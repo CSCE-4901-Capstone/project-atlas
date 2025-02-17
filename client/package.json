@@ -8,5 +8,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^8.17.14",
+    "@types/three": "^0.173.0",
+    "three": "^0.173.0"
   }
 }
