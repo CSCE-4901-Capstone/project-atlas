@@ -10,4 +10,9 @@ Group Members: Amaan Jamil Siddiqui,
 Dev Log:
     Starting a new IDE:
         npm init && npm install (Critical as node_modules is ignored on commit)
+        Create Python environment for efficient package testing and management
+            -Install python3
+            -Create venv file in source location(python3 -m venv name-of-file)
+        Activate environment
+            -source C:/path/to/bin/activate
         
