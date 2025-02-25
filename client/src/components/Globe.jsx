@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import StarField from 'src/components/StarField';
 //import Movement from 'src/components/Movement'
 
 function Globe() {
@@ -22,13 +23,14 @@ function Globe() {
 
   return (
     <Canvas
-      style={{ width: windowSize.width, height: windowSize.height}}
+      style={{ width: windowSize.width, height: windowSize.height, background: 'black'}}
     >
-
-      <OrbitControls /> 
+      <ambientLight intensity={2} />
+      <StarField numStars={500}/>
+      <OrbitControls />
       <mesh>
-          <boxGeometry args={[2, 2, 2]} />
-          <meshPhongMaterial />
+          <sphereGeometry args={[2, 51, 32]} />
+          <meshStandardMaterial color={'blue'} />
       </mesh>
     </Canvas>
   )
