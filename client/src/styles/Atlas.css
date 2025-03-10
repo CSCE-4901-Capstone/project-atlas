@@ -2,3 +2,33 @@
     margin: 0;
     padding: 0;
 }
+.toggle-menu{
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    position: absolute;
+    top: 5rem;
+    left: 95rem;
+    height: 22rem;
+    width: 20rem;
+    background-color: white;
+}
+.search{
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    position: absolute;
+    top: 35rem;
+    left: 95rem;
+    height: 18rem;
+    width: 20rem;
+    background-color: white;
+}
+.country-choice{
+    position: absolute;
+    top: 5rem;
+    left: 78rem;
+    height: 5rem;
+    width: 15rem;
+    background-color: white;
+}
