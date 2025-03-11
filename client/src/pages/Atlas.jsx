@@ -4,6 +4,7 @@ import 'src/styles/Atlas.css'
 function Atlas() {
 
   return (
+    // UI
     <Globe/>
   )
 }
