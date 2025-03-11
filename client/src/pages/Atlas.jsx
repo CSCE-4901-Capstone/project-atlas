@@ -1,15 +1,13 @@
 import Globe from 'src/components/Globe'
 import 'src/styles/Atlas.css'
-import ToggleMenu from '../components/menu/ToggleMenu'
-import Search from '../components/menu/Search'
+import Menu from '../components/menu/Menu'
 
 function Atlas() {
 
   return (
     <>
       <Globe/>
-      <ToggleMenu/>
-      <Search/>
+      <Menu/>
     </>
   )
 }

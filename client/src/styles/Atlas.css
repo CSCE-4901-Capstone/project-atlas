@@ -6,34 +6,70 @@
 html {
     background-color: 'black';
 }
-
-.toggle-menu{
+/*Toggle Menu Styling*/
+#toggle-menu{
     display: flex;
-    justify-content: center;
-    align-items: top;
-    position: absolute;
-    top: 5rem;
-    left: 95rem;
-    height: 22rem;
-    width: 20rem;
-    background-color: white;
-}
-.search{
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: top;
     align-items: top;
     position: absolute;
     top: 35rem;
     left: 95rem;
     height: 18rem;
     width: 20rem;
-    background-color: white;
+}
+#toggle-radio-group {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-around;
+    height:20rem;
+    margin: 2rem;
+    background-color: transparent;
+}
+#toggle-radio-group > div {
+    background-color: transparent;
+}
+#toggle-radio-group > div > label{
+    margin-left: 5px;
+    background-color: transparent;
+}
+/*Search Menu Styling*/
+#search{
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: top;
+    position: absolute;
+    top: 5rem;
+    left: 95rem;
+    height: 6rem;
+    width: 20rem;
+}
+
+#search > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+    background-color: transparent;
 }
 .country-choice{
     position: absolute;
     top: 5rem;
     left: 78rem;
-    height: 5rem;
+    height: 4rem;
     width: 15rem;
-    background-color: white;
+}
+/*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
+div > h1 {
+    align-self: center;
+    justify-self: center;
+    margin-top: 0.5rem;
+}
+/*Physical styling for all divs in the menu*/
+body > div :not(:first-child) {
+    border-radius: 20px;
+    color: white;
+    background-color: rgba(182, 169, 169, 0.5);
 }
