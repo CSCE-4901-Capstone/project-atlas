@@ -1,7 +1,7 @@
 import { Vector3, Color } from 'three'
 
+// Select a random point for the radius, longitude and lattitude
 function randomPoint() {
-  // Select a random point for the radius, longitude and lattitude
   const radius = Math.random() * 20 + 20; // Pick a radius between 20 and 40
   const longitude = 2 * Math.PI * Math.random();
   const latitude = Math.acos(2 * Math.random() - 1);

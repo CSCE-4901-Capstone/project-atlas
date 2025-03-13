@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Atlas from "src/pages/Atlas"
+import Atlas from 'src/pages/Atlas'
 
 function App() {
   return (
