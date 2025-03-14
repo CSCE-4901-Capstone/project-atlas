@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
-import { Vector3, Color, FogExp2 } from 'three'
+import { Vector3, Color, Fog } from 'three'
 
 function StarField({ numStars }) {
   const { scene } = useThree()
@@ -15,9 +15,8 @@ function StarField({ numStars }) {
     colors.push(col.r, col.g, col.b)
   }
 
-  // Add some fog to the scene to make the stars look a bit more realistic
   useEffect(() => {
-    scene.fog = new FogExp2('black', 0.03);
+    console.log(scene)
   }, [scene])
 
   return (
@@ -36,7 +35,7 @@ function StarField({ numStars }) {
           itemSize={3} 
         />
       </bufferGeometry>
-      <pointsMaterial size={0.2} vertexColors fog={true}/>
+      <pointsMaterial size={0.2} vertexColors fog={false}/>
     </points>
 
   )

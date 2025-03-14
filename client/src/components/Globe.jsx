@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Canvas, useLoader, useThree } from '@react-three/fiber';
+import { Canvas, useLoader} from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { TextureLoader, LinearFilter } from 'three';
+import { TextureLoader, LinearFilter, FogExp2 } from 'three';
 import StarField from 'src/components/StarField';
 import Outline from 'src/components/builders/Outline'
 //import Movement from 'src/components/Movement'
@@ -12,7 +12,6 @@ function Globe() {
     height: window.innerHeight
   });
 
-  // Updates render when resized
   function handleResize() {
     setWindowSize({
       width: window.innerWidth,
@@ -24,12 +23,6 @@ function Globe() {
     window.addEventListener('resize', handleResize)
   }, [])
 
-  //useEffect(() => {
-  //  let scene = useThree();
-  //  scene.fog = new THREE.kk
-  //})
-
-  // Loads in earth texture (implementation may be changed in the future)
   const texture= useLoader(TextureLoader, "/images/earth2.jpg");
   texture.minFilter = LinearFilter;
   texture.generateMipmaps = false;
@@ -41,7 +34,7 @@ function Globe() {
     >
       <ambientLight intensity={3} />
       <StarField numStars={500}/>
-      <Outline filename={'countries.json'} radius={2.0}/>
+      <Outline filename={'countries.json'} radius={2.05}/>
       <OrbitControls />
       <mesh>
           <sphereGeometry args={[2, 51, 32]} />
