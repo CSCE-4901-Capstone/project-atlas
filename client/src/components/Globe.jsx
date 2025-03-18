@@ -34,9 +34,9 @@ function Globe() {
     >
       <ambientLight intensity={3} />
       <StarField numStars={500}/>
-      <Outline filename={'countries.json'} radius={2.05}/>
-      <OrbitControls />
-      <mesh>
+      <Outline filename={'countries.json'} radius={2}/>
+      <OrbitControls makeDefault/>
+      <mesh onClick = {(e) => console.log(e)}>
           <sphereGeometry args={[2, 51, 32]} />
           <meshStandardMaterial map={texture} />
       </mesh>
