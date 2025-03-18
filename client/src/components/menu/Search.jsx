@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 function Search() {
     return(
         <div id="search">
-            <h1>Search</h1>
             <div>
-                <input type="text" placeholder="Enter Country" />
+                <input type="text" placeholder="Search for a Country" />
             </div>
         </div>
     )

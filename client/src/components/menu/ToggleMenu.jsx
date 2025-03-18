@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
-import ChoiceCountry from './ChoiceCountry'
 
 function toggleMenu() {
     return(
         <>
             <div id="toggle-menu">
-            <h1>Toggles</h1>
+            <h1>Filters</h1>
                 <div id="toggle-radio-group">
                     <div>
                         <input
@@ -35,7 +34,6 @@ function toggleMenu() {
 
                 </div>
             </div>
-            <ChoiceCountry />
         </>
 
     )

@@ -1,4 +1,11 @@
+@font-face{
+    font-family: 'inter';
+    src:url('../assets/Inter-VariableFont_opsz,wght.ttf') format('truetype')
+}
+
 * {
+    font-family: 'inter';
+    font-weight: 200;
     margin: 0;
     padding: 0;
 }
@@ -13,25 +20,28 @@ html {
     justify-content: top;
     align-items: top;
     position: absolute;
-    top: 35rem;
-    left: 95rem;
-    height: 18rem;
-    width: 20rem;
+    top: 40vh;
+    left: 82vw;
+    height: 458px;
+    width: 230px;
+    border: 1.5px white solid
 }
 #toggle-radio-group {
     display: flex;
     flex-direction: column;
     align-items: start;
-    justify-content: space-around;
-    height:20rem;
-    margin: 2rem;
+    justify-content: start;
+    padding-left:2vw;
+    padding-top: 2vh;
+    gap: 2vh;
     background-color: transparent;
+    border-top: 1.5px white solid
 }
 #toggle-radio-group > div {
     background-color: transparent;
 }
 #toggle-radio-group > div > label{
-    margin-left: 5px;
+    margin-left: 9px;
     background-color: transparent;
 }
 /*Search Menu Styling*/
@@ -39,12 +49,24 @@ html {
     display: flex;
     flex-direction: column;
     justify-content: top;
-    align-items: top;
+    align-items: center;
     position: absolute;
-    top: 5rem;
-    left: 95rem;
-    height: 6rem;
+    top: 3vh;
+    left: 75vw;
+    height: 2rem;
     width: 20rem;
+    background-color: transparent;
+}
+#search > div > input {
+    background-color: black;
+    border: 1.5px white solid;
+    width: 20rem;
+    height: 1rem;
+    padding: 2px;
+    color: white;
+}
+#search > div > input::placeholder{
+    size: 20px;
 }
 
 #search > div{
@@ -55,6 +77,8 @@ html {
     background-color: transparent;
 }
 .country-choice{
+    /*Change display when applying the component to AI Summary*/
+    display: none;
     position: absolute;
     top: 5rem;
     left: 78rem;
@@ -69,7 +93,6 @@ div > h1 {
 }
 /*Physical styling for all divs in the menu*/
 body > div :not(:first-child) {
-    border-radius: 20px;
     color: white;
-    background-color: rgba(182, 169, 169, 0.5);
+    background-color: rgba(0, 0, 0, 50%);
 }
