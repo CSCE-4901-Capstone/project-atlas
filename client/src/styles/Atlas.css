@@ -21,7 +21,7 @@ html {
     align-items: top;
     position: absolute;
     top: 55vh;
-    left: 83vw;
+    left: 80vw;
     height: 20rem;
     width: 15rem;
     border: 1.5px white solid
@@ -53,7 +53,7 @@ html {
     align-items: center;
     position: absolute;
     top: 3vh;
-    left: 78vw;
+    left: 75%;
     height: 2rem;
     width: 20rem;
     background-color: transparent;
@@ -76,15 +76,6 @@ html {
     align-items: center;
     height: 2rem;
     background-color: transparent;
-}
-.country-choice{
-    /*Change display when applying the component to AI Summary*/
-    display: none;
-    position: absolute;
-    top: 5rem;
-    left: 78rem;
-    height: 4rem;
-    width: 15rem;
 }
 /*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
 div > h1 {
