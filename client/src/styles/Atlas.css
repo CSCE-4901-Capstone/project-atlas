@@ -1,3 +1,6 @@
+/*Add right and left menu split components to avoid absolute positioning*/
+
+
 @font-face{
     font-family: 'inter';
     src:url('../assets/Inter-VariableFont_opsz,wght.ttf') format('truetype')
@@ -38,6 +41,9 @@ html {
     border-top: 1.5px white solid
 }
 #toggle-radio-group > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: transparent;
 }
 #toggle-radio-group > div > label{
