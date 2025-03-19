@@ -1,12 +1,11 @@
-import ToggleMenu from './ToggleMenu'
-import Search from './Search'
-
+import Right from "./Right"
+import Left from "./Left"
 function Menu() {
     return(
-        <>
-            <ToggleMenu/>
-            <Search/>
-        </>
+        <div id="menu">
+            <Left/>
+            <Right/>
+        </div>
     )
 }
 

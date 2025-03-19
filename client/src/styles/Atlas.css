@@ -16,15 +16,39 @@
 html {
     background-color: 'black';
 }
+#menu{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+}
+#left{
+    display: flex;
+}
+#right{
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+    align-items: end;
+    justify-content: space-between;
+    position: absolute;
+    left: 50%;
+    top: 0%;
+    height:100%;
+    width: 50%;
+}
+
+
+
 /*Toggle Menu Styling*/
 #toggle-menu{
     display: flex;
     flex-direction: column;
     justify-content: top;
     align-items: top;
-    position: absolute;
-    top: 55vh;
-    left: 83%;
     height: 20rem;
     width: 13rem;
     border: 1.5px white solid
@@ -55,16 +79,11 @@ html {
 #search{
     display: flex;
     flex-direction: column;
-    justify-content: top;
     align-items: center;
-    position: absolute;
-    top: 3vh;
-    left: 75%;
     height: 2rem;
-    width: 20rem;
     background-color: transparent;
 }
-#search > div > input {
+#search > input {
     background-color: rgba(0, 0, 0, 50%);
     border: 1.5px white solid;
     width: 20rem;
@@ -91,7 +110,8 @@ div > h1 {
     font-size: 1.8rem;
 }
 /*Physical styling for all divs in the menu*/
-body > div :not(:first-child) {
+body > div :not(:first-child) > div > div{
     color: white;
     background-color: rgba(0, 0, 0, 50%);
 }
+
