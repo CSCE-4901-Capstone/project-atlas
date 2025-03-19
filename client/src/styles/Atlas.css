@@ -21,9 +21,9 @@ html {
     align-items: top;
     position: absolute;
     top: 55vh;
-    left: 80vw;
+    left: 83%;
     height: 20rem;
-    width: 15rem;
+    width: 13rem;
     border: 1.5px white solid
 }
 #toggle-radio-group {
@@ -59,7 +59,7 @@ html {
     background-color: transparent;
 }
 #search > div > input {
-    background-color: black;
+    background-color: rgba(0, 0, 0, 50%);
     border: 1.5px white solid;
     width: 20rem;
     height: 1rem;
