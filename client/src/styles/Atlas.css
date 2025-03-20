@@ -24,6 +24,9 @@ html {
     left: 0%;
     height: 100%;
     width: 100%;
+    overflow: visible;
+    pointer-events: none;
+    background: none !important;
 }
 #left{
     display: flex;
