@@ -3,13 +3,14 @@ import '../../styles/Atlas.css'
 
 function toggleMenu() {
     return(
-        <>
-            <div id="toggle-menu">
-            <h1>Filters</h1>
+        <div id="toggle-menu">
+            <div className="title">
+                <h1>Filters</h1>
+            </div>
                 <div id="toggle-radio-group">
                     <div>
                         <input
-                            type="radio"
+                            type="checkbox"
                             id="Topography"
                             name='toggles'
                         />
@@ -17,7 +18,7 @@ function toggleMenu() {
                     </div>
                     <div>
                         <input
-                            type="radio"
+                            type="checkbox"
                             id="Borders"
                             name='toggles'
                         />
@@ -25,7 +26,7 @@ function toggleMenu() {
                     </div>
                     <div>
                         <input
-                            type="radio"
+                            type="checkbox"
                             id="Flights"
                             name='toggles'
                         />
@@ -33,8 +34,7 @@ function toggleMenu() {
                     </div>
 
                 </div>
-            </div>
-        </>
+        </div>
 
     )
 }

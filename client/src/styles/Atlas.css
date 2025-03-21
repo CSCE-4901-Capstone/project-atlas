@@ -22,8 +22,8 @@ html {
     position: absolute;
     top: 0%;
     left: 0%;
-    height: 100%;
-    width: 100%;
+    min-height: 100vh;
+    min-width: 100vw;
     overflow: visible;
     pointer-events: none;
     background: none !important;
@@ -36,10 +36,7 @@ html {
     flex-direction: column;
     align-self: flex-end;
     align-items: end;
-    justify-content: space-between;
-    position: absolute;
-    left: 50%;
-    top: 0%;
+    gap: 60%;
     height:100%;
     width: 50%;
 }
@@ -51,17 +48,23 @@ html {
 }
 
 
-
-/*Toggle Menu Styling*/
-#toggle-menu{
+/*Shared Styling for #info-box and #toggle-menu as well as their titles*/
+#right > :not(:first-child){
     display: flex;
     flex-direction: column;
     justify-content: top;
     align-items: top;
     height: 20rem;
     width: 13rem;
-    border: 1.5px white solid
+    border: 1.5px white solid;
 }
+#right > :not(:first-child) > .title {
+    border-bottom: 1.5px white solid;
+    padding: 5px;
+}
+/*Adjust styling for the information section*/
+
+/*Filter group styling*/
 #toggle-radio-group {
     display: flex;
     flex-direction: column;
@@ -71,7 +74,6 @@ html {
     padding-top: 1.6vh;
     gap: 1.1vh;
     background-color: transparent;
-    border-top: 1.5px white solid
 }
 #toggle-radio-group > div {
     display: flex;

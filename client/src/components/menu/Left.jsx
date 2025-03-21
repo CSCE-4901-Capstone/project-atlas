@@ -1,17 +1,19 @@
 import React from "react";
-
+import Logo from './Logo'
+import AISummary from "./AISummary";
+import Help from "./Help";
 
 function Left() {
     return(
         <div id="left">
             <div id='logo'>
-                {/*Image div for logo */}
+                <Logo/>
             </div>
             <div id='AI'>
-                {/*Div for AI summary component with the ChoiceCountry component */}    
+                <AISummary/> 
             </div>
             <div id="help">
-                {/*Div for the help modal component */}
+                <Help/>
             </div>
         </div>
     )

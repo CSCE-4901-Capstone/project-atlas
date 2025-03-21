@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 function ChoiceCountry() {
     return(
         <div className="country-choice">
-            <h1>Country Choice</h1>
+            <h1>Earth</h1>
         </div>
     )
 }
