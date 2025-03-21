@@ -9,7 +9,7 @@ delete filler text
 
 function AISummary(){
     return(
-        <div id="AI">
+        <>
             <ChoiceCountry/>
             <p>
                 {/*Insert AI prompt return here and delete below filler text */}
@@ -19,7 +19,7 @@ function AISummary(){
                 of Russia’s intentions, accusing Putin of obstructing the peace process.
                 Global Leaders Advocate for Peace in Ukraine: Australian
             </p>
-        </div>
+        </>
     )
 }
 

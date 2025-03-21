@@ -2,11 +2,11 @@ import React from "react";
 
 function Help(){
     return(
-        <div id="help">
-            <button>
-                <img src="../../assets/Group2.png" alt="Help Button" />
+        <>
+            <button id="help-button">
+                <img src="/src/assets/Group2.png" alt="Help Button" />
             </button>
-        </div>
+        </>
     )
 }
 
