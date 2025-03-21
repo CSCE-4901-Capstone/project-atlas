@@ -16,9 +16,12 @@
 html {
     background-color: 'black';
 }
+
+/*Start Menu styling*/
 #menu{
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     position: absolute;
     top: 0%;
     left: 0%;
@@ -28,26 +31,47 @@ html {
     pointer-events: none;
     background: none !important;
 }
+/*Left side of the menu*/
 #left{
     display: flex;
-}
-#right{
-    display: flex;
     flex-direction: column;
-    align-self: flex-end;
-    align-items: end;
-    gap: 60%;
-    height:100%;
-    width: 50%;
-}
-#right > div {
-    pointer-events: all;
+    align-items: start;
+    justify-content: space-between;
+    margin: 2rem;
 }
 #left > div {
     pointer-events: all;
 }
 
+#AI {
+    width: 13rem;
+    height: 20rem;
+    overflow: scroll;
+    overflow-x:hidden;
 
+}
+
+#help-button{
+    background-color: transparent;
+    border: none;
+}
+
+/*Consider style change for the help button to show click action physically*/
+
+
+
+/*Right side of the menu*/
+#right > div {
+    pointer-events: all;
+}
+
+#right{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
+    margin:2rem;
+}
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #right > :not(:first-child){
     display: flex;
