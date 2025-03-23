@@ -80,7 +80,7 @@ class Gemini_API(ExternalAPI):
             
         }
         #pushing data to GPT to get processed data
-        #additional prompt engineering will be added to ensure proper data fromat is expected
+        #additional prompt engineering will be added to tailor model to appropriate role 
         
     def ReturnPrompt():
         #return data to be implemented from API call
