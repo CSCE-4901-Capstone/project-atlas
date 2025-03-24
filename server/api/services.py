@@ -48,6 +48,16 @@ class FlightAPI(ExternalAPI):
             output.append(flight_dict)
         return output
 
+class WeatherAPI(ExternalAPI):
+    def __init__(self):
+        super().__init__()
+
+    def fetch_weather(self):
+        #fetch weather data from Meteostat for a given station ID
+
+    def build_weather(self):
+        #Process the data from Meteostat API and return weather details.
+
 class GPT_API(ExternalAPI):
 
     def EnterPrompt(prompt):
