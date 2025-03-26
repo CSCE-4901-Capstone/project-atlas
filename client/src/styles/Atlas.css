@@ -64,6 +64,9 @@ html {
 #right > div {
     pointer-events: all;
 }
+#right > form {
+    pointer-events: all;
+}
 
 #right{
     display: flex;
@@ -76,8 +79,6 @@ html {
 #right > :not(:first-child){
     display: flex;
     flex-direction: column;
-    justify-content: top;
-    align-items: top;
     height: 20rem;
     width: 13rem;
     border: 1.5px white solid;
@@ -126,11 +127,11 @@ html {
     padding: 2px;
     color: white;
 }
-#search > div > input::placeholder{
+#search > form > input::placeholder{
     size: 20px;
 }
 
-#search > div{
+#search > form{
     display: flex;
     justify-content: center;
     align-items: center;
