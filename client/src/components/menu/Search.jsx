@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 
 
 const Search = ({onChangeHandle}) => {
-    const handleSearchChange = (event) => {
-        onChangeHandle(event.target.value);
+    const handleSearchInput = (event) => {
+        if(event.key === 'Enter'){
+            onChangeHandle(event.target.value);
+        }
       };
     return(
         <>
@@ -11,7 +13,7 @@ const Search = ({onChangeHandle}) => {
                 <input
                     type="text"
                     placeholder="Search for a Country"
-                    onChange={handleSearchChange}
+                    onKeyDown={handleSearchInput}
                 />
             </div>
         </>
