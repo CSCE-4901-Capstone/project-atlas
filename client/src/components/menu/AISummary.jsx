@@ -1,16 +1,15 @@
 import React from "react";
 import ChoiceCountry from './ChoiceCountry'
 
-
 /*
 AI logic functionality will be inserted here then put the variable for the return prompt in the brackets where the comment is and 
 delete filler text
  */
 
-function AISummary(){
+const AISummary = ({choiceCountry}) =>{
     return(
         <>
-            <ChoiceCountry/>
+            <ChoiceCountry choice={choiceCountry}/>
             <p>
                 {/*Insert AI prompt return here and delete below filler text */}
                 International Relations and Politics Ukraine-Russia Ceasefire Negotiations: Ukrainian President Volodymyr Zelenskyy has called on U.S. President Donald Trump to 

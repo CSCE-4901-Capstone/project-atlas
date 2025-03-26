@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 
-function ChoiceCountry() {
-    const [choice,setChoice] = useState('Earth');
-    
-
+const ChoiceCountry = ({choice}) => {
     return(
         <div className="country-choice">
-            <h1>{choice}</h1>
+            <h1>{choice == '' ? 'Earth' : choice}</h1>
         </div>
     )
 }
 
-export default ChoiceCountry
+export default ChoiceCountry;
