@@ -49,16 +49,31 @@ html {
     border: 1.5px white solid;
 }
 #AI > .text-container {
-    max-height: 78%;
-    overflow-y: auto;
+    max-height: 80%;
+    overflow: scroll;
     overflow-x:hidden;
-    padding: 0.5rem;
-    
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-right: 0.35rem;
+    margin-top: 0.35rem;
+    margin-bottom: 0.35rem
 }
+/*Custom Scrollbar*/
+#AI > .text-container::-webkit-scrollbar{
+    width: 8px;
+}
+#AI > .text-container::-webkit-scrollbar-track{
+    background: transparent;
+    border: 0.5px white solid;
+}
+#AI > .text-container::-webkit-scrollbar-thumb{
+    background: white;
+}
+/*Padding for text inside of AISummary*/
 #AI > .text-container > p{
     padding: 0.7rem;
 }
-/*padding for country selection*/
+/*Padding for country selection*/
 #AI > .country-choice{
     border-bottom: 1.5px white solid;
     padding: 5px;
