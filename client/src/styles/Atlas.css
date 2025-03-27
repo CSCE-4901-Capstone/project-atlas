@@ -73,7 +73,7 @@ html {
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    margin:2rem;
+    margin: 1rem;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #right > :not(:first-child){
@@ -116,7 +116,7 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 2rem;
+    height: 5rem;
     background-color: transparent;
 }
 #search > input {
@@ -126,6 +126,10 @@ html {
     height: 1rem;
     padding: 2px;
     color: white;
+}
+/*Remove blue focus on click for search input*/
+textarea:focus, input:focus{
+    outline: none;
 }
 #search > form > input::placeholder{
     size: 20px;
@@ -149,5 +153,27 @@ div > h1 {
 body > div :not(:first-child) > div > div{
     color: white;
     background-color: rgba(0, 0, 0, 50%);
+}
+/*Autocomplete dropdown*/
+.suggestion-list{
+    background-color: rgba(0, 0, 0, 50%);
+    width: 20rem;
+    padding: 2px;
+    list-style: none;
+    overflow: scroll;
+    z-index: 10;
+}
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+.suggestion-item:hover {
+    background: rgba(59, 59, 59, 0.255);
+  }
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 2px;
 }
 
