@@ -25,8 +25,8 @@ html {
     position: absolute;
     top: 0%;
     left: 0%;
-    min-height: 100vh;
-    min-width: 100vw;
+    height: 100vh;
+    width: 100vw;
     overflow: visible;
     pointer-events: none;
     background: none !important;
@@ -44,11 +44,24 @@ html {
 }
 
 #AI {
-    width: 13rem;
+    width: 23rem;
     height: 20rem;
-    overflow: scroll;
+    border: 1.5px white solid;
+}
+#AI > .text-container {
+    max-height: 78%;
+    overflow-y: auto;
     overflow-x:hidden;
-
+    padding: 0.5rem;
+    
+}
+#AI > .text-container > p{
+    padding: 0.7rem;
+}
+/*padding for country selection*/
+#AI > .country-choice{
+    border-bottom: 1.5px white solid;
+    padding: 5px;
 }
 
 #help-button{
@@ -73,10 +86,10 @@ html {
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    margin: 1rem;
+    margin: 1.5rem;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
-#right > :not(:first-child){
+#toggle-menu{
     display: flex;
     flex-direction: column;
     height: 20rem;
@@ -131,17 +144,21 @@ html {
 textarea:focus, input:focus{
     outline: none;
 }
-#search > form > input::placeholder{
-    size: 20px;
+#info-box {
+    display: flex;
+    flex-direction: column;
+    height: 20rem;
+    width: 17rem;
+    border: 1.5px white solid;
+}
+#info-box > p {
+    padding: 0.5rem;
+}
+#info-box > .information{
+    padding: 0.7rem;
 }
 
-#search > form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 2rem;
-    background-color: transparent;
-}
+
 /*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
 div > h1 {
     align-self: center;
@@ -173,7 +190,7 @@ body > div :not(:first-child) > div > div{
   }
 .error-message {
     color: red;
-    font-size: 14px;
+    font-size: 12px;
     margin-top: 2px;
 }
 
