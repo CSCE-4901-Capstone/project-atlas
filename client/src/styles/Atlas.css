@@ -12,9 +12,24 @@
     margin: 0;
     padding: 0;
 }
-
+/*Custom Scrollbar*/
+*::-webkit-scrollbar{
+    width: 7px;
+}
+*::-webkit-scrollbar-track{
+    background: transparent;
+    border: 0.5px white solid;
+}
+*::-webkit-scrollbar-thumb{
+    background: white;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background: lightgrey;
+}
 html {
     background-color: 'black';
+    height: 100%;
+    width: 100%;
 }
 
 /*Start Menu styling*/
@@ -44,9 +59,10 @@ html {
 }
 
 #AI {
-    width: 23rem;
-    height: 20rem;
+    width: 18rem;
+    height: 25rem;
     border: 1.5px white solid;
+    margin-bottom: 12rem;
 }
 #AI > .text-container {
     max-height: 80%;
@@ -54,24 +70,14 @@ html {
     overflow-x:hidden;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    margin-right: 0.35rem;
-    margin-top: 0.35rem;
-    margin-bottom: 0.35rem
+    margin-right: 0.45rem;
+    margin-top: 0.45rem;
+    padding-bottom: 0.45rem;
 }
-/*Custom Scrollbar*/
-#AI > .text-container::-webkit-scrollbar{
-    width: 8px;
-}
-#AI > .text-container::-webkit-scrollbar-track{
-    background: transparent;
-    border: 0.5px white solid;
-}
-#AI > .text-container::-webkit-scrollbar-thumb{
-    background: white;
-}
+
 /*Padding for text inside of AISummary*/
 #AI > .text-container > p{
-    padding: 0.7rem;
+    padding: 0.4rem;
 }
 /*Padding for country selection*/
 #AI > .country-choice{
