@@ -27,7 +27,6 @@
     background: lightgrey;
 }
 html {
-    background-color: 'black';
     height: 100%;
     width: 100%;
 }
@@ -52,27 +51,38 @@ html {
     flex-direction: column;
     align-items: start;
     justify-content: space-between;
-    margin: 2rem;
+    margin: 1%;
 }
 #left > div {
     pointer-events: all;
+}
+/*Logo styling*/
+#logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 14%;
+    width: 100%;
+}
+#logo > img {
+    height: 80%;
+    width: 65%;
 }
 
 #AI {
     width: 18rem;
     height: 25rem;
     border: 1.5px white solid;
-    margin-bottom: 12rem;
+    margin-bottom: 89%;
 }
 #AI > .text-container {
     max-height: 80%;
     overflow: scroll;
     overflow-x:hidden;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    margin-right: 0.45rem;
-    margin-top: 0.45rem;
-    padding-bottom: 0.45rem;
+    padding-left: 4%;
+    margin-right: 3%;
+    margin-top: 3%;
+    padding-bottom: 3.8%;
 }
 
 /*Padding for text inside of AISummary*/
@@ -107,21 +117,23 @@ html {
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    margin: 1.5rem;
+    margin: 1%;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #toggle-menu{
     display: flex;
     flex-direction: column;
-    height: 20rem;
-    width: 13rem;
+    height: 40%;
+    width: 60%;
     border: 1.5px white solid;
 }
 #right > :not(:first-child) > .title {
     border-bottom: 1.5px white solid;
     padding: 5px;
 }
-/*Adjust styling for the information section*/
+
+
+
 
 /*Filter group styling*/
 #toggle-radio-group {
@@ -165,6 +177,7 @@ html {
 textarea:focus, input:focus{
     outline: none;
 }
+/*Adjust styling for the information section*/
 #info-box {
     display: flex;
     flex-direction: column;
