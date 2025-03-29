@@ -66,7 +66,7 @@ class Gemini_API(ExternalAPI):
 
         SendMessage = {
             "model" = model,                #make sure the message is being sent to the gemini model
-            "messages":[
+            "messages": [
                 {#Message to define role of AI in prompt exchange
                     "role": "system",   
                     "type": "text",
