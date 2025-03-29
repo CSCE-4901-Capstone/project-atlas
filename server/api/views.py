@@ -24,9 +24,15 @@ class FlightList(APIView):
 
 
 
-class AI_Model(APIView):                #handles connection to external API for AI interaction             
+class TravelCountry(APIView):                #handles connection to external API for AI interaction 
+
+            AI_gemini = Gemini_API()
+    
     def post(self,request):
         prompt = request.data.get("prompt","")
-        AI_gemini = Gemini_API()
         result = AI_gemini.EnterPrompt(prompt)                  #calling function within gemini class to send the prompt to the API per django requirements
+<<<<<<< HEAD
         return Response({"response":result}) 
+=======
+        return Response({"response":result})
+>>>>>>> d27e313533948682fa69a5151b09015c5ebaa0f7
