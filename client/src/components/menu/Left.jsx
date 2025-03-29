@@ -3,14 +3,14 @@ import Logo from './Logo'
 import AISummary from "./AISummary";
 import Help from "./Help";
 
-function Left() {
+const Left = ({choice}) => {
     return(
         <div id="left">
             <div id='logo'>
                 <Logo/>
             </div>
             <div id='AI'>
-                <AISummary/> 
+                <AISummary choiceCountry={choice}/> 
             </div>
             <div id="help">
                 <Help/>

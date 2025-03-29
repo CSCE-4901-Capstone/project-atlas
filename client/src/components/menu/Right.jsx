@@ -3,10 +3,10 @@ import ToggleMenu from "./ToggleMenu";
 import Search from "./Search";
 import Info from './Info';
 
-function Right() {
+const Right = ({onSearchChange}) => {
     return(
         <div id="right">
-            <Search/>
+            <Search onChangeHandle={onSearchChange}/>
             <ToggleMenu/>
             <Info/>
         </div>
