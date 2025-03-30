@@ -56,3 +56,11 @@ class FlightAPI(ExternalAPI):
             output.append(flight_dict)
         return output
 
+class GPT_API(ExternalAPI):
+
+    def EnterPrompt(prompt):
+        #pushing data to GPT to get processed data
+        #additional prompt engineering will be added to ensure proper data fromat is expected
+        
+    def ReturnPrompt():
+        #return data to be implemented from API call

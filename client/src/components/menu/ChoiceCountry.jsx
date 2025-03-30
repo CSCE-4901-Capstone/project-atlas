@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
-function ChoiceCountry() {
+const ChoiceCountry = ({choice}) => {
     return(
         <div className="country-choice">
-            <h1>Earth</h1>
+            <h1>{choice == '' ? 'Earth' : choice}</h1>
         </div>
     )
 }
 
-export default ChoiceCountry
+export default ChoiceCountry;
