@@ -35,7 +35,7 @@ function BuildOutline({ json, radius }) {
   }, [])
 
   return (
-    <group ref={groupRef}>
+    <group onClick = {(e) => { console.log(e)}} ref={groupRef}>
       {coordArray.map((line, index) => (
         <Line key={index} points={line} color={'white'} lineWidth={1} />
       ))}
