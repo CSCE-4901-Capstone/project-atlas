@@ -135,8 +135,6 @@ html {
     border-bottom: 1.5px white solid;
     padding: 5px;
 }
-
-
 /*Filter group styling*/
 #toggle-radio-group {
     display: flex;
@@ -171,7 +169,7 @@ html {
 .custom-label input[type="radio"]:checked + .custom-radio {
     background-color: white !important;
 }
-.custom-label input[type="radio"]:hover + .custom-radio {
+.custom-label input[type="radio"]:not(:checked) + .custom-radio:hover {
     background-color: gray !important;
 }
 

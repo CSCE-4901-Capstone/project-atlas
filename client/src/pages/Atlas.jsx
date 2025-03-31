@@ -9,7 +9,7 @@ function Atlas() {
   return (
     <>
       <Environment selectedCountry={selectedCountry} onCountrySelection={setSelectedCountry}/>
-      <Menu/>
+      <Menu searchVal={selectedCountry} setSearchVal={setSelectedCountry}/>
     </>
   )
 }

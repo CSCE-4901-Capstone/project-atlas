@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { label } from "three/tsl";
 
 //Array is dummy data that tests the suggestion functionality
 const Countries = ['United States', 'Japan', 'South Korea', 'Mexico', 'Canada', 'Australia', 'United Kingdom'];
