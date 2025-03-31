@@ -53,7 +53,7 @@ html {
     justify-content: space-between;
     padding-left: 2%;
     padding-top: 0.5%;
-    padding-bottom: 5%;
+    padding-bottom: 2%;
 }
 #left > div {
     pointer-events: all;
@@ -148,17 +148,33 @@ html {
     gap: 1.1vh;
     background-color: transparent;
 }
-#toggle-radio-group > div {
+#toggle-radio-group > label {
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
+    gap: 4px;
 }
-#toggle-radio-group > div > label{
-    margin-left: 10px;
+/*Remove Default styling for radio buttons*/
+#toggle-radio-group > label > input {
+    display: none;
+}
+/*Styling for custom radio buttons*/
+#toggle-radio-group > label > span{
     font-size: 0.8rem;
     background-color: transparent;
+    border: 1px white solid;
+    height: 0.75rem;
+    width: 0.75rem;
+    border-radius: 50%;
 }
+.custom-label input[type="radio"]:checked + .custom-radio {
+    background-color: white !important;
+}
+.custom-label input[type="radio"]:hover + .custom-radio {
+    background-color: gray !important;
+}
+
 /*Search Menu Styling*/
 #search{
     display: flex;
