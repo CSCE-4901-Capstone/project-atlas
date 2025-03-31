@@ -1,20 +1,27 @@
 import * as turf from '@turf/turf';
 
 async function getSelectedCountry(point) {
-  try {
-    // Fetch the countries json
-    const response = await fetch(`/json/outlines/all.geojson`);
-    const countries_json = await response.json();
+  // If the json was not saved in cache, then save it
+  if (!window.countriesCache) {
+    try {
+      // Fetch the countries json
+      const response = await fetch(`/json/outlines/all.geojson`);
+      const countries_json = await response.json();
 
-    // Convert the 3D point to geographic coordinates
-    let convertedPoint = convertToGeographicCoordinates(point);
-
-    // Find the selected country
-    return findSelectedCountry(countries_json, convertedPoint);
-  } catch (error) {
-    console.error('Error loading GeoJSON file:', error);
-    return null;
+      window.countriesCache = countries_json;
+    } catch (error) {
+      console.error('Error loading GeoJSON file:', error);
+      return null;
+    }
   }
+
+
+  // Convert the 3D point to geographic coordinates
+  let convertedPoint = convertToGeographicCoordinates(point);
+
+  // Find the selected country
+  return findSelectedCountry(window.countriesCache, convertedPoint);
+
 }
 
 // Converts input x, y, z coordinates into longitude and latitude
