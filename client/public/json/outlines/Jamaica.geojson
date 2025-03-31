@@ -1,0 +1,70 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "3. Upper middle income",
+                "pop_est": 2825928.0,
+                "mapcolor7": 1.0,
+                "continent": "North America",
+                "economy": "6. Developing region",
+                "mapcolor13": 10.0,
+                "iso_a3": "JAM",
+                "name": "Jamaica",
+                "mapcolor9": 4.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -76.902561,
+                            17.868238
+                        ],
+                        [
+                            -77.206341,
+                            17.701116
+                        ],
+                        [
+                            -77.766023,
+                            17.861597
+                        ],
+                        [
+                            -78.337719,
+                            18.225968
+                        ],
+                        [
+                            -78.217727,
+                            18.454533
+                        ],
+                        [
+                            -77.797365,
+                            18.524218
+                        ],
+                        [
+                            -77.569601,
+                            18.490525
+                        ],
+                        [
+                            -76.896619,
+                            18.400867
+                        ],
+                        [
+                            -76.365359,
+                            18.160701
+                        ],
+                        [
+                            -76.199659,
+                            17.886867
+                        ],
+                        [
+                            -76.902561,
+                            17.868238
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

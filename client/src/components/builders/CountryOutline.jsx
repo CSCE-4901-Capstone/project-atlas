@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import { Line } from '@react-three/drei';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
 
-function Outline({ filename, radius }) {
+function CountryOutline({ filename, radius, color }) {
   const [json, setJson] = useState(null)
 
   // Pull data from json file
   useEffect(() => {
-    fetch(`/json/${filename}`)
+    fetch(`/json/outlines/${filename}`)
       .then(response => response.json())
       .then(json => {
         setJson(json)
@@ -18,12 +18,12 @@ function Outline({ filename, radius }) {
 
   return (
     <>
-      {json ? <BuildOutline json={json} radius={radius}/> : null}
+      {json ? <BuildOutline json={json} radius={radius} color={color}/> : null}
     </>
   );
 }
 
-function BuildOutline({ json, radius }) {
+function BuildOutline({ json, radius, color}) {
   const groupRef = useRef();
   let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius)
   let coordArray = sphereCoordinates['output_coordinate_array'];
@@ -34,14 +34,15 @@ function BuildOutline({ json, radius }) {
      }
   }, [])
 
+
   return (
     <group onClick = {(e) => { console.log(e)}} ref={groupRef}>
       {coordArray.map((line, index) => (
-        <Line key={index} points={line} color={'white'} lineWidth={1} />
+        <Line key={index} points={line} color={color} lineWidth={1} />
       ))}
     </group>
   )
 }
 
 
-export default Outline;
+export default CountryOutline;

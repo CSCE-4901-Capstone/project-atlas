@@ -3,7 +3,7 @@ import * as turf from '@turf/turf';
 async function getSelectedCountry(point) {
   try {
     // Fetch the countries json
-    const response = await fetch(`/json/countries.json`);
+    const response = await fetch(`/json/outlines/all.geojson`);
     const countries_json = await response.json();
 
     // Convert the 3D point to geographic coordinates
