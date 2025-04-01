@@ -4,12 +4,13 @@ import 'src/styles/Atlas.css';
 import Menu from '../components/menu/Menu';
 
 function Atlas() {
-  let [selectedCountry, setSelectedCountry] = useState(null)
+  let [selectedCountry, setSelectedCountry] = useState(null);
+  let [activeFilter, setActiveFilter] = useState(null);
 
   return (
     <>
-      <Environment selectedCountry={selectedCountry} onCountrySelection={setSelectedCountry}/>
-      <Menu searchVal={selectedCountry} setSearchVal={setSelectedCountry}/>
+      <Environment selectedCountry={selectedCountry} onCountrySelection={setSelectedCountry} activeFilter={activeFilter}/>
+      <Menu searchVal={selectedCountry} setSearchVal={setSelectedCountry} onFilterSelection={setActiveFilter}/>
     </>
   )
 }
