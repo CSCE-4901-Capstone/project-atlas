@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
 
-function toggleMenu() {
+// Have the toggle menu be built using an array of names
+function toggleMenu({ onFilterSelection }) {
+
+  function handleFilterSelection(e) {
+    onFilterSelection(e.target.value) 
+  }
+
     return(
         <div id="toggle-menu">
             <div className="title">
@@ -11,24 +17,27 @@ function toggleMenu() {
                     <label className="custom-label">
                         <input
                             type="radio"
-                            id="Topography"
+                            value="Topography"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Topography
                     </label>
                     <label className="custom-label">
                         <input
                             type="radio"
-                            id="Borders"
+                            value="Borders"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Borders
                     </label>
                     <label className="custom-label">
                         <input
                             type="radio"
-                            id="Flights"
+                            value="Flights"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Flights
                     </label>

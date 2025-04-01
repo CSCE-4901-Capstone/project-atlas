@@ -2,13 +2,11 @@ import Right from "./Right"
 import Left from "./Left"
 import { useState } from "react"
 
-
-
-const Menu = ({searchVal, setSearchVal}) => {
+const Menu = ({searchVal, setSearchVal, onFilterSelection}) => {
     return(
         <div id="menu">
             <Left choice={searchVal}/>
-            <Right onSearchChange={setSearchVal}/>
+            <Right onSearchChange={setSearchVal} onFilterSelection={onFilterSelection}/>
         </div>
     )
 }
