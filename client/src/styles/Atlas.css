@@ -76,7 +76,7 @@ html {
     width: 52%;
     height: 40%;
     border: 1.5px white solid;
-    margin-bottom: 40%
+    margin-bottom: 32vh;
 }
 #AI > .text-container {
     max-height: 74%;
