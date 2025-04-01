@@ -1,0 +1,66 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "1. High income: OECD",
+                "pop_est": 3140.0,
+                "mapcolor7": 6.0,
+                "continent": "South America",
+                "economy": "2. Developed region: nonG7",
+                "mapcolor13": 3.0,
+                "iso_a3": "FLK",
+                "name": "Falkland Is.",
+                "mapcolor9": 6.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -58.55,
+                            -51.1
+                        ],
+                        [
+                            -57.75,
+                            -51.55
+                        ],
+                        [
+                            -58.05,
+                            -51.9
+                        ],
+                        [
+                            -59.4,
+                            -52.2
+                        ],
+                        [
+                            -59.85,
+                            -51.85
+                        ],
+                        [
+                            -60.7,
+                            -52.3
+                        ],
+                        [
+                            -61.2,
+                            -51.85
+                        ],
+                        [
+                            -60.0,
+                            -51.25
+                        ],
+                        [
+                            -59.15,
+                            -51.5
+                        ],
+                        [
+                            -58.55,
+                            -51.1
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

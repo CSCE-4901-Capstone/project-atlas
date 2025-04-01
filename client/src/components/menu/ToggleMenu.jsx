@@ -8,30 +8,30 @@ function toggleMenu() {
                 <h1>Filters</h1>
             </div>
                 <div id="toggle-radio-group">
-                    <div>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
+                            type="radio"
                             id="Topography"
                             name='toggles'
                         />
-                        <label>Topography</label>
-                    </div>
-                    <div>
+                        <span className="custom-radio"></span>Topography
+                    </label>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
+                            type="radio"
                             id="Borders"
                             name='toggles'
                         />
-                        <label>Borders</label>
-                    </div>
-                    <div>
+                        <span className="custom-radio"></span>Borders
+                    </label>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
+                            type="radio"
                             id="Flights"
                             name='toggles'
                         />
-                        <label>Flights</label>
-                    </div>
+                        <span className="custom-radio"></span>Flights
+                    </label>
 
                 </div>
         </div>

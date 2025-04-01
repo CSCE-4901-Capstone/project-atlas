@@ -12,11 +12,14 @@
   "dependencies": {
     "@react-three/drei": "^10.0.2",
     "@react-three/fiber": "^9.0.4",
+    "@turf/turf": "^7.2.0",
     "axios": "^1.7.9",
+    "file-saver": "^2.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.2.0",
-    "three": "^0.173.0"
+    "three": "^0.173.0",
+    "turf": "^3.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -1,10 +1,14 @@
 import Right from "./Right"
 import Left from "./Left"
-function Menu() {
+import { useState } from "react"
+
+
+
+const Menu = ({searchVal, setSearchVal}) => {
     return(
         <div id="menu">
-            <Left/>
-            <Right/>
+            <Left choice={searchVal}/>
+            <Right onSearchChange={setSearchVal}/>
         </div>
     )
 }

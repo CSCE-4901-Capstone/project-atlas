@@ -1,0 +1,62 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "2. High income: nonOECD",
+                "pop_est": 140.0,
+                "mapcolor7": 7.0,
+                "continent": "Seven seas (open ocean)",
+                "economy": "6. Developing region",
+                "mapcolor13": 11.0,
+                "iso_a3": "ATF",
+                "name": "Fr. S. Antarctic Lands",
+                "mapcolor9": 9.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            70.28,
+                            -49.71
+                        ],
+                        [
+                            68.745,
+                            -49.775
+                        ],
+                        [
+                            68.72,
+                            -49.2425
+                        ],
+                        [
+                            68.8675,
+                            -48.83
+                        ],
+                        [
+                            68.935,
+                            -48.625
+                        ],
+                        [
+                            69.58,
+                            -48.94
+                        ],
+                        [
+                            70.525,
+                            -49.065
+                        ],
+                        [
+                            70.56,
+                            -49.255
+                        ],
+                        [
+                            70.28,
+                            -49.71
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}
