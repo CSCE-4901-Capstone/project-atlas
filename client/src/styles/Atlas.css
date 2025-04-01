@@ -65,6 +65,7 @@ html {
     justify-content: center;
     height: 14%;
     width: 100%;
+    background: transparent;
 }
 #logo > img {
     height: 80%;
@@ -97,9 +98,15 @@ html {
     padding: 5px;
 }
 
+#help{
+    height: 43px;
+    width: 43px;
+}
 #help-button{
     background-color: transparent;
     border: none;
+    height: 43px;
+    width: auto;
 }
 
 /*Consider style change for the help button to show click action physically*/
@@ -229,8 +236,9 @@ body > div :not(:first-child) > div > div{
     width: 20rem;
     padding: 2px;
     list-style: none;
-    overflow: scroll;
+    overflow-y: scroll;
     z-index: 10;
+    border: none;
 }
 .suggestion-item {
     padding: 10px;
