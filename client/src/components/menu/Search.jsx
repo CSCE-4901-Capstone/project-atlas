@@ -40,8 +40,6 @@ const Search = ({onChangeHandle}) => {
                 setFilteredSuggestions([]);
                 setShowOptions(false);
                 setError(false);
-            } else {
-                
             }
         }
       };
