@@ -70,11 +70,11 @@ html {
 
 #logo > img {
     height: 80%;
-    width: 38%;
+    width: 35%;
 }
 
 #AI {
-    width: 26vw;
+    max-width: 23vw;
     height: 43vh;
     border: 1.5px white solid;
     margin-bottom: 32vh;
