@@ -4,10 +4,7 @@ import { useState } from "react"
 
 
 
-function Menu() {
-    //Variables from the top down
-    const [searchVal,setSearchVal] = useState('');
-    
+const Menu = ({searchVal, setSearchVal}) => {
     return(
         <div id="menu">
             <Left choice={searchVal}/>
