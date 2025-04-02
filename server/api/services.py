@@ -59,8 +59,10 @@ class FlightAPI(ExternalAPI):
 class GPT_API(ExternalAPI):
 
     def EnterPrompt(prompt):
+        pass
         #pushing data to GPT to get processed data
         #additional prompt engineering will be added to ensure proper data fromat is expected
-        
+
     def ReturnPrompt():
+        pass
         #return data to be implemented from API call
