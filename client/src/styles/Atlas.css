@@ -18,7 +18,6 @@
 }
 *::-webkit-scrollbar-track{
     background: transparent;
-    border: 0.5px white solid;
 }
 *::-webkit-scrollbar-thumb{
     background: white;
@@ -74,10 +73,13 @@ html {
 }
 
 #AI {
-    max-width: 23vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 20vw;
     height: 43vh;
-    border: 1.5px white solid;
     margin-bottom: 32vh;
+    border-radius: 15%;
 }
 #AI > .text-container {
     max-height: 74%;
@@ -96,6 +98,7 @@ html {
 #AI > .country-choice{
     border-bottom: 1.5px white solid;
     padding: 5px;
+    width: 13rem;
 }
 
 #help{
@@ -134,13 +137,16 @@ html {
 #toggle-menu{
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 40%;
     width: 60%;
-    border: 1.5px white solid;
+    border-radius: 15%;
 }
 #right > :not(:first-child) > .title {
     border-bottom: 1.5px white solid;
     padding: 5px;
+    background: transparent;
+    width: 10rem;
 }
 /*Filter group styling*/
 #toggle-radio-group {
@@ -152,6 +158,7 @@ html {
     padding-top: 1.6vh;
     gap: 1.1vh;
     background-color: transparent;
+    align-self:start;
 }
 #toggle-radio-group > label {
     display: flex;
@@ -204,15 +211,17 @@ textarea:focus, input:focus{
 #info-box {
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 20rem;
     width: 17rem;
-    border: 1.5px white solid;
+    border-radius: 15%;
 }
 #info-box > p {
     padding: 0.5rem;
 }
 #info-box > .information{
     padding: 0.7rem;
+    background: transparent;
 }
 
 
