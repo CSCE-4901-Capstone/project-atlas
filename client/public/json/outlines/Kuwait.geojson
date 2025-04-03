@@ -1,0 +1,62 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "2. High income: nonOECD",
+                "pop_est": 2691158.0,
+                "mapcolor7": 2.0,
+                "continent": "Asia",
+                "economy": "6. Developing region",
+                "mapcolor13": 2.0,
+                "iso_a3": "KWT",
+                "name": "Kuwait",
+                "mapcolor9": 2.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            47.974519,
+                            29.975819
+                        ],
+                        [
+                            48.183189,
+                            29.534477
+                        ],
+                        [
+                            48.093943,
+                            29.306299
+                        ],
+                        [
+                            48.416094,
+                            28.552004
+                        ],
+                        [
+                            47.708851,
+                            28.526063
+                        ],
+                        [
+                            47.459822,
+                            29.002519
+                        ],
+                        [
+                            46.568713,
+                            29.099025
+                        ],
+                        [
+                            47.302622,
+                            30.05907
+                        ],
+                        [
+                            47.974519,
+                            29.975819
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

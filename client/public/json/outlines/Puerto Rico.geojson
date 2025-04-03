@@ -1,0 +1,62 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "2. High income: nonOECD",
+                "pop_est": 3971020.0,
+                "mapcolor7": 4.0,
+                "continent": "North America",
+                "economy": "6. Developing region",
+                "mapcolor13": 1.0,
+                "iso_a3": "PRI",
+                "name": "Puerto Rico",
+                "mapcolor9": 1.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -65.591004,
+                            18.228035
+                        ],
+                        [
+                            -65.847164,
+                            17.975906
+                        ],
+                        [
+                            -66.599934,
+                            17.981823
+                        ],
+                        [
+                            -67.184162,
+                            17.946553
+                        ],
+                        [
+                            -67.242428,
+                            18.37446
+                        ],
+                        [
+                            -67.100679,
+                            18.520601
+                        ],
+                        [
+                            -66.282434,
+                            18.514762
+                        ],
+                        [
+                            -65.771303,
+                            18.426679
+                        ],
+                        [
+                            -65.591004,
+                            18.228035
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

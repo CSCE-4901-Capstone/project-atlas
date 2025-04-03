@@ -1,0 +1,54 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "1. High income: OECD",
+                "pop_est": 491775.0,
+                "mapcolor7": 1.0,
+                "continent": "Europe",
+                "economy": "2. Developed region: nonG7",
+                "mapcolor13": 7.0,
+                "iso_a3": "LUX",
+                "name": "Luxembourg",
+                "mapcolor9": 3.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            6.18632,
+                            49.463803
+                        ],
+                        [
+                            5.897759,
+                            49.442667
+                        ],
+                        [
+                            5.674052,
+                            49.529484
+                        ],
+                        [
+                            5.782417,
+                            50.090328
+                        ],
+                        [
+                            6.043073,
+                            50.128052
+                        ],
+                        [
+                            6.242751,
+                            49.902226
+                        ],
+                        [
+                            6.18632,
+                            49.463803
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

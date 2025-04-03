@@ -40,8 +40,16 @@ class FlightAPI(ExternalAPI):
     def fetch_data(self):
         self.update_last_modified()
         url = "https://opensky-network.org/api/states/all"
-        response = requests.get(url)
-        response.raise_for_status()
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f"Error, An HTTP error has occurred:\n{e}")
+            return []
+        except requests.exceptions.RequestException as e:
+            print(f"A request error has occured:\n{e}")
+            return []
 
         return self.build_output(response.json())
 
@@ -82,7 +90,7 @@ class Gemini_API(ExternalAPI):
         "Authorization": f"Bearer {API_key}",
         "Content-Type": "application/json"
         }
-
+        
         SendMessage = {
             "model": model,                #make sure the message is being sent to the gemini model
             "messages": [
@@ -123,6 +131,3 @@ class Gemini_API(ExternalAPI):
     
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
-        
-        
-        

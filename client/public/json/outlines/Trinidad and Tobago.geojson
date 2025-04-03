@@ -1,0 +1,58 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "income_grp": "2. High income: nonOECD",
+                "pop_est": 1310000.0,
+                "mapcolor7": 5.0,
+                "continent": "North America",
+                "economy": "6. Developing region",
+                "mapcolor13": 5.0,
+                "iso_a3": "TTO",
+                "name": "Trinidad and Tobago",
+                "mapcolor9": 2.0
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -60.935,
+                            10.11
+                        ],
+                        [
+                            -61.77,
+                            10.0
+                        ],
+                        [
+                            -61.95,
+                            10.09
+                        ],
+                        [
+                            -61.66,
+                            10.365
+                        ],
+                        [
+                            -61.68,
+                            10.76
+                        ],
+                        [
+                            -61.105,
+                            10.89
+                        ],
+                        [
+                            -60.895,
+                            10.855
+                        ],
+                        [
+                            -60.935,
+                            10.11
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

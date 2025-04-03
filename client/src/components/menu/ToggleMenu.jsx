@@ -1,37 +1,46 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
 
-function toggleMenu() {
+// Have the toggle menu be built using an array of names
+function toggleMenu({ onFilterSelection }) {
+
+  function handleFilterSelection(e) {
+    onFilterSelection(e.target.value) 
+  }
+
     return(
         <div id="toggle-menu">
             <div className="title">
                 <h1>Filters</h1>
             </div>
                 <div id="toggle-radio-group">
-                    <div>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
-                            id="Topography"
+                            type="radio"
+                            value="Topography"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
-                        <label>Topography</label>
-                    </div>
-                    <div>
+                        <span className="custom-radio"></span>Topography
+                    </label>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
-                            id="Borders"
+                            type="radio"
+                            value="Borders"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
-                        <label>Borders</label>
-                    </div>
-                    <div>
+                        <span className="custom-radio"></span>Borders
+                    </label>
+                    <label className="custom-label">
                         <input
-                            type="checkbox"
-                            id="Flights"
+                            type="radio"
+                            value="Flights"
                             name='toggles'
+                            onChange={handleFilterSelection}
                         />
-                        <label>Flights</label>
-                    </div>
+                        <span className="custom-radio"></span>Flights
+                    </label>
 
                 </div>
         </div>

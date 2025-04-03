@@ -3,11 +3,11 @@ import ToggleMenu from "./ToggleMenu";
 import Search from "./Search";
 import Info from './Info';
 
-const Right = ({onSearchChange}) => {
+const Right = ({onSearchChange, onFilterSelection}) => {
     return(
         <div id="right">
             <Search onChangeHandle={onSearchChange}/>
-            <ToggleMenu/>
+            <ToggleMenu onFilterSelection={onFilterSelection}/>
             <Info/>
         </div>
     )
