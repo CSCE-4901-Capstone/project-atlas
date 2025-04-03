@@ -1,2 +1,6 @@
 client/node_modules
 /.venv
+.qodo
+.env
+server/api/secrets/firebase_key.json
+__pycache__
