@@ -26,4 +26,4 @@ how to run backend:
     .\venv\Scripts\Activate.ps1            #this command activates the virtual environment.
     python manage.py runserver            #this command runs the client server
     deactivate                    #this command ends the virtual machine
-    
+Research new models without limits

@@ -84,7 +84,7 @@ class Gemini_API(ExternalAPI):
     user is an American national.'''
         
     def EnterPrompt_C_Data(self,prompt):
-        model = "google/gemini-2.0-pro-exp-02-05:free"
+        model = "google/gemini-2.5-pro-exp-03-25:free"
         
         headers = {
         "Authorization": f"Bearer {API_key}",
@@ -96,27 +96,36 @@ class Gemini_API(ExternalAPI):
             "messages": [
                 {#Message to define role of AI in prompt exchange
                     "role": "system",
-                    "content": [   
-                    {"type": "text", "text": self.AI_Role1}
-                    ]
+                    "content": self.AI_Role1
                 },
                 {#Message to define the message being sent to the AI
                     "role": "user",
-                    "content": [   
-                    {"type": "text", "text": prompt}
-                    ]
+                    "content": prompt
                 }
             ]
         }
+
+
+        response = requests.get(
+        url="https://openrouter.ai/api/v1/auth/key",
+        headers={
+            "Authorization": f"Bearer {API_key}"
+        }
+        )
+
+        print(json.dumps(response.json(), indent=2))
+
+
+
         try:
             response = requests.post(
-                "https://api.openai.com/v1/chat/completions",           #url of API endpoint
+                "https://openrouter.ai/api/v1/chat/completions",           #url of API endpoint
                 headers = headers,                          #sending the headers so API knows who is accessing and what format to use
-                DataRecieved = json.dumps(SendMessage)              #prompt converted to json file so it can be used by API
+                json = SendMessage              #prompt converted to json file so it can be used by API
             )
             #pushing data to GPT to get processed data
             if response.status_code == 200:
-                return response.json()["choices"][0]["message"]["content"]
+                return response.json()
             
             else:   #display error message in event that API request is unsuccessful
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
