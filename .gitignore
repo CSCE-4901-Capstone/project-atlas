@@ -3,4 +3,7 @@ client/node_modules
 .qodo
 .env
 server/api/secrets/firebase_key.json
-__pycache__
+__pycache__/
+*.pyc
+*.pyo
+
