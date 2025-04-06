@@ -4,11 +4,10 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .services import Gemini_API
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI
+from api.services import FlightAPI, Gemini_API
 
 class FlightList(APIView):
     """

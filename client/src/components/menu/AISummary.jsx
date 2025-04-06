@@ -17,14 +17,15 @@ const AISummary = ({choiceCountry}) =>{
         const Get_AI_Response = async () => {
             //This is where the AI logic will be inserted
             //For this example, let's assume we're making a GET request to an AI endpoint
-            //const response = await fetch(`https://your-ai-endpoint.com/session/${SessionNum}`);
-            //const AI_Response_Data = await response.json();
-            //SET_AI_RESPONSE(AI_Response_Data.response);
-    }
+            const response = await fetch(`https://your-ai-endpoint.com/session/${SessionNum}`);
+            const AI_Response_Data = await response.json();
+            SET_AI_Response(AI_Response_Data.response);
+        }
 
-    if(choiceCountry) {
-        Get_AI_Response();  //Call the function when the choiceCountry state changes (ensuring new data is generated from API)
-    }
+        if(choiceCountry) {
+            Get_AI_Response();  //Call the function when the choiceCountry state changes (ensuring new data is generated from API)
+        }
+    })
 
     return(
         <>
