@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRef } from 'react';
 import { Line } from '@react-three/drei';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
@@ -25,8 +25,10 @@ function CountryOutline({ filename, radius, color }) {
 
 function BuildOutline({ json, radius, color}) {
   const groupRef = useRef();
-  let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius)
-  let coordArray = sphereCoordinates['output_coordinate_array'];
+  const coordArray = useMemo(() => {
+    let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius);
+    return sphereCoordinates['output_coordinate_array']
+  }, [json, radius]);
 
   useEffect(() => {
      if (groupRef.current) {
