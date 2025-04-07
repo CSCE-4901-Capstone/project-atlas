@@ -10,11 +10,12 @@ const AISummary = ({choiceCountry}) =>{
     const[AI_Response, SET_AI_Response] = useState("Getting AI Response...");   //declaring what to display while response is getting fetched
     const[SessionNum, SET_SessionNum] = useState("");
 
-    const NEW_SessionNum = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
-    SET_SessionNum(NEW_SessionNum); //Store the newly generated Session ID to the current use State
+    
     
     //Use effect to make a call to the server
         useEffect(() => {
+            const NEW_SessionNum = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
+            SET_SessionNum(NEW_SessionNum); //Store the newly generated Session ID to the current use State
             async function Get_AI_Response() {
                 await api_conn.get(`/api/AI?country=${choiceCountry}/${SessionNum}`).then(response => response.data) .then(data => {
                     console.log(data);
@@ -22,7 +23,16 @@ const AISummary = ({choiceCountry}) =>{
                   })
                   .catch(error => console.error('Error fetching json file:', error));
                 }
-          Get_AI_Response();
+                try{
+                    if(choiceCountry == null){
+                        Get_AI_Response();
+                        console.log(AI_Response);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+
+
         }, []);
 
     return(
@@ -30,7 +40,7 @@ const AISummary = ({choiceCountry}) =>{
             <ChoiceCountry choice={choiceCountry}/>
             <div className="text-container">
                 <p>
-                    {AI_Response}
+                    {SessionNum != "" ? AI_Response : "Getting AI Response..."}
                 </p>
             </div>
         </>
