@@ -81,10 +81,10 @@ class Gemini_API(ExternalAPI):
     AI_Role1 = '''You are to assume the role of a travel planner.
     Your main objective will be to identify the country being spoken of in the prompt,
     and then provide information on the documentation needed to travel to that country assuming the 
-    user is an American national.'''
+    user is an American national. Only display it in a list format with the length given right after.'''
         
     def EnterPrompt_C_Data(self,prompt):
-        model = "google/gemini-2.5-pro-exp-03-25:free"
+        model = "meta-llama/llama-4-maverick:free"
         
         headers = {
         "Authorization": f"Bearer {API_key}",
@@ -107,7 +107,7 @@ class Gemini_API(ExternalAPI):
 
 
         response = requests.get(
-        url="https://openrouter.ai/api/v1/auth/key",
+        url="https://openrouter.ai/api/v1/key",
         headers={
             "Authorization": f"Bearer {API_key}"
         }
@@ -125,7 +125,7 @@ class Gemini_API(ExternalAPI):
             )
             #pushing data to GPT to get processed data
             if response.status_code == 200:
-                return response.json()
+                return response.json()["choices"][0]["message"]["content"]
             
             else:   #display error message in event that API request is unsuccessful
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
