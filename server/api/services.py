@@ -8,8 +8,8 @@ import dotenv
 from dotenv import load_dotenv
 
 #below is library for database connection and 
-import firebase_admin
-from firebase_admin import credentials, firestore
+'''import firebase_admin
+from firebase_admin import credentials, firestore'''
 
 load_dotenv()       #load the .env file with needed credentials
 API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
