@@ -17,4 +17,15 @@ class FlightModel(models.Model):
     class Meta:
         ordering = ('icao24', )
 
+class WeatherModel(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    temperature = models.FloatField()
+    description = models.CharField(max_length=100)
+    timestamp = models.DateTimeField()
+    location_name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.location_name} - {self.temperature}°C"
+    
+    

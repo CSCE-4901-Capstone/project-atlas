@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models import FlightModel
+from api.models import WeatherModel
 
 class FlightSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,3 +17,16 @@ class FlightSerializer(serializers.ModelSerializer):
 
         print(f"Created: {created}, Flight: {flight}")  # Debugging print to check if update or create happens
         return flight
+
+class WeatherSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WeatherModel
+        fields = '__all__'
+
+    latitude = serializers.FloatField()
+    longitude = serializers.FloatField()
+    temperature = serializers.FloatField()
+    description = serializers.CharField()
+    timestamp = serializers.IntegerField()
+    location_name = serializers.CharField()

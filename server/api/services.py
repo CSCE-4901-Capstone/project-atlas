@@ -52,11 +52,37 @@ class WeatherAPI(ExternalAPI):
     def __init__(self):
         super().__init__()
 
-    def fetch_weather(self):
-        #fetch weather data from Meteostat for a given station ID
+    def fetch_weather(self, lat, lon):
+        """
+        Fetches data based on latitude and longitude.
+        """
+        self.update_last_modified()
+        url = "https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}"
+        params = {
+            'lat': lat,
+            'lon': lon,
+            'appid': self.api_key,
+            'units': 'metric'
+        }
 
-    def build_weather(self):
-        #Process the data from Meteostat API and return weather details.
+        response = requests.get(url)
+        response.raise_for_status()
+        return self.build_output(response.json())
+    
+    def build_weather(self, raw_data):
+        """
+        Formats weather data into more simpler terms
+        """
+
+        return {
+            'latitude': raw_data.get('coord', {}).get('lat'),
+            'longitude': raw_data.get('coord', {}).get('lon'),
+            'temperature': raw_data.get('main', {}).get('temp'),
+            'description': raw_data.get('weather', [{}])[0].get('description'),
+            'timestamp': raw_data.get('dt'),
+            'location_name': raw_data.get('name')
+
+        }
 
 class GPT_API(ExternalAPI):
 

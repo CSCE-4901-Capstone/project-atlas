@@ -9,6 +9,10 @@ from api.models import FlightModel
 from api.serializers import FlightSerializer
 from api.services import FlightAPI
 
+from api.models import WeatherModel
+from api.serializers import WeatherSerializer
+from api.services import WeatherAPI
+
 class FlightList(APIView):
     """
     Handles the connection to the external flight API
@@ -20,4 +24,16 @@ class FlightList(APIView):
         #last_mod = self.api.get_last_modified()
         flights = self.api.fetch_data()
         return Response(flights, status=status.HTTP_200_OK)
+    
+class WeatherList(APIView):
+    """
+    Connects to OpenWeatherMap and return data by coordinates
+    """
+    api_weather = WeatherAPI()
 
+    def get(self, request, format=None):
+        lat = request.GET.get('lat')
+        lon = request.GET.get('lon')
+
+        weather = self.api.fetch_weather()
+        return Response(weather, status=status.HTTP_200_OK)
