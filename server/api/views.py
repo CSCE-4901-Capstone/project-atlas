@@ -4,11 +4,10 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .services import Gemini_API
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI
+from api.services import FlightAPI, Gemini_API
 
 class FlightList(APIView):
     """
@@ -24,12 +23,12 @@ class FlightList(APIView):
 
 
 
-class TravelCountry(APIView):                #handles connection to external API for AI interaction 
+class GenerateGPT_ResponseList(APIView):                #handles connection to external API for AI interaction 
 
         AI_gemini = Gemini_API()
     
-        def post(self,request):
+        def post(self,request,format=None):
                 prompt = request.data.get("prompt","")
-                result = AI_gemini.EnterPrompt(prompt)                  #calling function within gemini class to send the prompt to the API per django requirements
+                result = self.AI_gemini.EnterPrompt_C_Data(prompt)                  #calling function within gemini class to send the prompt to the API per django requirements
         
                 return Response({"response":result}) 

@@ -8,8 +8,8 @@ import dotenv
 from dotenv import load_dotenv
 
 #below is library for database connection and 
-import firebase_admin
-from firebase_admin import credentials, firestore
+'''import firebase_admin
+from firebase_admin import credentials, firestore'''
 
 load_dotenv()       #load the .env file with needed credentials
 API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
@@ -84,7 +84,7 @@ class Gemini_API(ExternalAPI):
     user is an American national.'''
         
     def EnterPrompt_C_Data(self,prompt):
-        model = "google/gemini-2.0-pro-exp-02-05:free"
+        model = "google/gemini-2.5-pro-exp-03-25:free"
         
         headers = {
         "Authorization": f"Bearer {API_key}",
@@ -96,23 +96,23 @@ class Gemini_API(ExternalAPI):
             "messages": [
                 {#Message to define role of AI in prompt exchange
                     "role": "system",
-                    "content": [   
+                    "content": self.AI_Role1 '''[   
                     {"type": "text", "text": self.AI_Role1}
-                    ]
+                    ]'''
                 },
                 {#Message to define the message being sent to the AI
                     "role": "user",
-                    "content": [   
+                    "content": prompt ''' [   
                     {"type": "text", "text": prompt}
-                    ]
+                    ]'''
                 }
             ]
         }
         try:
             response = requests.post(
-                "https://api.openai.com/v1/chat/completions",           #url of API endpoint
+                "https://openrouter.ai/api/v1/chat/completions",           #url of API endpoint
                 headers = headers,                          #sending the headers so API knows who is accessing and what format to use
-                DataRecieved = json.dumps(SendMessage)              #prompt converted to json file so it can be used by API
+                json = SendMessage              #prompt converted to json file so it can be used by API
             )
             #pushing data to GPT to get processed data
             if response.status_code == 200:

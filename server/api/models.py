@@ -18,3 +18,11 @@ class FlightModel(models.Model):
         ordering = ('icao24', )
 
 
+class AI_MessageHistory(models.Model):          #model defined for API communication with Google Gemini
+    session_id = models.CharField(max_length=100)
+    role = models.CharField(max_length=20)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self): #definition of string representation of AI response
+        return f"[{self.timestamp}] {self.role}: {self.content[:30]}"

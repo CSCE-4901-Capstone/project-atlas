@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import FlightList, AI_Model
+from api.views import FlightList, GenerateGPT_ResponseList
 
 urlpatterns = [
-        path('flights/', views.FlightList().as_view())
+        path('flights/', FlightList.as_view())
+        path('AI/', GenerateGPT_ResponseList.as_view())
 ]
+ 
+ 
  
