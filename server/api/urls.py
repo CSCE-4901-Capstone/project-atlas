@@ -1,9 +1,9 @@
 from django.urls import path
-from api.views import FlightList, GenerateGPT_ResponseList
+from api.views import FlightList, TravelCountry
 
 urlpatterns = [
-        path('flights/', FlightList.as_view())
-        path('AI/', GenerateGPT_ResponseList.as_view())
+        path('flights/', FlightList.as_view()),
+        path('AI/', TravelCountry.as_view())
 ]
  
  

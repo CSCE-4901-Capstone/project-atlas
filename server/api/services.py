@@ -8,8 +8,8 @@ import dotenv
 from dotenv import load_dotenv
 
 #below is library for database connection and 
-'''import firebase_admin
-from firebase_admin import credentials, firestore'''
+#import firebase_admin
+#from firebase_admin import credentials, firestore
 
 load_dotenv()       #load the .env file with needed credentials
 API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
@@ -81,10 +81,10 @@ class Gemini_API(ExternalAPI):
     AI_Role1 = '''You are to assume the role of a travel planner.
     Your main objective will be to identify the country being spoken of in the prompt,
     and then provide information on the documentation needed to travel to that country assuming the 
-    user is an American national.'''
+    user is an American national. Only display it in a list format with the length given right after.'''
         
     def EnterPrompt_C_Data(self,prompt):
-        model = "google/gemini-2.5-pro-exp-03-25:free"
+        model = "meta-llama/llama-4-maverick:free"
         
         headers = {
         "Authorization": f"Bearer {API_key}",
@@ -96,18 +96,27 @@ class Gemini_API(ExternalAPI):
             "messages": [
                 {#Message to define role of AI in prompt exchange
                     "role": "system",
-                    "content": self.AI_Role1 '''[   
-                    {"type": "text", "text": self.AI_Role1}
-                    ]'''
+                    "content": self.AI_Role1
                 },
                 {#Message to define the message being sent to the AI
                     "role": "user",
-                    "content": prompt ''' [   
-                    {"type": "text", "text": prompt}
-                    ]'''
+                    "content": prompt
                 }
             ]
         }
+
+
+        response = requests.get(
+        url="https://openrouter.ai/api/v1/key",
+        headers={
+            "Authorization": f"Bearer {API_key}"
+        }
+        )
+
+        print(json.dumps(response.json(), indent=2))
+
+
+
         try:
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",           #url of API endpoint

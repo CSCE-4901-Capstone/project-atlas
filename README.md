@@ -15,3 +15,15 @@ Dev Log:
         Activate environment
             -source C:/path/to/bin/activate
         
+    how to run the FrontEnd:
+
+    cd client
+    npm run dev
+
+how to run backend:
+
+    cd server
+    .\venv\Scripts\Activate.ps1            #this command activates the virtual environment.
+    python manage.py runserver            #this command runs the client server
+    deactivate                    #this command ends the virtual machine
+Research new models without limits
