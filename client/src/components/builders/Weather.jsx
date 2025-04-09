@@ -68,7 +68,7 @@ function Weather() {
       <ambientLight intensity={1} />
       <OrbitControls makeDefault />
       <mesh>
-        <sphereGeometry args={[2, 450, 450]} />
+        <sphereGeometry args={[2, 51.5, 32.5]} />
         <meshStandardMaterial
           map={tempTexture || fallbackTexture}
           transparent={true}
