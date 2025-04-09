@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
 
+//Create array of prefilled filters then render based on the length of the filter
+
 // Have the toggle menu be built using an array of names
 function toggleMenu({ onFilterSelection }) {
 
@@ -22,15 +24,6 @@ function toggleMenu({ onFilterSelection }) {
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Topography
-                    </label>
-                    <label className="custom-label">
-                        <input
-                            type="radio"
-                            value="Borders"
-                            name='toggles'
-                            onChange={handleFilterSelection}
-                        />
-                        <span className="custom-radio"></span>Borders
                     </label>
                     <label className="custom-label">
                         <input
