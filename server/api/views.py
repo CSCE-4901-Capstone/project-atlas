@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .services import Gemini_API
+from .services import WeatherAPI
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
@@ -33,3 +34,20 @@ class TravelCountry(APIView):                #handles connection to external API
                 result = AI_gemini.EnterPrompt(prompt)                  #calling function within gemini class to send the prompt to the API per django requirements
         
                 return Response({"response":result}) 
+        
+class WeatherGridView(APIView):
+    """
+    Fills and returns a 2D temperature grid based on OpenWeatherMap
+    """        
+    api = WeatherAPI()
+
+    def get(self, request, format=None):
+        #Sample grid
+        sample_points = [
+            (lat,lon)
+            for lat in range(-90, 90, 10)
+            for lon in range(-180, 180, 10)
+        ]
+        #temp_grid = self.api.fill_grid(sample_points)
+        weather = self.api.fetch_weather
+        return Response(weather, status=status.HTTP_200_OK)
