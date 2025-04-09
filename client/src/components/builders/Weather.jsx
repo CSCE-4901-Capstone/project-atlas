@@ -22,8 +22,8 @@ function Weather() {
     }
 
     const generateTexture = (json) => {
-      const width = json.width;
-      const height = json.height;
+      const width = json.lat;
+      const height = json.lon;
       const temperatureData = json.data;
 
       const canvas = document.createElement('canvas');
