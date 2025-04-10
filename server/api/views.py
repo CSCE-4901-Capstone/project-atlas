@@ -23,12 +23,12 @@ class FlightList(APIView):
 
 
 
-class GenerateGPT_ResponseList(APIView):                #handles connection to external API for AI interaction 
+class TravelCountry(APIView):                #handles connection to external API for AI interaction 
 
         AI_Gemini = Gemini_API()
     
-        def get(self,request,format=None):
-                #prompt = request.data.get("the country in question is {country}","")
-                country = request.GET.get("country")
-                result = self.AI_Gemini.EnterPrompt_C_Data(country)                  #calling function within gemini class to send the prompt to the API per django requirements
+        def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
+                country = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
+                prompt = "the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
+                result = self.AI_Gemini.EnterPrompt_C_Data(prompt)                  #calling function within gemini class to send the prompt to the API per django requirements
                 return Response({"response":result}, status=status.HTTP_200_OK) 

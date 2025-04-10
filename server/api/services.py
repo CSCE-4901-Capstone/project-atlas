@@ -7,19 +7,9 @@ import os
 import dotenv
 from dotenv import load_dotenv
 
-#below is library for database connection and 
-#import firebase_admin
-#from firebase_admin import credentials, firestore
-
 load_dotenv()       #load the .env file with needed credentials
 API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
 
-'''#Below is the connection to the firebase hosted database
-Database_path = os.getenv("FIREBASE_PATH")
-DB_creds = credentials.Certificate(Database_path)
-firebase_admin.initialize_app(DB_creds)
-
-DB = firestore.client()             #Create Database instance in the backend'''
 
 
 class ExternalAPI():
@@ -91,6 +81,14 @@ class Gemini_API(ExternalAPI):
         "Content-Type": "application/json"
         }
         
+        #for future debuggin, in case the API_Key is changed, uncomment the code below to check if API_Key supports Model being used
+        '''response = requests.get(
+            url="https://openrouter.ai/api/v1/models",
+            headers={"Authorization": f"Bearer {API_key}"}
+        )
+        print(response.json())'''
+
+        
         SendMessage = {
             "model": model,                #make sure the message is being sent to the gemini model
             "messages": [
@@ -115,6 +113,7 @@ class Gemini_API(ExternalAPI):
 
         print(json.dumps(response.json(), indent=2))
 
+        print("🧠 Sending prompt to OpenRouter:", json.dumps(SendMessage, indent=2))
 
 
         try:
@@ -123,8 +122,10 @@ class Gemini_API(ExternalAPI):
                 headers = headers,                          #sending the headers so API knows who is accessing and what format to use
                 json = SendMessage              #prompt converted to json file so it can be used by API
             )
+            
+            data = response.json()
             #pushing data to GPT to get processed data
-            if response.status_code == 200:
+            if response.status_code == 200 and "choices" in data:
                 return response.json()["choices"][0]["message"]["content"]
             
             else:   #display error message in event that API request is unsuccessful
@@ -140,3 +141,6 @@ class Gemini_API(ExternalAPI):
     
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
+
+    def CleanResponse(Raw_Response):            #function takes raw response of the model and cleans it up to how I want it.
+        

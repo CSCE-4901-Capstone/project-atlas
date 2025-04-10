@@ -22,8 +22,10 @@ Dev Log:
 
 how to run backend:
 
-    cd server
+    cd server                               #you must be within the server folder
+    python -m venv venv                     #this command creates the virtual environment
     .\venv\Scripts\Activate.ps1            #this command activates the virtual environment.
+    pip install -r requirements.txt         #this command ensures virual environment has all dependencies
     python manage.py runserver            #this command runs the client server
     deactivate                    #this command ends the virtual machine
 Research new models without limits
