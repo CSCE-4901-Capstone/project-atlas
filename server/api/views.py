@@ -46,15 +46,15 @@ class WeatherGridView(APIView):
             #Sample grid
             sample_points = [
                 (lat,lon)
-                for lat in range(-45, 45, 10)
+                for lat in range(-, 45, 10)
                 for lon in range(-35, 145, 10)
             ]
             grid = self.api.fill_grid(sample_points)
 
             #return dimensions
             return Response({
-                "width": self.api.cols,
-                "height": self.api.rows,
+                "lon": self.api.cols,
+                "lat": self.api.rows,
                 "data": grid
             },status=status.HTTP_200_OK)
         except Exception as e:
