@@ -1,9 +1,14 @@
 client/node_modules
-/.venv
 .qodo
 .env
-server/api/secrets/firebase_key.json
-__pycache__/
+__pycache__
 *.pyc
 *.pyo
+server/api/.env
+
+#ignore any virtual environments from tracked changes
+.venv/
+venv/
+server/api/.env
+
 
