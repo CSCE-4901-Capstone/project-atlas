@@ -76,7 +76,7 @@ class Gemini_API(ExternalAPI):
     AI_Role2 = '''asdfasf'''
     
     def CleanResponse(Raw_Response):            #function takes raw response of the model and cleans it up to how I want it.
-        
+        pass    
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         #selection of AI role to make the call to the API
         if (Role_choice == 0):
