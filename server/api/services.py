@@ -75,8 +75,14 @@ class Gemini_API(ExternalAPI):
     
     AI_Role2 = '''asdfasf'''
     
-    def CleanResponse(Raw_Response):            #function takes raw response of the model and cleans it up to how I want it.
-        pass    
+    def CleanResponse(RAW_Response):#function takes raw response of the model and cleans it up to how I want it.
+        print(RAW_Response)
+        
+        CLEANED_Response = "to be changed"
+        
+        return CLEANED_Response
+    
+    
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         #selection of AI role to make the call to the API
         if (Role_choice == 0):
@@ -98,14 +104,16 @@ class Gemini_API(ExternalAPI):
         )
         print(response.json())'''
 
+        '''{#Message to define role of AI in prompt exchange
+                "role": "system",
+                "content": Role
+            },'''
+        
+        print(prompt)
         
         SendMessage = {
             "model": model,                #make sure the message is being sent to the gemini model
             "messages": [
-                {#Message to define role of AI in prompt exchange
-                    "role": "system",
-                    "content": Role
-                },
                 {#Message to define the message being sent to the AI
                     "role": "user",
                     "content": prompt
@@ -134,15 +142,17 @@ class Gemini_API(ExternalAPI):
             )
             
             data = response.json()
+            
             #pushing data to GPT to get processed data
             if response.status_code == 200 and "choices" in data:
                 
-                ''' Lines below are to clean up the response recieved from the json file.
-                Raw_response = response.json()["choices"][0]["message"]["content"]
-                return CleanResponse(Raw_Response)
-                '''
+                #collect the response from the AI model
+                RETURNED_response =  response.json()["choices"][0]["message"]["content"]
                 
-                return response.json()["choices"][0]["message"]["content"] #use line to return prompt raw
+                #output the returned Message from the API
+                print(RETURNED_response)
+                
+                return RETURNED_response #use line to return prompt raw
             
             else:   #display error message in event that API request is unsuccessful
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
