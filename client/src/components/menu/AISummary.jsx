@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from "react";        // import the useState and useEffect to generate Session Tokens
+import React, {useState,useEffect, useRef} from "react";        // import the useState and useEffect to generate Session Tokens
 import ChoiceCountry from './ChoiceCountry'
 import api_conn from 'src/utils/api';
 /*
@@ -9,14 +9,24 @@ delete filler text
 const AISummary = ({choiceCountry}) =>{
     const[AI_Response, SET_AI_Response] = useState("Getting AI Response...");   //declaring what to display while response is getting fetched
     const[SessionNum, SET_SessionNum] = useState("");
+    const[articleArray, setArticleArray] = useState([]);
+    //useref for single calls only Note: useEffect in React 18 causes double fetch calls for debugging purposes and will not be affected in production
+    const didFetch = useRef(false);
 
     //for testing purposes manually set value of choiceCountry below (uncomment when not needed)
     choiceCountry = "USA";
+
     
     //Use effect to make a call to the server
         useEffect(() => {
             const NEW_SessionNum = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
             SET_SessionNum(NEW_SessionNum); //Store the newly generated Session ID to the current use State
+
+            //Useref here to prevent double calls
+            if(didFetch.current) return;
+            didFetch.current = true;
+
+            //async function to grab data
             async function GET_AI_Response() {
                 await api_conn.post("/api/AI/", {       //sending post request with needed values in body
                     country: choiceCountry,
@@ -28,30 +38,42 @@ const AISummary = ({choiceCountry}) =>{
                     SET_AI_Response(data.response);
                   })*/
                 .then(response => {
-                    console.log("AI response received:", response.data);
-                    SET_AI_Response(response.data.response);
+                        console.log("AI response received:", response.data);
+                        SET_AI_Response(response.data.response);
+                        if(response.data.response != "AI response not received"){
+                            const parsed = JSON.parse(response.data.response).articles;
+                            console.log(parsed);
+                            setArticleArray(parsed);
+                        }
                 })
                 .catch(error => console.error('Error fetching json file:', error));
             }
             try{
                 if(choiceCountry){
                     GET_AI_Response();
-                    console.log(AI_Response);
                 }
             } catch (e) {
                 console.error(e);
             }
-
-
         }, []);
+        //useEffect to test if the parsed article array works
+        useEffect(() => {
+            console.log(articleArray);
+        }, [articleArray])
 
     return(
         <>
             <ChoiceCountry choice={choiceCountry}/>
             <div className="text-container">
-                <p>
-                    {SessionNum != "" ? AI_Response : "Getting AI Response..."}
-                </p>
+                <ul className="article">
+                    {articleArray.length > 0 ? articleArray.map((item) => (
+                        <li key={item.title}>
+                            <h3><a href={item.link} target="_blank" rel="noopener noreferrer">{item.title}</a></h3>
+                            <p>{item.description}</p>
+                            <p>Source: <strong>{item.source}</strong></p>
+                        </li>
+                    )): "Getting AI Response..."}
+                </ul>
             </div>
         </>
     )
