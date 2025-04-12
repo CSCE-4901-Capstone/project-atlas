@@ -31,7 +31,7 @@ class CountryNews(APIView):                #handles connection to external API f
                 country = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
                 Role_choice = request.data.get("Role_choice")
                 
-                prompt = f'''Give me a list of 5 articles about major events that are occurring within {country}. 
+                prompt = f'''Give me a list of 5 articles about current events that are occurring within {country} that are LESS than 3 months old. 
                         Return it in a JSON format where it has a list called articles where each entry has a title, 
                         description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
                 
