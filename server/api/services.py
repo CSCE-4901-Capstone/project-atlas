@@ -198,5 +198,5 @@ class WeatherAPI(ExternalAPI):
                     self.grid[row][col] = weather['temperature']
             except Exception as e:
                 print(f"Failed to fetch data for ({lat}, {lon}): {e}")
-
+                continue
         return self.grid
