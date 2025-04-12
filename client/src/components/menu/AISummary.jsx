@@ -20,14 +20,15 @@ const AISummary = ({choiceCountry}) =>{
             async function GET_AI_Response() {
                 await api_conn.post("/api/AI/", {       //sending post request with needed values in body
                     country: choiceCountry,
-                    session_id: SessionNum
+                    session_id: SessionNum,
+                    Role_choice: 0
                 })
                     /*?country=${choiceCountry}/${SessionNum}`).then(response => response.data) .then(data => {
                     console.log(data);
                     SET_AI_Response(data.response);
                   })*/
                 .then(response => {
-                    console.log("✅ AI response received:", response.data);
+                    console.log("AI response received:", response.data);
                     SET_AI_Response(response.data.response);
                 })
                 .catch(error => console.error('Error fetching json file:', error));

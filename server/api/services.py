@@ -69,11 +69,21 @@ class FlightAPI(ExternalAPI):
 class Gemini_API(ExternalAPI):
     
     AI_Role1 = '''You are to assume the role of a travel planner.
-    Your main objective will be to identify the country being spoken of in the prompt,
-    and then provide information on the documentation needed to travel to that country assuming the 
-    user is an American national. Only display it in a list format with the length given right after.'''
+    Your MAIN OBJECTIVE will be to PROVIDE travel information on the country being spoken of
+    in the prompt. Assume the traveler is a United States citizen. ONLY RESPOND it in a list format
+    where the list consists of necessary travel documents.'''
+    
+    AI_Role2 = '''asdfasf'''
+    
+    def CleanResponse(Raw_Response):            #function takes raw response of the model and cleans it up to how I want it.
         
-    def EnterPrompt_C_Data(self,prompt):
+    def EnterPrompt_C_Data(self,prompt,Role_choice):
+        #selection of AI role to make the call to the API
+        if (Role_choice == 0):
+            Role = self.AI_Role1
+        elif (Role_choice == 1):
+            Role = self.AI_Role2
+            
         model = "meta-llama/llama-4-maverick:free"
         
         headers = {
@@ -94,7 +104,7 @@ class Gemini_API(ExternalAPI):
             "messages": [
                 {#Message to define role of AI in prompt exchange
                     "role": "system",
-                    "content": self.AI_Role1
+                    "content": Role
                 },
                 {#Message to define the message being sent to the AI
                     "role": "user",
@@ -126,7 +136,13 @@ class Gemini_API(ExternalAPI):
             data = response.json()
             #pushing data to GPT to get processed data
             if response.status_code == 200 and "choices" in data:
-                return response.json()["choices"][0]["message"]["content"]
+                
+                ''' Lines below are to clean up the response recieved from the json file.
+                Raw_response = response.json()["choices"][0]["message"]["content"]
+                return CleanResponse(Raw_Response)
+                '''
+                
+                return response.json()["choices"][0]["message"]["content"] #use line to return prompt raw
             
             else:   #display error message in event that API request is unsuccessful
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
@@ -142,5 +158,5 @@ class Gemini_API(ExternalAPI):
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
-    def CleanResponse(Raw_Response):            #function takes raw response of the model and cleans it up to how I want it.
+    
         
