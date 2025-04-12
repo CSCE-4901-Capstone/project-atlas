@@ -1,4 +1,4 @@
-# airline-project
+# Project Atlas
 
 Group Name : Ctrl+Alt+Elite
 
