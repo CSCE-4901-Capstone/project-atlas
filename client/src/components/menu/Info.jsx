@@ -11,9 +11,7 @@ function Info(){
             </div>
             <div className="information">
                 <p>
-                A major fire at an electrical substation near London's Heathrow Airport caused a massive power outage today, 
-                leading to the shutdown of the airport and impacting hundreds of thousands of passengers. At least 1,350 flights were affected, 
-                including many from U.S. cities. 
+                Feature coming sprint 3.
                 </p>
             </div>
         </div>

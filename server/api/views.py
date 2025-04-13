@@ -7,7 +7,7 @@ from rest_framework import status
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI, Gemini_API
+from api.services import FlightAPI, Gemini_API, NEWS_API
 
 class FlightList(APIView):
     """
@@ -26,15 +26,33 @@ class FlightList(APIView):
 class CountryNews(APIView):                #handles connection to external API for AI interaction 
 
         AI_Gemini = Gemini_API()
+        NEWS = NEWS_API()
+        
     
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
-                country = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
+                CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
                 Role_choice = request.data.get("Role_choice")
                 
-                prompt = f'''Give me a list of 5 articles about current events that are occurring within {country} that are LESS than 3 months old. 
-                        Return it in a JSON format where it has a list called articles where each entry has a title, 
-                        description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
+                RAW_articles = self.NEWS.GatherArticles(CountryChoice)
                 
+                #prompt = f'''Give me a list of 5 articles about current events that are occurring within {country} that are LESS than 3 months old. 
+                #        Return it in a JSON format where it has a list called articles where each entry has a title, 
+                #        description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
+                        
+                        
+                prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
+                        in the following format (NO CODE SNIPPET OR INSTRUCTION JUST PRINT THE CONVERTED JSON):
+                        {{"articles": [
+                                {{"title": "Title of the News Article",
+                                        "description": "Description of the news Article", 
+                                        "source": "source of the news article", 
+                                        "link": "web url of the news article"
+                                }}
+                                ]
+                        }}
+                        Here is the JSON data to be used:
+                        {RAW_articles}
+                        '''
                 result = self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
                 return Response({"response":result}, status=status.HTTP_200_OK) 
                 

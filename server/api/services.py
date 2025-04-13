@@ -8,8 +8,8 @@ import dotenv
 from dotenv import load_dotenv
 
 load_dotenv()       #load the .env file with needed credentials
-API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
-
+AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
+NEWS_API_key = os.getenv("NEWS_API_KEY")
 
 
 class ExternalAPI():
@@ -75,14 +75,6 @@ class Gemini_API(ExternalAPI):
     
     AI_Role2 = '''asdfasf'''
     
-    def CleanResponse(RAW_Response):#function takes raw response of the model and cleans it up to how I want it.
-        print(RAW_Response)
-        
-        CLEANED_Response = "to be changed"
-        
-        return CLEANED_Response
-    
-    
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         #selection of AI role to make the call to the API
         if (Role_choice == 0):
@@ -92,8 +84,10 @@ class Gemini_API(ExternalAPI):
             
         model = "meta-llama/llama-4-maverick:free"
         
+        #model = "google/gemini-2.5-pro-exp-03-25:free"
+        
         headers = {
-        "Authorization": f"Bearer {API_key}",
+        "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
         }
         
@@ -125,7 +119,7 @@ class Gemini_API(ExternalAPI):
         response = requests.get(
         url="https://openrouter.ai/api/v1/key",
         headers={
-            "Authorization": f"Bearer {API_key}"
+            "Authorization": f"Bearer {AI_API_key}"
         }
         )
 
@@ -169,4 +163,23 @@ class Gemini_API(ExternalAPI):
         pass
 
     
+class NEWS_API(ExternalAPI):
+    
+    def GatherArticles(self,CountryChoice):          #function for getting LIVE valid articles pertaining to a CountryChoice
+        
+        NEWS_API_url = 'https://newsapi.org/v2/everything'          #NEWS_API endpoint
+        
+        params = {              #parameters to be sent to the NEWS API
+            'q': CountryChoice,         # Search query
+            'language': 'en',              # English articles only
+            'sortBy': 'publishedAt',       # Sort by latest news
+            'pageSize': 5,                 # Number of articles
+            'apiKey': NEWS_API_key              # Your API key
+        }
+        
+        # Make the request to the NEWS API
+        response = requests.get(NEWS_API_url, params=params)
+        
+        return response.json()          #return the json response collection of articles
+        
         
