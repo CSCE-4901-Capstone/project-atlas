@@ -159,6 +159,10 @@ class WeatherAPI(ExternalAPI):
         Fetches data based on latitude and longitude.
         """
         self.update_last_modified()
+        WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+        if not WEATHER_API_KEY:
+            raise Exception("API key not found. Make sure to set it in the .env file.")
+        
         url = "https://api.openweathermap.org/data/2.5/weather"
         parameters = {
             'lat': lat,
@@ -169,12 +173,13 @@ class WeatherAPI(ExternalAPI):
 
         response = requests.get(url, params=parameters)
         response.raise_for_status()
-        return self.build_weather(response.json())
+        return (response.json())
     
+    """
     def build_weather(self, raw_data):
-        """
+        
         Formats weather data into more simpler terms
-        """
+        
         return {
             'latitude': raw_data.get('coord', {}).get('lat'),
             'longitude': raw_data.get('coord', {}).get('lon'),
@@ -184,19 +189,29 @@ class WeatherAPI(ExternalAPI):
             'location_name': raw_data.get('name')
 
         }
-    
-    def fill_grid(self, sample_points):
+    """
+
+    def fill_grid(self):
         """
         Given a list of coorinate points, fetch temperature and store in grid
         """
-        for lat, lon in sample_points:
-            try:
-                weather = self.fetch_weather(lat, lon)
-                index = self.coords_to_index(lat, lon)
-                if index:
-                    row, col = index
-                    self.grid[row][col] = weather['temperature']
-            except Exception as e:
-                print(f"Failed to fetch data for ({lat}, {lon}): {e}")
-                continue
+        for lat_index in range(self.rows):
+            for lon_index in range(self.cols):
+                lat = self.LAT_MIN + lat_index * self.STEP
+                lon = self.LON_MIN + lon_index * self.STEP
+                try:
+                    weather = self.fetch_weather(lat, lon)
+                    self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
+                    time.sleep(0.02) #API rate limit
+                except Exception as e:
+                    print(f"Failed ({lat}, {lon}): {e}")
+                    continue
+
+        with open("weather_cache.json", "w") as f:
+            json.dump(self.grid, f)
+
+        with open("weather_cache.json", "r") as f:
+            self.grid =  json.load(f) 
+
         return self.grid
+    

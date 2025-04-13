@@ -4,5 +4,5 @@ from api.views import WeatherGridView
 
 urlpatterns = [
         path('flights/', FlightList().as_view()),
-        path('weather-grid/', WeatherGridView().as_view()),
+        path('weather/', WeatherGridView().as_view()),
 ]

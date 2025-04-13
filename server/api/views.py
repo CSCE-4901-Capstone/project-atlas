@@ -43,20 +43,16 @@ class WeatherGridView(APIView):
 
     def get(self, request, format=None):
         try:
-            #Sample grid
-            sample_points = [
-                (lat,lon)
-                for lat in range(-, 45, 10)
-                for lon in range(-35, 145, 10)
-            ]
-            grid = self.api.fill_grid(sample_points)
-
-            #return dimensions
+            # Load prebuilt grid instead of fetching live
+            grid = self.api.fill_grid()  # or load from cache/file
+            
+            # Return dimensions
             return Response({
-                "lon": self.api.cols,
-                "lat": self.api.rows,
+                "lon": self.api.cols, 
+                "lat": self.api.rows, 
                 "data": grid
-            },status=status.HTTP_200_OK)
+            }, status=status.HTTP_200_OK)
+
         except Exception as e:
-            print(" WeatherGridView error:", e)
+            print("WeatherGridView error:", e)
             return Response({"error": str(e)}, status=500)
