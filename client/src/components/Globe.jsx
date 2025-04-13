@@ -17,7 +17,7 @@ function Globe({onCountrySelection = () => {}}) {
   async function handlePointerUp(e) {
     const timeDiff = Date.now() - pointerDownTime;
 
-    if (timeDiff < 200) {
+    if (timeDiff < 1000) {
       let selectedCountry = await getSelectedCountry(e.point)
       onCountrySelection(selectedCountry)
       console.log(selectedCountry)

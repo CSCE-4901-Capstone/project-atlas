@@ -52,7 +52,8 @@ class CountryNews(APIView):                #handles connection to external API f
                         }}
                         Here is the JSON data to be used:
                         {RAW_articles}
-                        Return a parsable json format no markdown
+                        Double check formatting before response
+                        MAKE SURE IT IS A PARSABLE JSON NO MARKDOWN
                         '''
                 result = self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
                 return Response({"response":result}, status=status.HTTP_200_OK) 

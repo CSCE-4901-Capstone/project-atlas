@@ -6,30 +6,22 @@ AI logic functionality will be inserted here then put the variable for the retur
 delete filler text
  */
 
-const AISummary = ({choiceCountry}) =>{
+const AISummary = ({chCountry}) =>{
     const[AI_Response, SET_AI_Response] = useState("Getting AI Response...");   //declaring what to display while response is getting fetched
     const[SessionNum, SET_SessionNum] = useState("");
     const[articleArray, setArticleArray] = useState([]);
     //useref for single calls only Note: useEffect in React 18 causes double fetch calls for debugging purposes and will not be affected in production
-    const didFetch = useRef(false);
-
-    //for testing purposes manually set value of choiceCountry below (uncomment when not needed)
-    choiceCountry = "USA";
-
-    
     //Use effect to make a call to the server
         useEffect(() => {
             const NEW_SessionNum = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
             SET_SessionNum(NEW_SessionNum); //Store the newly generated Session ID to the current use State
 
-            //Useref here to prevent double calls
-            if(didFetch.current) return;
-            didFetch.current = true;
+            
 
             //async function to grab data
             async function GET_AI_Response() {
                 await api_conn.post("/api/AI/", {       //sending post request with needed values in body
-                    country: choiceCountry,
+                    country: chCountry,
                     session_id: SessionNum,
                     Role_choice: 0
                 })
@@ -49,13 +41,14 @@ const AISummary = ({choiceCountry}) =>{
                 .catch(error => console.error('Error fetching json file:', error));
             }
             try{
-                if(choiceCountry){
+                console.log(chCountry)
+                if(chCountry){
                     GET_AI_Response();
                 }
             } catch (e) {
                 console.error(e);
             }
-        }, []);
+        }, [chCountry]);
         //useEffect to test if the parsed article array works
         useEffect(() => {
             console.log(articleArray);
@@ -63,7 +56,7 @@ const AISummary = ({choiceCountry}) =>{
 
     return(
         <>
-            <ChoiceCountry choice={choiceCountry}/>
+            <ChoiceCountry choice={chCountry}/>
             <div className="text-container">
                 <ul className="article">
                     {articleArray.length > 0 ? articleArray.map((item) => (

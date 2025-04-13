@@ -176,7 +176,7 @@ class NEWS_API(ExternalAPI):
             'pageSize': 5,                 # Number of articles
             'apiKey': NEWS_API_key              # Your API key
         }
-        
+        print(CountryChoice)
         # Make the request to the NEWS API
         response = requests.get(NEWS_API_url, params=params)
         
