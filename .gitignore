@@ -3,7 +3,7 @@ client/node_modules
 .qodo
 .env
 __pycache__
-/api/.env
+server/api/.env
 
 #ignore any virtual environments from tracked changes
 .venv/
