@@ -46,7 +46,7 @@ class WeatherGridView(APIView):
             #Sample grid
             sample_points = [
                 (lat,lon)
-                for lat in range(-, 45, 10)
+                for lat in range(-20, 45, 10)
                 for lon in range(-35, 145, 10)
             ]
             grid = self.api.fill_grid(sample_points)
