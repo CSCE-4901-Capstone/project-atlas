@@ -11,9 +11,13 @@ from dotenv import load_dotenv
 '''import firebase_admin
 from firebase_admin import credentials, firestore'''
 
+
+
 load_dotenv()       #load the .env file with needed credentials
 API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
 WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
+
+print("Loaded OpenWeather API Key:", WEATHER_API_KEY)
 
 '''#Below is the connection to the firebase hosted database
 Database_path = os.getenv("FIREBASE_PATH")
