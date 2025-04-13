@@ -34,7 +34,6 @@ function toggleMenu({ onFilterSelection }) {
                         />
                         <span className="custom-radio"></span>Flights
                     </label>
-
                 </div>
         </div>
 

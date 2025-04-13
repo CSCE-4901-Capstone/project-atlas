@@ -7,7 +7,6 @@ import api_conn from 'src/utils/api';
 
 function Flights({ radius }) {
   const [data, setData] = useState(null)
-    
     // Pull data from json file
     useEffect(() => {
       async function fetchData() {
@@ -20,8 +19,6 @@ function Flights({ radius }) {
 
       fetchData();
     }, [radius]); 
-
-
 return (
         <>
           {data ? <BuildFlights data={data} radius={radius}/> : null}

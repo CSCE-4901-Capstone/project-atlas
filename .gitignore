@@ -1,14 +1,10 @@
 client/node_modules
+
 .qodo
 .env
 __pycache__
-*.pyc
-*.pyo
 server/api/.env
 
 #ignore any virtual environments from tracked changes
 .venv/
 venv/
-server/api/.env
-
-
