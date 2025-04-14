@@ -12,9 +12,12 @@ const Left = ({choice}) => {
             <div id='AI'>
                 <AISummary chCountry={choice}/> 
             </div>
-            <div id="help">
-                <Help/>
-            </div>
+            {/* Commented out for demo purposes. Also not reflected on the design document
+                <div id="help">
+                    <Help/>
+                </div>        
+            */}
+
         </div>
     )
 }
