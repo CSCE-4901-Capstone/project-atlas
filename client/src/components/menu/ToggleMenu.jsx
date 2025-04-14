@@ -19,11 +19,11 @@ function toggleMenu({ onFilterSelection }) {
                     <label className="custom-label">
                         <input
                             type="radio"
-                            value="Topography"
+                            value="Weather"
                             name='toggles'
                             onChange={handleFilterSelection}
                         />
-                        <span className="custom-radio"></span>Topography
+                        <span className="custom-radio"></span>Weather
                     </label>
                     <label className="custom-label">
                         <input
