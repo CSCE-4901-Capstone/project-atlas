@@ -144,7 +144,7 @@ class WeatherAPI(ExternalAPI):
         #Grid Constants
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 5 #5-degree interval
+        self.STEP = 10 #5-degree interval
 
         #Empty Grid
         self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
@@ -163,9 +163,6 @@ class WeatherAPI(ExternalAPI):
         Fetches data based on latitude and longitude.
         """
         self.update_last_modified()
-        WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
-        if not WEATHER_API_KEY:
-            raise Exception("API key not found. Make sure to set it in the .env file.")
         
         url = "https://api.openweathermap.org/data/2.5/weather"
         parameters = {
@@ -206,16 +203,13 @@ class WeatherAPI(ExternalAPI):
                 try:
                     weather = self.fetch_weather(lat, lon)
                     self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
-                    time.sleep(0.02) #API rate limit
+                    time.sleep(0.02)
                 except Exception as e:
                     print(f"Failed ({lat}, {lon}): {e}")
                     continue
 
-        with open("weather_cache.json", "w") as f:
-            json.dump(self.grid, f)
-
-        with open("weather_cache.json", "r") as f:
-            self.grid =  json.load(f) 
+            with open("weather_cache.json", "w") as f:
+                json.dump(self.grid, f)
 
         return self.grid
     
