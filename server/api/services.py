@@ -6,7 +6,7 @@ import os
 #library for secure key handling
 import dotenv
 from dotenv import load_dotenv
-#below is library for database connection and 
+#below is library for database connection and
 '''import firebase_admin
 from firebase_admin import credentials, firestore'''
 
@@ -80,30 +80,30 @@ class FlightAPI(ExternalAPI):
         return output
 
 class Gemini_API(ExternalAPI):
-    
+
     AI_Role1 = '''You are to assume the role of a travel planner.
     Your MAIN OBJECTIVE will be to PROVIDE travel information on the country being spoken of
     in the prompt. Assume the traveler is a United States citizen. ONLY RESPOND it in a list format
     where the list consists of necessary travel documents.'''
-    
+
     AI_Role2 = '''asdfasf'''
-    
+
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         #selection of AI role to make the call to the API
         if (Role_choice == 0):
             Role = self.AI_Role1
         elif (Role_choice == 1):
             Role = self.AI_Role2
-            
+
         model = "meta-llama/llama-4-maverick:free"
-        
+
         #model = "google/gemini-2.5-pro-exp-03-25:free"
-        
+
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
         }
-        
+
         #for future debuggin, in case the API_Key is changed, uncomment the code below to check if API_Key supports Model being used
         '''response = requests.get(
             url="https://openrouter.ai/api/v1/models",
@@ -115,9 +115,9 @@ class Gemini_API(ExternalAPI):
                 "role": "system",
                 "content": Role
             },'''
-        
+
         print(prompt)
-        
+
         SendMessage = {
             "model": model,                #make sure the message is being sent to the gemini model
             "messages": [
@@ -147,31 +147,31 @@ class Gemini_API(ExternalAPI):
                 headers = headers,                          #sending the headers so API knows who is accessing and what format to use
                 json = SendMessage              #prompt converted to json file so it can be used by API
             )
-            
+
             data = response.json()
-            
+
             #pushing data to GPT to get processed data
             if response.status_code == 200 and "choices" in data:
-                
+
                 #collect the response from the AI model
                 RETURNED_response =  response.json()["choices"][0]["message"]["content"]
-                
+
                 #output the returned Message from the API
                 print(RETURNED_response)
-                
+
                 return RETURNED_response #use line to return prompt raw
-            
+
             else:   #display error message in event that API request is unsuccessful
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
                 return "AI response not recieved."
         except Exception as e:
             print(f"[OpenRouter] Request failed: {e}")
             return "AI service error. Connection failed to be made."
-    
+
     def get_history(self): #retrieve the history already allocated in the database for a specific user
-        
+
         return []
-    
+
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
@@ -194,14 +194,14 @@ class WeatherAPI(ExternalAPI):
             return None
         row = int((lat - self.LAT_MIN) // self.STEP)
         col = int((lon - self.LON_MIN) // self.STEP)
-        return row, col   
+        return row, col
 
     def fetch_weather(self, lat, lon):
         """
         Fetches data based on latitude and longitude.
         """
         self.update_last_modified()
-        
+
         url = "https://api.openweathermap.org/data/2.5/weather"
         parameters = {
             'lat': lat,
@@ -213,12 +213,12 @@ class WeatherAPI(ExternalAPI):
         response = requests.get(url, params=parameters)
         response.raise_for_status()
         return (response.json())
-    
+
     """
     def build_weather(self, raw_data):
-        
+
         Formats weather data into more simpler terms
-        
+
         return {
             'latitude': raw_data.get('coord', {}).get('lat'),
             'longitude': raw_data.get('coord', {}).get('lon'),
@@ -250,13 +250,13 @@ class WeatherAPI(ExternalAPI):
                 json.dump(self.grid, f)
 
         return self.grid
-    
+
 class NEWS_API(ExternalAPI):
-    
+
     def GatherArticles(self,CountryChoice):          #function for getting LIVE valid articles pertaining to a CountryChoice
-        
+
         NEWS_API_url = 'https://newsapi.org/v2/everything'          #NEWS_API endpoint
-        
+
         params = {              #parameters to be sent to the NEWS API
             'q': CountryChoice,         # Search query
             'language': 'en',              # English articles only
@@ -267,5 +267,5 @@ class NEWS_API(ExternalAPI):
         print(CountryChoice)
         # Make the request to the NEWS API
         response = requests.get(NEWS_API_url, params=params)
-        
+
         return response.json()          #return the json response collection of article
