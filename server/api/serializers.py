@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import FlightModel
+from api.models import FlightModel, AI_MessageHistory
 
 class FlightSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +25,8 @@ class FlightSerializer(serializers.ModelSerializer):
             child=serializers.FloatField(allow_null=True)
         )
     )"""
+
+class AI_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = AI_MessageHistory
+        fields = '__all__'
