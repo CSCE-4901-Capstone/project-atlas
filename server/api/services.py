@@ -17,8 +17,6 @@ API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment v
 WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
 NEWS_API_key = os.getenv("NEWS_API_KEY")
 
-print("Loaded OpenWeather API Key:", WEATHER_API_KEY)
-
 '''#Below is the connection to the firebase hosted database
 Database_path = os.getenv("FIREBASE_PATH")
 DB_creds = credentials.Certificate(Database_path)
