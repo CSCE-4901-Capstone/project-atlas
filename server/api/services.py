@@ -25,7 +25,6 @@ DB_creds = credentials.Certificate(Database_path)
 firebase_admin.initialize_app(DB_creds)
 
 DB = firestore.client()             #Create Database instance in the backend'''
-=======
 
 
 class ExternalAPI():
