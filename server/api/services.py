@@ -181,52 +181,27 @@ class WeatherAPI(ExternalAPI):
     def __init__(self):
         super().__init__()
 
-        # Grid Constants
+        #Grid Constants
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 10  # 5-degree interval
+        self.STEP = 10 #5-degree interval
 
-        # Empty Grid
+        #Empty Grid
         self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
         self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
-
-        # Caching configuration
-        self.cache_file = "weather_cache.json"
-        self.cache_expiry = 3600  # 1 hour in seconds (adjust as needed)
 
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
             return None
         row = int((lat - self.LAT_MIN) // self.STEP)
         col = int((lon - self.LON_MIN) // self.STEP)
-        return row, col
-
-    def load_cache(self):
-        """Load cached data if it exists and is fresh"""
-        if os.path.exists(self.cache_file):
-            file_age = time.time() - os.path.getmtime(self.cache_file)
-            if file_age < self.cache_expiry:
-                try:
-                    with open(self.cache_file, 'r') as f:
-                        self.grid = json.load(f)
-                        print("Loaded weather data from cache")
-                        return True
-                except (json.JSONDecodeError, IOError) as e:
-                    print(f"Error loading cache: {e}")
-        return False
-
-    def save_cache(self):
-        """Save current grid data to cache file"""
-        try:
-            with open(self.cache_file, 'w') as f:
-                json.dump(self.grid, f)
-            print("Saved weather data to cache")
-        except IOError as e:
-            print(f"Error saving cache: {e}")
+        return row, col   
 
     def fetch_weather(self, lat, lon):
-        """Fetches weather data based on latitude and longitude"""
+        """
+        Fetches data based on latitude and longitude.
+        """
         self.update_last_modified()
         
         url = "https://api.openweathermap.org/data/2.5/weather"
@@ -237,36 +212,45 @@ class WeatherAPI(ExternalAPI):
             'units': 'metric'
         }
 
-        try:
-            response = requests.get(url, params=parameters)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Failed to fetch weather for ({lat}, {lon}): {e}")
-            return None
+        response = requests.get(url, params=parameters)
+        response.raise_for_status()
+        return (response.json())
+    
+    """
+    def build_weather(self, raw_data):
+        
+        Formats weather data into more simpler terms
+        
+        return {
+            'latitude': raw_data.get('coord', {}).get('lat'),
+            'longitude': raw_data.get('coord', {}).get('lon'),
+            'temperature': raw_data.get('main', {}).get('temp'),
+            'description': raw_data.get('weather', [{}])[0].get('description'),
+            'timestamp': raw_data.get('dt'),
+            'location_name': raw_data.get('name')
+
+        }
+    """
 
     def fill_grid(self):
         """
-        Fill the grid with weather data, using cache if available and fresh
-        Otherwise fetch new data and cache it
+        Given a list of coorinate points, fetch temperature and store in grid
         """
-        # Try to load from cache first
-        if self.load_cache():
-            return self.grid
-
-        # If cache not available or expired, fetch fresh data
-        print("Fetching fresh weather data...")
         for lat_index in range(self.rows):
             for lon_index in range(self.cols):
                 lat = self.LAT_MIN + lat_index * self.STEP
                 lon = self.LON_MIN + lon_index * self.STEP
-                weather_data = self.fetch_weather(lat, lon)
-                if weather_data:
-                    self.grid[lat_index][lon_index] = weather_data.get('main', {}).get('temp')
-                time.sleep(0.02)  # Small delay to avoid rate limiting
+                try:
+                    weather = self.fetch_weather(lat, lon)
+                    self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
+                    time.sleep(0.02)
+                except Exception as e:
+                    print(f"Failed ({lat}, {lon}): {e}")
+                    continue
 
-        # Save the fresh data to cache
-        self.save_cache()
+            with open("weather_cache.json", "w") as f:
+                json.dump(self.grid, f)
+
         return self.grid
     
 class NEWS_API(ExternalAPI):
