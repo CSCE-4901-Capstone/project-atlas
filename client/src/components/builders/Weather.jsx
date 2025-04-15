@@ -31,7 +31,7 @@ function Weather() {
       const scale = chroma.scale([
         '#4200ff',  // Very cold (deep purple)
         '#0061ff',  // Cold (blue)
-        '#00d5f',  // Cool (light blue)
+        '#00d5ff',  // Cool (light blue)
         '#90eb9d',  // Slightly cool (light Green)
         '#ffffbf',  // Neutral 
         '#f9d057',  // Slightly warm
