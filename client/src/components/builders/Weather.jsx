@@ -81,7 +81,7 @@ function Weather() {
   return (
     <>
       <mesh>
-        <sphereGeometry args={[2, 450, 450]} />
+        <sphereGeometry args={[2, 51.5, 32.5]} />
         <meshStandardMaterial map={tempTexture || fallbackTexture}
         />
       </mesh>
