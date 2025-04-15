@@ -13,7 +13,7 @@ from firebase_admin import credentials, firestore'''
 
 
 load_dotenv()       #load the .env file with needed credentials
-API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
+AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
 WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
 NEWS_API_key = os.getenv("NEWS_API_KEY")
 

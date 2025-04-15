@@ -24,7 +24,7 @@ class FlightList(APIView):
         return Response(flights, status=status.HTTP_200_OK)
 
 
-                return Response({"response":result}) 
+        #return Response({"response":result}) 
         
 class WeatherGridView(APIView):
     """
@@ -54,17 +54,17 @@ class CountryNews(APIView):                #handles connection to external API f
         NEWS = NEWS_API()
     
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
-                CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
-                Role_choice = request.data.get("Role_choice")
+            CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
+            Role_choice = request.data.get("Role_choice")
                 
-                RAW_articles = self.NEWS.GatherArticles(CountryChoice)
+            RAW_articles = self.NEWS.GatherArticles(CountryChoice)
                 
                 #prompt = f'''Give me a list of 5 articles about current events that are occurring within {country} that are LESS than 3 months old. 
                 #        Return it in a JSON format where it has a list called articles where each entry has a title, 
                 #        description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
                         
                         
-                prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
+            prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
                         in the following format (NO CODE SNIPPET OR INSTRUCTION JUST PRINT THE CONVERTED JSON):
                         {{"articles": [
                                 {{"title": "Title of the News Article",
@@ -77,10 +77,10 @@ class CountryNews(APIView):                #handles connection to external API f
                         Here is the JSON data to be used:
                         {RAW_articles}
                         Double check formatting before response
-                        MAKE SURE IT IS A PARSABLE JSON NO MARKDOWN
+                        Do not give a response using markdown only the json format
                         '''
-                result = self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
-                return Response({"response":result}, status=status.HTTP_200_OK) 
+            result = self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
+            return Response({"response":result}, status=status.HTTP_200_OK) 
                 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.    
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model

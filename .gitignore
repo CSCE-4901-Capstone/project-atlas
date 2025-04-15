@@ -8,3 +8,4 @@ server/api/.env
 #ignore any virtual environments from tracked changes
 .venv/
 venv/
+weather_cache.json

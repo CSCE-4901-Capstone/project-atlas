@@ -7,7 +7,7 @@ delete filler text
  */
 
 const AISummary = ({chCountry}) =>{
-    const[AI_Response, SET_AI_Response] = useState("Getting AI Response...");   //declaring what to display while response is getting fetched
+    const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
     const[SessionNum, SET_SessionNum] = useState("");
     const[articleArray, setArticleArray] = useState([]);
     //useref for single calls only Note: useEffect in React 18 causes double fetch calls for debugging purposes and will not be affected in production
@@ -65,7 +65,7 @@ const AISummary = ({chCountry}) =>{
                             <p>{item.description}</p>
                             <p>Source: <strong>{item.source}</strong></p>
                         </li>
-                    )): "Getting AI Response..."}
+                    )): "Please Select a country..."}
                 </ul>
             </div>
         </>
