@@ -10,11 +10,14 @@ const Left = ({choice}) => {
                 <Logo/>
             </div>
             <div id='AI'>
-                <AISummary choiceCountry={choice}/> 
+                <AISummary chCountry={choice}/> 
             </div>
-            <div id="help">
-                <Help/>
-            </div>
+            {/* Commented out for demo purposes. Also not reflected on the design document
+                <div id="help">
+                    <Help/>
+                </div>        
+            */}
+
         </div>
     )
 }
