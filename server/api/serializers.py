@@ -17,6 +17,14 @@ class FlightSerializer(serializers.ModelSerializer):
         print(f"Created: {created}, Flight: {flight}")  # Debugging print to check if update or create happens
         return flight
 
+"""class TemperatureGridSeralizer(serializers.ModelSerializer):
+    width = serializers.IntegerField()
+    height = serializers.IntegerField()
+    data = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.FloatField(allow_null=True)
+        )
+    )"""
 
 class AI_Serializer(serializers.ModelSerializer):
     class Meta:

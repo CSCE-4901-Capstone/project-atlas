@@ -6,10 +6,26 @@ import os
 #library for secure key handling
 import dotenv
 from dotenv import load_dotenv
+#below is library for database connection and 
+'''import firebase_admin
+from firebase_admin import credentials, firestore'''
+
+
 
 load_dotenv()       #load the .env file with needed credentials
-AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
+API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
+WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
 NEWS_API_key = os.getenv("NEWS_API_KEY")
+
+print("Loaded OpenWeather API Key:", WEATHER_API_KEY)
+
+'''#Below is the connection to the firebase hosted database
+Database_path = os.getenv("FIREBASE_PATH")
+DB_creds = credentials.Certificate(Database_path)
+firebase_admin.initialize_app(DB_creds)
+
+DB = firestore.client()             #Create Database instance in the backend'''
+=======
 
 
 class ExternalAPI():
@@ -162,6 +178,81 @@ class Gemini_API(ExternalAPI):
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
+class WeatherAPI(ExternalAPI):
+    def __init__(self):
+        super().__init__()
+
+        #Grid Constants
+        self.LAT_MIN, self.LAT_MAX = -90, 90
+        self.LON_MIN, self.LON_MAX = -180, 180
+        self.STEP = 10 #5-degree interval
+
+        #Empty Grid
+        self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
+        self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
+        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+
+    def coords_to_index(self, lat, lon):
+        if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
+            return None
+        row = int((lat - self.LAT_MIN) // self.STEP)
+        col = int((lon - self.LON_MIN) // self.STEP)
+        return row, col   
+
+    def fetch_weather(self, lat, lon):
+        """
+        Fetches data based on latitude and longitude.
+        """
+        self.update_last_modified()
+        
+        url = "https://api.openweathermap.org/data/2.5/weather"
+        parameters = {
+            'lat': lat,
+            'lon': lon,
+            'appid': WEATHER_API_KEY,
+            'units': 'metric'
+        }
+
+        response = requests.get(url, params=parameters)
+        response.raise_for_status()
+        return (response.json())
+    
+    """
+    def build_weather(self, raw_data):
+        
+        Formats weather data into more simpler terms
+        
+        return {
+            'latitude': raw_data.get('coord', {}).get('lat'),
+            'longitude': raw_data.get('coord', {}).get('lon'),
+            'temperature': raw_data.get('main', {}).get('temp'),
+            'description': raw_data.get('weather', [{}])[0].get('description'),
+            'timestamp': raw_data.get('dt'),
+            'location_name': raw_data.get('name')
+
+        }
+    """
+
+    def fill_grid(self):
+        """
+        Given a list of coorinate points, fetch temperature and store in grid
+        """
+        for lat_index in range(self.rows):
+            for lon_index in range(self.cols):
+                lat = self.LAT_MIN + lat_index * self.STEP
+                lon = self.LON_MIN + lon_index * self.STEP
+                try:
+                    weather = self.fetch_weather(lat, lon)
+                    self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
+                    time.sleep(0.02)
+                except Exception as e:
+                    print(f"Failed ({lat}, {lon}): {e}")
+                    continue
+
+            with open("weather_cache.json", "w") as f:
+                json.dump(self.grid, f)
+
+        return self.grid
     
 class NEWS_API(ExternalAPI):
     
@@ -180,6 +271,4 @@ class NEWS_API(ExternalAPI):
         # Make the request to the NEWS API
         response = requests.get(NEWS_API_url, params=params)
         
-        return response.json()          #return the json response collection of articles
-        
-        
+        return response.json()          #return the json response collection of article

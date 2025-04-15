@@ -4,6 +4,8 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .services import Gemini_API
+from .services import WeatherAPI
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
@@ -22,12 +24,34 @@ class FlightList(APIView):
         return Response(flights, status=status.HTTP_200_OK)
 
 
+                return Response({"response":result}) 
+        
+class WeatherGridView(APIView):
+    """
+    Fills and returns a 2D temperature grid based on OpenWeatherMap
+    """        
+    api = WeatherAPI()
+
+    def get(self, request, format=None):
+        try:
+            # Load prebuilt grid instead of fetching live
+            grid = self.api.fill_grid()  # or load from cache/file
+            
+            # Return dimensions
+            return Response({
+                "lon": self.api.cols, 
+                "lat": self.api.rows, 
+                "data": grid
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("WeatherGridView error:", e)
+            return Response({"error": str(e)}, status=500)
 
 class CountryNews(APIView):                #handles connection to external API for AI interaction 
 
         AI_Gemini = Gemini_API()
         NEWS = NEWS_API()
-        
     
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
                 CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
@@ -60,3 +84,4 @@ class CountryNews(APIView):                #handles connection to external API f
                 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.    
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
+
