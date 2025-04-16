@@ -25,8 +25,6 @@ class FlightList(APIView):
 
 
                 #return Response({"response":result})
-
-        return Response({"response":result}) 
         
 class WeatherGridView(APIView):
     """
