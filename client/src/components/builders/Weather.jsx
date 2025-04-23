@@ -33,12 +33,12 @@ function Weather() {
           tempMin, -20, 0, 15, 20, 23, 25, 30, tempMax
         ]);
 
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
+        for (let y = 0; y < grid.length; y++) {
+          for (let x = 0; x < grid[0].length; x++) {
             const i = (y * width + x) * 4;
             const temp = grid[y][x];
             const [r, g, b] = scale(temp ?? tempMin).rgb();
-
+        
             imageData.data[i] = r;
             imageData.data[i + 1] = g;
             imageData.data[i + 2] = b;
