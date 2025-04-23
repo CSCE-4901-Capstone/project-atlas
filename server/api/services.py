@@ -175,79 +175,46 @@ class Gemini_API(ExternalAPI):
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
-class WeatherAPI(ExternalAPI):
-    def __init__(self):
-        super().__init__()
-
-        #Grid Constants
-        self.LAT_MIN, self.LAT_MAX = -90, 90
-        self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 10 #5-degree interval
-
-        #Empty Grid
-        self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
-        self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
-        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
-
-    def coords_to_index(self, lat, lon):
-        if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
-            return None
-        row = int((lat - self.LAT_MIN) // self.STEP)
-        col = int((lon - self.LON_MIN) // self.STEP)
-        return row, col
-
-    def fetch_weather(self, lat, lon):
-        """
-        Fetches data based on latitude and longitude.
-        """
-        self.update_last_modified()
-
+class WeatherAPIAsync(ExternalAPI):
+    async def fetch_weather(self, session, lat, lon):
         url = "https://api.openweathermap.org/data/2.5/weather"
-        parameters = {
+        params = {
             'lat': lat,
             'lon': lon,
             'appid': WEATHER_API_KEY,
             'units': 'metric'
         }
+        async with session.get(url, params=params) as resp:
+            data = await resp.json()
+            return data.get('main', {}).get('temp')
 
-        response = requests.get(url, params=parameters)
-        response.raise_for_status()
-        return (response.json())
+    async def fill_grid_async(self):
+        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
 
-    """
-    def build_weather(self, raw_data):
+        async with aiohttp.ClientSession() as session:
+            tasks = []
+            for lat_index in range(self.rows):
+                for lon_index in range(self.cols):
+                    lat = self.LAT_MIN + lat_index * self.STEP
+                    lon = self.LON_MIN + lon_index * self.STEP
+                    tasks.append(
+                        self.fetch_weather(session, lat, lon)
+                    )
 
-        Formats weather data into more simpler terms
+            temps = await asyncio.gather(*tasks, return_exceptions=True)
 
-        return {
-            'latitude': raw_data.get('coord', {}).get('lat'),
-            'longitude': raw_data.get('coord', {}).get('lon'),
-            'temperature': raw_data.get('main', {}).get('temp'),
-            'description': raw_data.get('weather', [{}])[0].get('description'),
-            'timestamp': raw_data.get('dt'),
-            'location_name': raw_data.get('name')
-
-        }
-    """
-
-    def fill_grid(self):
-        """
-        Given a list of coorinate points, fetch temperature and store in grid
-        """
+        index = 0
         for lat_index in range(self.rows):
             for lon_index in range(self.cols):
-                lat = self.LAT_MIN + lat_index * self.STEP
-                lon = self.LON_MIN + lon_index * self.STEP
-                try:
-                    weather = self.fetch_weather(lat, lon)
-                    self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
-                    time.sleep(0.02)
-                except Exception as e:
-                    print(f"Failed ({lat}, {lon}): {e}")
-                    continue
+                temp = temps[index]
+                if isinstance(temp, Exception):
+                    print(f"Failed at ({lat_index}, {lon_index}): {temp}")
+                    temp = None
+                self.grid[lat_index][lon_index] = temp
+                index += 1
 
-            with open("weather_cache.json", "w") as f:
-                json.dump(self.grid, f)
+        with open("weather_cache.json", "w") as f:
+            json.dump(self.grid, f)
 
         return self.grid
 
