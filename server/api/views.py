@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .services import Gemini_API
-from .services import WeatherAPI
+from .services import WeatherAPIAsync
+import asyncio
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
@@ -28,26 +29,26 @@ class FlightList(APIView):
         
 class WeatherGridView(APIView):
     """
-    Fills and returns a 2D temperature grid based on OpenWeatherMap
+    Fills and returns a 2D temperature grid based on OpenWeatherMap (async version)
     """
-    api = WeatherAPI()
 
     def get(self, request, format=None):
         try:
-            # Load prebuilt grid instead of fetching live
-            grid = self.api.fill_grid()  # or load from cache/file
+            api = WeatherAPIAsync()
 
-            # Return dimensions
+            # Run the async grid filler
+            grid = asyncio.run(api.fill_grid_async())
+
             return Response({
-                "lon": self.api.cols,
-                "lat": self.api.rows,
+                "lon": api.cols,
+                "lat": api.rows,
                 "data": grid
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
             print("WeatherGridView error:", e)
             return Response({"error": str(e)}, status=500)
-
+        
 class CountryNews(APIView):                #handles connection to external API for AI interaction
 
         AI_Gemini = Gemini_API()
