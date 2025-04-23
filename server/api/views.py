@@ -40,8 +40,8 @@ class WeatherGridView(APIView):
             grid = asyncio.run(api.fill_grid_async())
 
             return Response({
-                "lon": api.cols,
-                "lat": api.rows,
+                "lon": api.rows,
+                "lat": api.cols,
                 "data": grid
             }, status=status.HTTP_200_OK)
 
