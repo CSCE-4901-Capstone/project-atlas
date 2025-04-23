@@ -180,11 +180,14 @@ class WeatherAPIAsync:
         # Grid boundaries and resolution
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 10  # Adjust granularity here
+        self.STEP = 5  # Adjust granularity here
 
         # Grid size
         self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
         self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
+
+        self.rows = ((self.LAT_MAX - self.LAT_MIN) // self.STEP) + 1
+        self.cols = ((self.LON_MAX - self.LON_MIN) // self.STEP) + 1
 
         # Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
@@ -218,7 +221,7 @@ class WeatherAPIAsync:
             self.grid[lat_index][lon_index] = None
 
     async def fill_grid_async(self):
-        # ✅ Try loading from cache first
+        # Try loading from cache first
         if os.path.exists("weather_cache.json"):
             try:
                 with open("weather_cache.json", "r") as f:
@@ -227,7 +230,7 @@ class WeatherAPIAsync:
             except Exception as e:
                 print("Failed to load cached weather data:", e)
 
-        # 🌀 Fetch live data concurrently
+        # Fetch live data concurrently
         async with aiohttp.ClientSession() as session:
             tasks = []
 
@@ -239,7 +242,7 @@ class WeatherAPIAsync:
 
             await asyncio.gather(*tasks)
 
-        # 💾 Save to cache
+        # Save to cache
         try:
             with open("weather_cache.json", "w") as f:
                 json.dump(self.grid, f)

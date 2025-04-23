@@ -9,56 +9,51 @@ function Weather() {
 
   useEffect(() => {
     const generateTemperatureTexture = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/weather/');
-        const json = await res.json();
-
-        const grid = json.data;
-        const width = json.lon;  // cols
-        const height = json.lat; // rows
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        const imageData = ctx.createImageData(width, height);
-
-        const tempMin = -50;
-        const tempMax = 40;
-
-        const scale = chroma.scale([
-          '#4200ff', '#0061ff', '#00d5ff', '#90eb9d',
-          '#ffffbf', '#f9d057', '#f29e2e', '#e76818', '#d7191c'
-        ]).domain([
-          tempMin, -20, 0, 15, 20, 23, 25, 30, tempMax
-        ]);
-
-        for (let y = 0; y < grid.length; y++) {
-          for (let x = 0; x < grid[0].length; x++) {
-            const i = (y * width + x) * 4;
-            const temp = grid[y][x];
-            const [r, g, b] = scale(temp ?? tempMin).rgb();
-        
-            imageData.data[i] = r;
-            imageData.data[i + 1] = g;
-            imageData.data[i + 2] = b;
-            imageData.data[i + 3] = 255;
-          }
+      const res = await fetch('http://localhost:8000/api/weather/');
+      const json = await res.json();
+      const grid = json.data;
+  
+      // Dynamically derive width and height from the data
+      const height = grid.length;
+      const width = grid[0]?.length || 0;
+  
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.createImageData(width, height);
+  
+      const tempMin = -50;
+      const tempMax = 40;
+  
+      const scale = chroma.scale([
+        '#4200ff', '#0061ff', '#00d5ff', '#90eb9d',
+        '#ffffbf', '#f9d057', '#f29e2e', '#e76818', '#d7191c'
+      ]).domain([tempMin, -20, 0, 15, 20, 23, 25, 30, tempMax]);
+  
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const i = (y * width + x) * 4;
+          const temp = grid[y][x];
+  
+          const [r, g, b] = scale(temp ?? tempMin).rgb();
+          imageData.data[i] = r;
+          imageData.data[i + 1] = g;
+          imageData.data[i + 2] = b;
+          imageData.data[i + 3] = 255;
         }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        const texture = new CanvasTexture(canvas);
-        texture.minFilter = LinearMipMapLinearFilter;
-        texture.needsUpdate = true;
-        setTempTexture(texture);
-      } catch (error) {
-        console.error('Failed to generate temperature texture:', error);
       }
+  
+      ctx.putImageData(imageData, 0, 0);
+      const tex = new CanvasTexture(canvas);
+      tex.minFilter = LinearMipMapLinearFilter;
+      tex.needsUpdate = true;
+      setTempTexture(tex);
     };
-
+  
     generateTemperatureTexture();
   }, []);
+  
 
   return (
     <mesh>
