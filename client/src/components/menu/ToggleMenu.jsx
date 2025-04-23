@@ -4,10 +4,15 @@ import '../../styles/Atlas.css'
 //Create array of prefilled filters then render based on the length of the filter
 
 // Have the toggle menu be built using an array of names
-function toggleMenu({ onFilterSelection }) {
+function ToggleMenu({ onFilterSelection }) {
+    const [selected,setSelected] = useState(null);
+
 
   function handleFilterSelection(e) {
-    onFilterSelection(e.target.value) 
+    const value = e.target.value;
+    const newValue = selected === value ? null : value;
+    setSelected(newValue);
+    onFilterSelection(newValue);
   }
 
     return(
@@ -18,18 +23,20 @@ function toggleMenu({ onFilterSelection }) {
                 <div id="toggle-radio-group">
                     <label className="custom-label">
                         <input
-                            type="radio"
+                            type="checkbox"
                             value="Weather"
                             name='toggles'
+                            checked={selected === "Weather"}
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Weather
                     </label>
                     <label className="custom-label">
                         <input
-                            type="radio"
+                            type="checkbox"
                             value="Flights"
                             name='toggles'
+                            checked={selected === "Flights"}
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Flights
@@ -40,4 +47,4 @@ function toggleMenu({ onFilterSelection }) {
     )
 }
 
-export default toggleMenu;
+export default ToggleMenu;

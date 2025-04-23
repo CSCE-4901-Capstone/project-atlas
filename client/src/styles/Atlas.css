@@ -180,10 +180,10 @@ html {
     width: 0.75rem;
     border-radius: 50%;
 }
-.custom-label input[type="radio"]:checked + .custom-radio {
+.custom-label input[type="checkbox"]:checked + .custom-radio {
     background-color: white !important;
 }
-.custom-label input[type="radio"]:not(:checked) + .custom-radio:hover {
+.custom-label input[type="checkbox"]:not(:checked) + .custom-radio:hover {
     background-color: gray !important;
 }
 
