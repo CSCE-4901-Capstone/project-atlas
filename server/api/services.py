@@ -175,8 +175,28 @@ class Gemini_API(ExternalAPI):
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
-class WeatherAPIAsync(ExternalAPI):
-    async def fetch_weather(self, session, lat, lon):
+class WeatherAPIAsync:
+    def __init__(self):
+        # Grid boundaries and resolution
+        self.LAT_MIN, self.LAT_MAX = -90, 90
+        self.LON_MIN, self.LON_MAX = -180, 180
+        self.STEP = 10  # Adjust granularity here
+
+        # Grid size
+        self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
+        self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
+
+        # Initialize empty grid
+        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+
+    def coords_to_index(self, lat, lon):
+        if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
+            return None
+        row = int((lat - self.LAT_MIN) // self.STEP)
+        col = int((lon - self.LON_MIN) // self.STEP)
+        return row, col
+
+    async def _fetch_weather(self, session, lat, lon):
         url = "https://api.openweathermap.org/data/2.5/weather"
         params = {
             'lat': lat,
@@ -184,37 +204,47 @@ class WeatherAPIAsync(ExternalAPI):
             'appid': WEATHER_API_KEY,
             'units': 'metric'
         }
-        async with session.get(url, params=params) as resp:
-            data = await resp.json()
-            return data.get('main', {}).get('temp')
+        async with session.get(url, params=params) as response:
+            response.raise_for_status()
+            return await response.json()
+
+    async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
+        try:
+            data = await self._fetch_weather(session, lat, lon)
+            temp = data.get('main', {}).get('temp')
+            self.grid[lat_index][lon_index] = temp
+        except Exception as e:
+            print(f"Failed to fetch ({lat}, {lon}): {e}")
+            self.grid[lat_index][lon_index] = None
 
     async def fill_grid_async(self):
-        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+        # ✅ Try loading from cache first
+        if os.path.exists("weather_cache.json"):
+            try:
+                with open("weather_cache.json", "r") as f:
+                    self.grid = json.load(f)
+                    return self.grid
+            except Exception as e:
+                print("Failed to load cached weather data:", e)
 
+        # 🌀 Fetch live data concurrently
         async with aiohttp.ClientSession() as session:
             tasks = []
+
             for lat_index in range(self.rows):
                 for lon_index in range(self.cols):
                     lat = self.LAT_MIN + lat_index * self.STEP
                     lon = self.LON_MIN + lon_index * self.STEP
-                    tasks.append(
-                        self.fetch_weather(session, lat, lon)
-                    )
+                    tasks.append(self._fetch_and_store(session, lat_index, lon_index, lat, lon))
 
-            temps = await asyncio.gather(*tasks, return_exceptions=True)
+            await asyncio.gather(*tasks)
 
-        index = 0
-        for lat_index in range(self.rows):
-            for lon_index in range(self.cols):
-                temp = temps[index]
-                if isinstance(temp, Exception):
-                    print(f"Failed at ({lat_index}, {lon_index}): {temp}")
-                    temp = None
-                self.grid[lat_index][lon_index] = temp
-                index += 1
-
-        with open("weather_cache.json", "w") as f:
-            json.dump(self.grid, f)
+        # 💾 Save to cache
+        try:
+            with open("weather_cache.json", "w") as f:
+                json.dump(self.grid, f)
+        except Exception as e:
+            print("Failed to write cache:", e)
 
         return self.grid
 
