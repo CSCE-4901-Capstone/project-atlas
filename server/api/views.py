@@ -36,8 +36,11 @@ class WeatherGridView(APIView):
         try:
             api = WeatherAPIAsync()
 
-            # Run the async grid filler
-            grid = asyncio.run(api.fill_grid_async())
+            # Read query parameter: ?refresh=true
+            refresh = request.GET.get("refresh", "false").lower() == "true"
+
+            # Run the async grid filler with refresh flag
+            grid = asyncio.run(api.fill_grid_async(force_refresh=refresh))
 
             return Response({
                 "lon": api.rows,
