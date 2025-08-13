@@ -17,13 +17,14 @@ Dev Log:
 
 Update npm and node version before starting Fall 2025:
     package-lock and package will not update on `npm install` until the following steps are taken
+
+Check for node versions using
     
-    - Check for node versions using
-        - `nvm ls`
-            - Look for the newest version of node
-            - Install using `nvm install <version>` then use with `nvm use <version>`
+    - `nvm ls`
+    - Look for the newest version of node
+    - Install using `nvm install <version>` then use with `nvm use <version>`
         
-    how to run the FrontEnd:
+  How to run the FrontEnd:
 
     cd client
     npm run dev
