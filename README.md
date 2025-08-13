@@ -14,6 +14,14 @@ Dev Log:
             -Create venv file in source location(python3 -m venv name-of-file)
         Activate environment
             -source C:/path/to/bin/activate
+
+Update npm and node version before starting Fall 2025:
+    package-lock and package will not update on `npm install` until the following steps are taken
+    
+    - Check for node versions using
+        - `nvm ls`
+            - Look for the newest version of node
+            - Install using `nvm install <version>` then use with `nvm use <version>`
         
     how to run the FrontEnd:
 
