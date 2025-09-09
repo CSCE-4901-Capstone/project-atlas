@@ -7,15 +7,8 @@ import api_conn from 'src/utils/api';
 
 function AtlasIntel(){
     return(
-        <div id="info-box">
-            <div className="title">
-                <h1>Info</h1>
-            </div>
-            <div className="information">
-                <p>
-                Feature coming sprint 3.
-                </p>
-            </div>
+        <div id="atlas-intel">
+            <h1>AI</h1>
         </div>
     )
 }

@@ -86,10 +86,10 @@ html {
     align-items: center;
     max-width: 20vw;
     height: 43vh;
-    margin-bottom: 32vh;
+    margin-top: 6vh;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 5%);
 }
 #AI > .text-container {
     max-height: 74%;
@@ -152,7 +152,7 @@ html {
     width: 60%;
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 5%);
 }
 #right > :not(:first-child) > .title {
     border-bottom: 1.5px white solid;
@@ -211,35 +211,33 @@ html {
     padding: 4px;
     color: white;
     backdrop-filter: blur(2px);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 5%);
 }
 /*Remove blue focus on click for search input*/
 textarea:focus, input:focus{
     outline: none;
 }
 /*Adjust styling for the information section*/
-#info-box {
+#atlas-intel{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 20rem;
-    width: 17rem;
-    border-radius: 15%;
+    justify-content: center;
+    height: 6rem;
+    width: 6rem;
+    margin: 7rem;
+    backdrop-filter: blur(2px);
+    border-radius: 50px !important;
+    background: rgba(255, 255, 255, 5%);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
 }
-#info-box > p {
+#info-box > div {
     padding: 0.5rem;
 }
-#info-box > .information{
-    padding: 0.7rem;
-}
-
 
 /*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
 div > h1 {
-    align-self: center;
     justify-self: center;
-    margin-top: 0.5rem;
-    font-size: 1.8rem;
 }
 
 /*Autocomplete dropdown*/
