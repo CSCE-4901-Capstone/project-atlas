@@ -1,14 +1,14 @@
 import React from "react";
 import ToggleMenu from "./ToggleMenu";
 import Search from "./Search";
-import Info from './Info';
+import AtlasIntel from './AtlasIntel';
 
 const Right = ({onSearchChange, onFilterSelection}) => {
     return(
         <div id="right">
             <Search onChangeHandle={onSearchChange}/>
             <ToggleMenu onFilterSelection={onFilterSelection}/>
-            <Info/>
+            <AtlasIntel/>
         </div>
     )
 }
