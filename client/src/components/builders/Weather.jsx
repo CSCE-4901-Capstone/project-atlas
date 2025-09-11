@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { TextureLoader, CanvasTexture, LinearMipMapLinearFilter, RepeatWrapping, ClampToEdgeWrapping } from 'three';
+import { TextureLoader, CanvasTexture, LinearMipMapLinearFilter, RepeatWrapping, ClampToEdgeWrapping, LinearFilter } from 'three';
 import chroma from 'chroma-js';
 
 function Weather() {
@@ -37,26 +37,28 @@ function Weather() {
       ]).domain([tempMin, -20, 0, 10, 20, 25, 30, tempMax]);
 
 
-      // Flip Y axis: top of canvas should be lat +90 (North Pole)
       for (let y = 0; y < height; y++) {
         const flippedY = height - 1 - y;
         for (let x = 0; x < width; x++) {
           const i = (y * width + x) * 4;
-          const temp = grid[flippedY][x]; // flip Y here
+          const temp = grid[flippedY][x]; //flip Y
 
-          const [r, g, b] = scale(temp ?? tempMin).rgb();
-          imageData.data[i] = r;
-          imageData.data[i + 1] = g;
-          imageData.data[i + 2] = b;
-          imageData.data[i + 3] = 255;
-        }
-      }
+      if (temp !== null && temp !== undefined) {
+        const [r, g, b] = scale(temp).rgb();
+        imageData.data[i] = r;
+        imageData.data[i + 1] = g;
+        imageData.data[i + 2] = b;
+        imageData.data[i + 3] = 200; //semi transparent
+    } else {
+      imageData.data[i + 3] = 0; 
+    }
+  }
+}
 
       ctx.putImageData(imageData, 0, 0);
       const tex = new CanvasTexture(canvas);
-      tex.minFilter = LinearMipMapLinearFilter;
-      //tex.wrapS = RepeatWrapping; // horizontal wrapping
-      //tex.wrapT = ClampToEdgeWrapping; // no vertical wrapping
+      tex.minFilter = LinearFilter;
+      tex.magFilter = LinearFilter; 
       tex.needsUpdate = true;
       setTempTexture(tex);
     };
@@ -65,11 +67,23 @@ function Weather() {
   }, []);
 
   return (
+  <>
     <mesh>
-      <sphereGeometry args={[2, 51, 32]} />
-      <meshStandardMaterial map={tempTexture || fallbackTexture} />
+      <sphereGeometry args={[2, 64, 32]} />
+      <meshStandardMaterial map={fallbackTexture} />
     </mesh>
-  );
+
+    {tempTexture && (
+      <mesh>
+        <sphereGeometry args={[2.01, 64, 32]} />
+        <meshStandardMaterial 
+          map={tempTexture}
+          transparent={true} //transparency
+        />
+      </mesh>
+    )}
+  </>
+);
 }
 
 export default Weather;
