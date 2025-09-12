@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
 
-//Create array of prefilled filters then render based on the length of the filter
-
-// Have the toggle menu be built using an array of names
-function ToggleMenu({ onFilterSelection }) {
-    const [selected,setSelected] = useState(null);
-
+function ToggleMenu({ onFilterSelection, activeFilter }) {
 
   function handleFilterSelection(e) {
     const value = e.target.value;
-    const newValue = selected === value ? null : value;
-    setSelected(newValue);
+    const newValue = activeFilter === value ? null : value;
     onFilterSelection(newValue);
   }
 
@@ -26,7 +20,7 @@ function ToggleMenu({ onFilterSelection }) {
                             type="checkbox"
                             value="Weather"
                             name='toggles'
-                            checked={selected === "Weather"}
+                            checked={activeFilter === "Weather"} //Check if weather toggle is active
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Weather
@@ -36,7 +30,6 @@ function ToggleMenu({ onFilterSelection }) {
                             type="checkbox"
                             value="Flights"
                             name='toggles'
-                            checked={selected === "Flights"}
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Flights

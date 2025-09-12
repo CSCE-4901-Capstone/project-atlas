@@ -2,6 +2,7 @@ import requests
 import time
 import json
 import os
+import asyncio
 
 #library for secure key handling
 import dotenv

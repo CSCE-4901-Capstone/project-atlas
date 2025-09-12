@@ -1,14 +1,17 @@
 import Right from "./Right"
 import Left from "./Left"
-import { useState } from "react"
 
-const Menu = ({searchVal, setSearchVal, onFilterSelection}) => {
+const Menu = ({searchVal, setSearchVal, onFilterSelection, activeFilter}) => {
     return(
         <div id="menu">
             <Left choice={searchVal}/>
-            <Right onSearchChange={setSearchVal} onFilterSelection={onFilterSelection}/>
+            <Right 
+              onSearchChange={setSearchVal} 
+              onFilterSelection={onFilterSelection} 
+              activeFilter={activeFilter}
+            />
         </div>
     )
 }
 
-export default Menu
+export default Menu;
