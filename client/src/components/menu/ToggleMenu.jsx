@@ -30,6 +30,7 @@ function ToggleMenu({ onFilterSelection, activeFilter }) {
                             type="checkbox"
                             value="Flights"
                             name='toggles'
+                            checked={activeFilter === "Flights"}
                             onChange={handleFilterSelection}
                         />
                         <span className="custom-radio"></span>Flights
