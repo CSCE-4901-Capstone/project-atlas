@@ -110,6 +110,10 @@ html {
     border-radius: 0px;
     padding: 5px;
     width: 13rem;
+    /*Center Country choice text*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #help{
@@ -167,9 +171,24 @@ html {
     border-radius: 0px;
     padding: 5px;
     width: 10rem;
+    /*Center filter text*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 /*Filter group styling*/
 #toggle-radio-group {
+    display: none;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+    padding-left:1.25vw;
+    padding-top: 1.6vh;
+    gap: 1.1vh;
+    background-color: transparent;
+    align-self:start;
+}
+#toggle-menu.active #toggle-radio-group{
     display: flex;
     flex-direction: row;
     align-items: start;
@@ -230,8 +249,8 @@ textarea:focus, input:focus{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 6rem;
-    width: 6rem;
+    min-height: 6rem;
+    min-width: 6rem;
     margin: 7rem;
     backdrop-filter: blur(2px);
     border-radius: 50px !important;
@@ -242,10 +261,7 @@ textarea:focus, input:focus{
     padding: 0.5rem;
 }
 
-/*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
-div > h1 {
-    justify-self: center;
-}
+
 
 /*Autocomplete dropdown*/
 .suggestion-list{

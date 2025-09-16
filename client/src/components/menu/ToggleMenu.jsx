@@ -8,6 +8,7 @@ import '../../styles/Atlas.css'
 function ToggleMenu({ onFilterSelection }) {
     const [selected,setSelected] = useState(null);
     const filters = ["Flights", "Weather"];
+    const [active, setActive] = useState(false);
 
   function handleFilterSelection(e) {
     const value = e.target.value;
@@ -15,14 +16,20 @@ function ToggleMenu({ onFilterSelection }) {
     setSelected(newValue);
     onFilterSelection(newValue);
   }
+  //CSS expansion from filters
+  
 
     return(
-        <div id="toggle-menu">
+        <div 
+        id="toggle-menu"
+        className={`${active ? "active" : ""}`}
+        onClick={() => setActive(!active)}
+        >
             <div className="title">
                 <h1>Filters</h1>
             </div>
             <div id="toggle-radio-group">
-                {filters.map((filter) => (
+                {active == true && filters.map((filter) => (
                     <label key={filter} id="custom-label">
                     <input
                         type="checkbox"
