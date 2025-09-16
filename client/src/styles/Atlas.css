@@ -165,6 +165,7 @@ html {
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 5%);
+    user-select: none;
 }
 #right > :not(:first-child) > .title {
     cursor: default;
@@ -179,14 +180,6 @@ html {
 /*Filter group styling*/
 #toggle-radio-group {
     display: none;
-    flex-direction: row;
-    align-items: start;
-    justify-content: start;
-    padding-left:1.25vw;
-    padding-top: 1.6vh;
-    gap: 1.1vh;
-    background-color: transparent;
-    align-self:start;
 }
 #toggle-menu.active #toggle-radio-group{
     display: flex;
@@ -216,7 +209,8 @@ html {
     height: 0.75rem;
     width: 0.75rem;
     border-radius: 50%;
-}#custom-label input[type="checkbox"]:checked + .custom-radio {
+}
+#custom-label input[type="checkbox"]:checked + .custom-radio {
     background-color: rgba(255,255,255, 0.5) !important;
 }
 #custom-label input[type="checkbox"]:not(:checked) + .custom-radio:hover {
@@ -256,12 +250,11 @@ textarea:focus, input:focus{
     border-radius: 50px !important;
     background: rgba(255, 255, 255, 5%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
 }
 #info-box > div {
     padding: 0.5rem;
 }
-
-
 
 /*Autocomplete dropdown*/
 .suggestion-list{
