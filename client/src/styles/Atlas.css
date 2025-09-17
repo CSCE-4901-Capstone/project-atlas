@@ -85,7 +85,7 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 20vw;
+    max-width: 25vw;
     height: 43vh;
     margin-top: 6vh;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
@@ -94,11 +94,9 @@ html {
 }
 #AI > .text-container {
     max-height: 74%;
-    overflow: scroll;
     overflow-x:hidden;
-    padding-left: 4%;
-    margin-right: 3%;
     margin-top: 3%;
+    border-radius: 0px;
 }
 
 /*Padding for text inside of AISummary*/
@@ -150,15 +148,14 @@ html {
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    padding-right: 1%;
-    padding-top: 1%;
-    padding-bottom: 2%;
+    margin-right:2%;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #toggle-menu{
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-height: 3rem;
     width: 60%;
     padding: 7px;
     margin-bottom: 30vh;
@@ -166,31 +163,38 @@ html {
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 5%);
     user-select: none;
-}
-#right > :not(:first-child) > .title {
-    cursor: default;
-    border-radius: 0px;
-    padding: 5px;
-    width: 10rem;
-    /*Center filter text*/
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: max-height 1.0s ease;
 }
 /*Filter group styling*/
 #toggle-radio-group {
-    display: none;
+    visibility: hidden;
 }
+#toggle-menu.active {
+    max-height: 7rem;
+}
+#toggle-menu{
+    visibility: none;
+}
+/*Code for when the filters are toggled on*/
 #toggle-menu.active #toggle-radio-group{
     display: flex;
+    visibility: visible;
+    animation: show 1.5s ease;
     flex-direction: row;
-    align-items: start;
-    justify-content: start;
+    align-items: center;
+    justify-content: center;
     padding-left:1.25vw;
     padding-top: 1.6vh;
     gap: 1.1vh;
     background-color: transparent;
     align-self:start;
+    pointer-events: all;
+    transition: opacity 1.0s ease;
+}
+/*Animations for toggle-menu*/
+@keyframes show {
+    0% {opacity: 0;}
+    100%{opacity: 1;}
 }
 #toggle-radio-group > label {
     display: flex;
@@ -216,15 +220,26 @@ html {
 #custom-label input[type="checkbox"]:not(:checked) + .custom-radio:hover {
     background-color: gray !important;
 }
+#right > :not(:first-child) > .title {
+    cursor: default;
+    border-radius: 0px;
+    padding: 5px;
+    width: 10rem;
+    /*Center filter text*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /*Search Menu Styling*/
 #search{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 5rem;
+    margin-top: 8%;
 }
 #search > input {
+    text-align: center;
     width: 20rem;
     height: 1rem;
     padding: 4px;
@@ -262,7 +277,6 @@ textarea:focus, input:focus{
     padding: 2px;
     list-style: none;
     overflow-y: scroll;
-    z-index: 10;
     border: none;
 }
 .suggestion-item {

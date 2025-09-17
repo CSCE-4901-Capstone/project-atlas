@@ -28,9 +28,15 @@ function ToggleMenu({ onFilterSelection }) {
             <div className="title">
                 <h1>Filters</h1>
             </div>
-            <div id="toggle-radio-group">
-                {active == true && filters.map((filter) => (
-                    <label key={filter} id="custom-label">
+            <div 
+            id="toggle-radio-group"
+            >
+                {filters.map((filter) => (
+                    <label 
+                    key={filter} 
+                    id="custom-label"
+                    onClick={(e)=>e.stopPropagation()}
+                    >
                     <input
                         type="checkbox"
                         value={filter}
