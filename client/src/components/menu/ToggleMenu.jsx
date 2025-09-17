@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import '../../styles/Atlas.css'
 
-//**Array is global! Consider the data being passed from the server instead!**
-
-
 // Have the toggle menu be built using an array of names
-function ToggleMenu({ onFilterSelection }) {
+function ToggleMenu({ choiceMade, onFilterSelection }) {
     const [selected,setSelected] = useState(null);
     const filters = ["Flights", "Weather"];
     const [active, setActive] = useState(false);
@@ -16,9 +13,11 @@ function ToggleMenu({ onFilterSelection }) {
     setSelected(newValue);
     onFilterSelection(newValue);
   }
-  //CSS expansion from filters
-  
-
+  useEffect(()=>{
+    if(choiceMade != null){
+        setActive(false);
+    }
+  }, [choiceMade])
     return(
         <div 
         id="toggle-menu"
