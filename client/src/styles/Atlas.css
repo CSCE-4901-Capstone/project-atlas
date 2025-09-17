@@ -163,14 +163,14 @@ html {
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 5%);
     user-select: none;
-    transition: max-height 1.0s ease;
+    transition: max-height 1.0s ease-in-out;
 }
 /*Filter group styling*/
 #toggle-radio-group {
     visibility: hidden;
 }
 #toggle-menu.active {
-    max-height: 7rem;
+    max-height: 5rem;
 }
 #toggle-menu{
     visibility: none;
@@ -179,16 +179,13 @@ html {
 #toggle-menu.active #toggle-radio-group{
     display: flex;
     visibility: visible;
-    animation: show 1.5s ease;
+    animation: show 1.0s ease;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding-left:1.25vw;
-    padding-top: 1.6vh;
-    gap: 1.1vh;
+    gap: 1rem;
     background-color: transparent;
-    align-self:start;
+    align-self: center;
     pointer-events: all;
+    padding: 5px;
     transition: opacity 1.0s ease;
 }
 /*Animations for toggle-menu*/

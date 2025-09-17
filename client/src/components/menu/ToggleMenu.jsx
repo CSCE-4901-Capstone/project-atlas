@@ -28,9 +28,7 @@ function ToggleMenu({ onFilterSelection }) {
             <div className="title">
                 <h1>Filters</h1>
             </div>
-            <div 
-            id="toggle-radio-group"
-            >
+            <div id="toggle-radio-group">
                 {filters.map((filter) => (
                     <label 
                     key={filter} 
