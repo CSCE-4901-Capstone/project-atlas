@@ -6,7 +6,7 @@ const Menu = ({searchVal, setSearchVal, onFilterSelection}) => {
     return(
         <div id="menu">
             <Left choice={searchVal}/>
-            <Right onSearchChange={setSearchVal} onFilterSelection={onFilterSelection}/>
+            <Right choice={searchVal} onSearchChange={setSearchVal} onFilterSelection={onFilterSelection}/>
         </div>
     )
 }
