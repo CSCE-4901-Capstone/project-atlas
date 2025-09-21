@@ -35,7 +35,6 @@ function Globe({onCountrySelection = () => {}}) {
   return (
     <>
       <ambientLight intensity={3} />
-      <OrbitControls makeDefault/>
       <mesh 
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
