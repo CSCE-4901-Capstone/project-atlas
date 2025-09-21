@@ -44,19 +44,27 @@ html {
     pointer-events: none;
     background: none !important;
 }
+
+/*Insert new glass styling for all children of menu*/
+#menu > div *{
+    border-radius: 20px;
+    color: white;
+}
+
 /*Left side of the menu*/
 #left{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: start;
-    padding-left: 2%;
+    margin-left: 2%;
     height: 100%;
     width: 50%;
 }
 #left > div {
     pointer-events: all;
 }
-/*Logo styling*/
+/*Logo styling {deprecated}
 #logo {
     display: flex;
     align-items: center;
@@ -71,23 +79,24 @@ html {
     height: 80%;
     width: 35%;
 }
+*/
 
 #AI {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 20vw;
+    max-width: 25vw;
     height: 43vh;
-    margin-bottom: 32vh;
-    border-radius: 15%;
+    margin-top: 6vh;
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 5%);
 }
 #AI > .text-container {
     max-height: 74%;
-    overflow: scroll;
     overflow-x:hidden;
-    padding-left: 4%;
-    margin-right: 3%;
     margin-top: 3%;
+    border-radius: 0px;
 }
 
 /*Padding for text inside of AISummary*/
@@ -96,20 +105,30 @@ html {
 }
 /*Padding for country selection*/
 #AI > .country-choice{
-    border-bottom: 1.5px white solid;
+    border-radius: 0px;
     padding: 5px;
     width: 13rem;
+    /*Center Country choice text*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #help{
-    height: 43px;
-    width: 43px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3vh;
 }
 #help-button{
-    background-color: transparent;
-    border: none;
-    height: 43px;
-    width: auto;
+    height: 2.5rem;
+    width: 2.5rem;
+    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 5%);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+}
+#help-button > img {
+    height: 0.8rem;
 }
 
 /*Consider style change for the help button to show click action physically*/
@@ -129,42 +148,55 @@ html {
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
-    padding-right: 1%;
-    padding-top: 1%;
-    padding-bottom: 2%;
+    margin-right:2%;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #toggle-menu{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 40%;
+    max-height: 3rem;
     width: 60%;
-    border-radius: 15%;
-}
-#right > :not(:first-child) > .title {
-    border-bottom: 1.5px white solid;
-    padding: 5px;
-    background: transparent;
-    width: 10rem;
+    padding: 7px;
+    margin-bottom: 30vh;
+    backdrop-filter: blur(2px);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 5%);
+    user-select: none;
+    transition: max-height 1.0s ease-in-out;
 }
 /*Filter group styling*/
 #toggle-radio-group {
+    visibility: hidden;
+}
+#toggle-menu.active {
+    max-height: 5rem;
+}
+#toggle-menu{
+    visibility: none;
+}
+/*Code for when the filters are toggled on*/
+#toggle-menu.active #toggle-radio-group{
     display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: start;
-    padding-left:1.25vw;
-    padding-top: 1.6vh;
-    gap: 1.1vh;
+    visibility: visible;
+    animation: show 1.0s ease;
+    flex-direction: row;
+    gap: 1rem;
     background-color: transparent;
-    align-self:start;
+    align-self: center;
+    pointer-events: all;
+    padding: 5px;
+    transition: opacity 1.0s ease;
+}
+/*Animations for toggle-menu*/
+@keyframes show {
+    0% {opacity: 0;}
+    100%{opacity: 1;}
 }
 #toggle-radio-group > label {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: transparent;
     gap: 4px;
 }
 /*Remove Default styling for radio buttons*/
@@ -174,17 +206,26 @@ html {
 /*Styling for custom radio buttons*/
 #toggle-radio-group > label > span{
     font-size: 0.8rem;
-    background-color: transparent;
-    border: 1px white solid;
+    border: 2.0px solid rgba(255, 255, 255, 0.2);
     height: 0.75rem;
     width: 0.75rem;
     border-radius: 50%;
 }
-.custom-label input[type="checkbox"]:checked + .custom-radio {
-    background-color: white !important;
+#custom-label input[type="checkbox"]:checked + .custom-radio {
+    background-color: rgba(255,255,255, 0.5) !important;
 }
-.custom-label input[type="checkbox"]:not(:checked) + .custom-radio:hover {
+#custom-label input[type="checkbox"]:not(:checked) + .custom-radio:hover {
     background-color: gray !important;
+}
+#right > :not(:first-child) > .title {
+    cursor: default;
+    border-radius: 0px;
+    padding: 5px;
+    width: 10rem;
+    /*Center filter text*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /*Search Menu Styling*/
@@ -192,59 +233,47 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 5rem;
-    background-color: transparent;
+    margin-top: 8%;
 }
 #search > input {
-    background-color: rgba(0, 0, 0, 50%);
-    border: 1.5px white solid;
+    text-align: center;
     width: 20rem;
     height: 1rem;
-    padding: 2px;
+    padding: 4px;
     color: white;
+    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 5%);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
 }
 /*Remove blue focus on click for search input*/
 textarea:focus, input:focus{
     outline: none;
 }
 /*Adjust styling for the information section*/
-#info-box {
+#atlas-intel{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 20rem;
-    width: 17rem;
-    border-radius: 15%;
+    justify-content: center;
+    min-height: 6rem;
+    min-width: 6rem;
+    margin: 7rem;
+    backdrop-filter: blur(2px);
+    border-radius: 50px !important;
+    background: rgba(255, 255, 255, 5%);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
 }
-#info-box > p {
+#info-box > div {
     padding: 0.5rem;
 }
-#info-box > .information{
-    padding: 0.7rem;
-    background: transparent;
-}
 
-
-/*Title styling for all menu divs. This can change but will leave as placeholder until final decision is made*/
-div > h1 {
-    align-self: center;
-    justify-self: center;
-    margin-top: 0.5rem;
-    font-size: 1.8rem;
-}
-/*Physical styling for all divs in the menu*/
-body > div :not(:first-child) > div > div{
-    color: white;
-    background-color: rgba(0, 0, 0, 50%);
-}
 /*Autocomplete dropdown*/
 .suggestion-list{
-    background-color: rgba(0, 0, 0, 50%);
     width: 20rem;
     padding: 2px;
     list-style: none;
     overflow-y: scroll;
-    z-index: 10;
     border: none;
 }
 .suggestion-item {
