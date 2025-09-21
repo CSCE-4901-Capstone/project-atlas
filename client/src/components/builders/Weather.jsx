@@ -39,9 +39,9 @@ function Weather({ radius, refreshTrigger }) {
         const tempMax = 40;
 
         const scale = chroma.scale([
-          '#000080', '#0055cc', '#00ccff', '#66ffcc',
-          '#ffff99', '#ffcc66', '#ff6600', '#cc0000'
-        ]).domain([tempMin, -20, 0, 10, 20, 25, 30, tempMax]);
+          '#00008B', '#071996', '#0E32A2', '#154AAD', '#1C63B9', '#237BC4', '#2A94D0', '#31ACDC', '#38C5E7', '#40E0D0', '#58D3B8', '#71C6A1', '#89B989', '#A2AC72', '#BA9F5A', '#D39243', '#EB852B', '#FF7814', '#FF690A', '#FF6600'
+
+        ]).domain([tempMin, -45.26, -40.53, -35.79, -31.05, -26.32, -21.58, -16.84, -12.11, -7.37, -2.63, 2.11, 6.84, 11.58, 16.32, 21.05, 25.79, 30.53, 35.26, tempMax]);
 
         for (let y = 0; y < height; y++) {
           const flippedY = height - 1 - y;
@@ -54,7 +54,7 @@ function Weather({ radius, refreshTrigger }) {
               imageData.data[i] = r;
               imageData.data[i + 1] = g;
               imageData.data[i + 2] = b;
-              imageData.data[i + 3] = 200;
+              imageData.data[i + 3] = 170;
             } else {
               imageData.data[i + 3] = 0;
             }
