@@ -9,7 +9,8 @@ function ToggleMenu({ choiceMade, onFilterSelection }) {
 
   function handleFilterSelection(e) {
     const value = e.target.value;
-    const newValue = activeFilter === value ? null : value;
+    const newValue = selected === value ? null : value;
+    setSelected(newValue);
     onFilterSelection(newValue);
   }
   useEffect(()=>{
