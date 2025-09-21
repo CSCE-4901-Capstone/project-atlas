@@ -25,10 +25,6 @@ const AISummary = ({chCountry}) =>{
                     session_id: SessionNum,
                     Role_choice: 0
                 })
-                    /*?country=${choiceCountry}/${SessionNum}`).then(response => response.data) .then(data => {
-                    console.log(data);
-                    SET_AI_Response(data.response);
-                  })*/
                 .then(response => {
                         console.log("AI response received:", response.data);
                         SET_AI_Response(response.data.response);
