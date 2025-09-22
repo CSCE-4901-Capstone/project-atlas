@@ -15,30 +15,33 @@ function Environment({ selectedCountry, onCountrySelection, activeFilter }) {
   });
   const [clickDisabled, setClickDisabled] = useState(false);
 
-  function handleResize() {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-  }
-
-  const handlePointerDown = (e) => {
-    if (clickDisabled) e.stopPropagation() // prevent clicks
-  }
-
-  // Handles screen resizing
   useEffect(() => {
-    window.addEventListener('resize', handleResize)
-  }, [])
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <Canvas
-      style={{ width: windowSize.width, height: windowSize.height, background: 'black'}}
-      onPointerDown={handlePointerDown}
+      style={{
+        width: windowSize.width,
+        height: windowSize.height,
+        background: 'black',
+        pointerEvents: clickDisabled ? 'none' : 'auto'
+      }}
     >
       <StarField numStars={500}/>
-      <CameraController selectedCountry={selectedCountry} setClickDisabled={setClickDisabled}/>
-      <OrbitControls makeDefault/>
+      <CameraController
+        selectedCountry={selectedCountry}
+        setClickDisabled={setClickDisabled}
+      />
+      <OrbitControls makeDefault />
       {activeFilter ? <UpdateFilter activeFilter={activeFilter} /> : null}
       <CountryHighlight selectedCountry={selectedCountry}/>
       <Globe onCountrySelection={onCountrySelection}/>
