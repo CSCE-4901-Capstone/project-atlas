@@ -91,7 +91,11 @@ class CountryNews(APIView):                #handles connection to external API f
                 #self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
                 result = self.NEWS.Parse_Spit(RAW_articles)
                 
-                return Response(result, status=status.HTTP_200_OK)
+                #error checking for News_API to see if correct output was recieved
+                if result.get("error"):
+                    return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
+                
+                return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model

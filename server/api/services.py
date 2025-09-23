@@ -268,8 +268,16 @@ class NEWS_API(ExternalAPI):
         return response.json()          #return the json response collection of article
     
     def Parse_Spit(self, Articles):
+        if not isinstance(Articles, dict) and Articles.get("status") == "error":
+            return {
+                "articles": [],
+                "error": Articles.get("message") or Articles.get("code") or "NewsAPI error"
+            }
         if not isinstance(Articles, dict) or "articles" not in Articles:
-            return {"articles": []}
+            return {
+                    "articles": [],
+                    "error": "Invalid Response from NEWS_API"
+                }
 
         items = Articles.get("articles", [])
         Formatted_Articles = []

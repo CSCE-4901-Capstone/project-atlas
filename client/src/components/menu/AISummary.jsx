@@ -39,7 +39,7 @@ const News = ({chCountry}) =>{
                             const articles = response?.data?.articles ?? [];
                             //SET_AI_Response(response.data.response);
                             if (Array.isArray(articles) && articles.length > 0){
-                                setArticleArray([]);
+                                setArticleArray(articles);
                                 setStatusText("Array populated!")
                             }
 
@@ -72,6 +72,7 @@ return (
         <ul className="article">
           {articleArray.map((item, idx) => (
             <li key={item?.link ?? `${idx}`}>
+                
               <h3>
                 {(item?.Num ?? idx + 1)}{" "}
                 <a
