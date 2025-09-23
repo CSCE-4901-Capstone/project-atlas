@@ -6,66 +6,95 @@ AI logic functionality will be inserted here then put the variable for the retur
 delete filler text
  */
 
-const AISummary = ({chCountry}) =>{
-    const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
-    const[SessionNum, SET_SessionNum] = useState("");
+const News = ({chCountry}) =>{
+    //const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
+    
     const[articleArray, setArticleArray] = useState([]);
+    const[statusText, setStatusText] = useState("Please select a country... ");
+
     //useref for single calls only Note: useEffect in React 18 causes double fetch calls for debugging purposes and will not be affected in production
     //Use effect to make a call to the server
         useEffect(() => {
-            const NEW_SessionNum = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
-            SET_SessionNum(NEW_SessionNum); //Store the newly generated Session ID to the current use State
+            if (!chCountry){
+                setArticleArray([]);setStatusText("Please select a country... ");
+                return;
 
-            
+            }
+        
+        
+        const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
+
 
             //async function to grab data
-            async function GET_AI_Response() {
-                await api_conn.post("/api/AI/", {       //sending post request with needed values in body
+            function GET_NEWS_response() {
+                setStatusText("fetching articles from NEWS_API")
+                
+                api_conn.post("/api/AI/", {       //sending post request with needed values in body
                     country: chCountry,
-                    session_id: SessionNum,
-                    Role_choice: 0
-                })
-                .then(response => {
-                        console.log("AI response received:", response.data);
-                        SET_AI_Response(response.data.response);
-                        if(response.data.response != "AI response not received"){
-                            const parsed = JSON.parse(response.data.response).articles;
-                            console.log(parsed);
-                            setArticleArray(parsed);
-                        }
-                })
-                .catch(error => console.error('Error fetching json file:', error));
-            }
-            try{
-                console.log(chCountry)
-                if(chCountry){
-                    GET_AI_Response();
+                    session_id: SessionID,
+                    Role_choice: 0                  //can actually remove later on
+                    })
+                    .then(response => {
+                            console.log("response FROM views.py:", response.data);
+                            const articles = response?.data?.articles ?? [];
+                            //SET_AI_Response(response.data.response);
+                            if (Array.isArray(articles) && articles.length > 0){
+                                setArticleArray([]);
+                                setStatusText("Array populated!")
+                            }
+
+                            /*if(response.data.response != "AI response not received"){
+                                const parsed = JSON.parse(response.data.response).articles;
+                                console.log(parsed);
+                                setArticleArray(parsed);
+                            }*/
+                            else{
+                            setArticleArray([]);
+                            setStatusText("No articles found/no response form API...")
+                            }
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching json file:', error);
+                        setArticleArray([]);
+                        setStatusText("There was an error when fetching the articles");
+
+                    });
                 }
-            } catch (e) {
-                console.error(e);
-            }
+    
+                GET_NEWS_response();
         }, [chCountry]);
-        //useEffect to test if the parsed article array works
-        useEffect(() => {
-            console.log(articleArray);
-        }, [articleArray])
 
-    return(
-        <>
-            <ChoiceCountry choice={chCountry}/>
-            <div className="text-container">
-                <ul className="article">
-                    {articleArray.length > 0 ? articleArray.map((item) => (
-                        <li key={item.title}>
-                            <h3><a href={item.link} target="_blank" rel="noopener noreferrer">{item.title}</a></h3>
-                            <p>{item.description}</p>
-                            <p>Source: <strong>{item.source}</strong></p>
-                        </li>
-                    )): "Please Select a country..."}
-                </ul>
-            </div>
-        </>
-    )
-}
+return (
+  <>
+    <ChoiceCountry choice={chCountry} />
+    <div className="text-container">
+      {articleArray.length > 0 ? (
+        <ul className="article">
+          {articleArray.map((item, idx) => (
+            <li key={item?.link ?? `${idx}`}>
+              <h3>
+                {(item?.Num ?? idx + 1)}{" "}
+                <a
+                  href={item?.link ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item?.Title ?? "Untitled"}
+                </a>
+              </h3>
 
-export default AISummary;
+              {item?.Author ? <p>By {item.Author}</p> : null}
+              {item?.Timestamp ? <p>{item.Timestamp}</p> : null}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>{statusText}</p>
+      )}
+    </div>
+  </>
+);
+};
+
+export default News;
+
