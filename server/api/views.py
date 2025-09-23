@@ -27,6 +27,7 @@ class FlightList(APIView):
 
                 #return Response({"response":result})
         
+
 class WeatherGridView(APIView):
     """
     Fills and returns a 2D temperature grid based on OpenWeatherMap (async version)
