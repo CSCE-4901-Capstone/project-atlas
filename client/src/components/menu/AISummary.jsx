@@ -6,6 +6,9 @@ AI logic functionality will be inserted here then put the variable for the retur
 delete filler text
  */
 
+
+
+
 const News = ({chCountry}) =>{
     //const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
     
@@ -68,32 +71,42 @@ return (
   <>
     <ChoiceCountry choice={chCountry} />
     <div className="text-container">
-      {articleArray.length > 0 ? (
-        <ul className="article">
-          {articleArray.map((item, idx) => (
-            <li key={item?.link ?? `${idx}`}>
-                
-              <h3>
-                {(item?.Num ?? idx + 1)}{" "}
+    {articleArray.length > 0 ? (
+        <ol className="article">
+        {articleArray.map((item, idx) => {
+            const safeTitle =
+            (item?.title && item.title.trim()) ||
+            (item?.source && `(${item.source})`) ||
+            "Untitled";
+            return (
+            <li key={item?.link ?? `${idx}`} style ={{marginBottom: "1rem"}}>
+                <h3>
+                    {idx+1}. {" "}
                 <a
-                  href={item?.link ?? "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                    href={item?.link ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#00FFFF", textDecoration: "none" }}  // link color here
                 >
-                  {item?.Title ?? "Untitled"}
+                    {safeTitle}
                 </a>
-              </h3>
-
-              {item?.Author ? <p>By {item.Author}</p> : null}
-              {item?.Timestamp ? <p>{item.Timestamp}</p> : null}
+                </h3>
+                {item?.description ? <p>{item.description}</p> : null}
+                {item?.source ? (
+                <p>
+                    Source: <strong>{item.source}</strong>
+                </p>
+                ) : null}
             </li>
-          ))}
-        </ul>
-      ) : (
+            );
+        })}
+        </ol>
+    ) : (
         <p>{statusText}</p>
-      )}
+    )}
     </div>
   </>
+  
 );
 };
 
