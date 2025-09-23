@@ -13,6 +13,7 @@ function ToggleMenu({ choiceMade, onFilterSelection }) {
     setSelected(newValue);
     onFilterSelection(newValue);
   }
+  //Apply closing animation when country is selected
   useEffect(()=>{
     if(choiceMade != null){
         setActive(false);
