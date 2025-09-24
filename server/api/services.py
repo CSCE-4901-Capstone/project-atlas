@@ -13,14 +13,6 @@ AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environmen
 WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
 NEWS_API_key = os.getenv("NEWS_API_KEY")
 
-'''#Below is the connection to the firebase hosted database
-Database_path = os.getenv("FIREBASE_PATH")
-DB_creds = credentials.Certificate(Database_path)
-firebase_admin.initialize_app(DB_creds)
-
-DB = firestore.client()             #Create Database instance in the backend'''
-
-
 class ExternalAPI():
     def __init__(self):
         self.last_modified = None
@@ -85,90 +77,56 @@ class Gemini_API(ExternalAPI):
     AI_Role2 = '''asdfasf'''
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
-        #selection of AI role to make the call to the API
         if (Role_choice == 0):
             Role = self.AI_Role1
         elif (Role_choice == 1):
             Role = self.AI_Role2
 
         model = "meta-llama/llama-4-maverick:free"
-
-        #model = "google/gemini-2.5-pro-exp-03-25:free"
-
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
         }
-
-        #for future debuggin, in case the API_Key is changed, uncomment the code below to check if API_Key supports Model being used
-        '''response = requests.get(
-            url="https://openrouter.ai/api/v1/models",
-            headers={"Authorization": f"Bearer {API_key}"}
-        )
-        print(response.json())'''
-
-        '''{#Message to define role of AI in prompt exchange
-                "role": "system",
-                "content": Role
-            },'''
-
         print(prompt)
-
         SendMessage = {
-            "model": model,                #make sure the message is being sent to the gemini model
+            "model": model,
             "messages": [
-                {#Message to define the message being sent to the AI
+                {
                     "role": "user",
                     "content": prompt
                 }
             ]
         }
-
-
         response = requests.get(
         url="https://openrouter.ai/api/v1/key",
         headers={
             "Authorization": f"Bearer {AI_API_key}"
         }
         )
-
         print(json.dumps(response.json(), indent=2))
-
         print("🧠 Sending prompt to OpenRouter:", json.dumps(SendMessage, indent=2))
-
-
         try:
             response = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",           #url of API endpoint
-                headers = headers,                          #sending the headers so API knows who is accessing and what format to use
-                json = SendMessage              #prompt converted to json file so it can be used by API
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers = headers,
+                json = SendMessage
             )
-
             data = response.json()
-
-            #pushing data to GPT to get processed data
             if response.status_code == 200 and "choices" in data:
-
-                #collect the response from the AI model
                 RETURNED_response =  response.json()["choices"][0]["message"]["content"]
-
-                #output the returned Message from the API
                 print(RETURNED_response)
-
-                return RETURNED_response #use line to return prompt raw
-
-            else:   #display error message in event that API request is unsuccessful
+                return RETURNED_response
+            else:
                 print(f"[OpenRouter] Error {response.status_code}: {response.text}")
                 return "AI response not recieved."
         except Exception as e:
             print(f"[OpenRouter] Request failed: {e}")
             return "AI service error. Connection failed to be made."
 
-    def get_history(self): #retrieve the history already allocated in the database for a specific user
-
+    def get_history(self):
         return []
 
-    def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
+    def save_history(self,NewHistory: list):
         pass
 
 class WeatherAPIAsync:
@@ -176,17 +134,17 @@ class WeatherAPIAsync:
         #Grid boundaries and resolution
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 5  # Adjust granularity here
+        self.STEP = 2  # Keep this at a high-resolution value
 
         #Grid size
-        self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
-        self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
-
         self.rows = ((self.LAT_MAX - self.LAT_MIN) // self.STEP) + 1
         self.cols = ((self.LON_MAX - self.LON_MIN) // self.STEP) + 1
 
         #Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+        
+        # ADDED: A property for the cache filename
+        self.cache_file = "weather_cache.json"
 
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
@@ -217,68 +175,70 @@ class WeatherAPIAsync:
             self.grid[lat_index][lon_index] = None
 
     async def fill_grid_async(self, force_refresh=False):
-        #Try loading from cache first
-        if not force_refresh and os.path.exists("weather_cache.json"):
+        if not force_refresh and os.path.exists(self.cache_file):
             try:
-                with open("weather_cache.json", "r") as f:
+                with open(self.cache_file, "r") as f:
                     self.grid = json.load(f)
                     return self.grid
             except Exception as e:
-                print("Failed to load cached weather data:", e)
+                print(f"Failed to load cached data from {self.cache_file}: {e}")
 
         #Fetch live data concurrently
         import aiohttp
         async with aiohttp.ClientSession() as session:
             tasks = []
-
             for lat_index in range(self.rows):
                 for lon_index in range(self.cols):
                     lat = self.LAT_MIN + lat_index * self.STEP
                     lon = self.LON_MIN + lon_index * self.STEP
                     tasks.append(self._fetch_and_store(session, lat_index, lon_index, lat, lon))
-
             await asyncio.gather(*tasks)
 
         #Save to cache
         try:
-            with open("weather_cache.json", "w") as f:
+            with open(self.cache_file, "w") as f:
                 json.dump(self.grid, f)
         except Exception as e:
-            print("Failed to write cache:", e)
+            print(f"Failed to write cache to {self.cache_file}: {e}")
 
         return self.grid
 
+class PrecipitationAPIAsync(WeatherAPIAsync):
+    def __init__(self):
+        super().__init__()
+        self.cache_file = "precip_cache.json"
+
+    async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
+        try:
+            data = await self._fetch_weather(session, lat, lon)
+            rain = data.get('rain', {}).get('1h', 0)
+            snow = data.get('snow', {}).get('1h', 0)
+            precipitation = rain + snow
+            self.grid[lat_index][lon_index] = precipitation
+        except Exception as e:
+            print(f"Failed to fetch precipitation ({lat}, {lon}): {e}")
+            self.grid[lat_index][lon_index] = None
+
 class NEWS_API(ExternalAPI):
 
-    def GatherArticles(self,CountryChoice):          #function for getting LIVE valid articles pertaining to a CountryChoice
-
-        NEWS_API_url = 'https://newsapi.org/v2/everything'          #NEWS_API endpoint
-
-        params = {              #parameters to be sent to the NEWS API
-            'q': CountryChoice,         # Search query
-            'language': 'en',              # English articles only
-            'sortBy': 'publishedAt',       # Sort by latest news
-            'pageSize': 5,                 # Number of articles
-            'apiKey': NEWS_API_key              # Your API key
+    def GatherArticles(self,CountryChoice):
+        NEWS_API_url = 'https://newsapi.org/v2/everything'
+        params = {
+            'q': CountryChoice,
+            'language': 'en',
+            'sortBy': 'publishedAt',
+            'pageSize': 5,
+            'apiKey': NEWS_API_key
         }
         print(CountryChoice)
-        # Make the request to the NEWS API
         response = requests.get(NEWS_API_url, params=params)
-
-        return response.json()          #return the json response collection of article
+        return response.json()
     
     def Parse_Spit(self, Articles):
         if not isinstance(Articles, dict) and Articles.get("status") == "error":
-            return {
-                "articles": [],
-                "error": Articles.get("message") or Articles.get("code") or "NewsAPI error"
-            }
+            return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
         if not isinstance(Articles, dict) or "articles" not in Articles:
-            return {
-                    "articles": [],
-                    "error": "Invalid Response from NEWS_API"
-                }
-
+            return { "articles": [], "error": "Invalid Response from NEWS_API" }
         items = Articles.get("articles", [])
         Formatted_Articles = []
         for i, a in enumerate(items, start=1):
@@ -291,14 +251,13 @@ class NEWS_API(ExternalAPI):
             })
         return {"articles": Formatted_Articles}
     
-
 class Agentic_AI(ExternalAPI):
-    def Weather_Gather(self):       #function to gather prior weather information
+    def Weather_Gather(self):
         return
-    def Flight_Gather(self):        #function to gather prior flight information
+    def Flight_Gather(self):
         return
-    def News_Gather(self):          #function to gather prior News information
+    def News_Gather(self):
         return
-    def Holistic_View(self):        #function to analyze all data and provide situational awareness
+    def Holistic_View(self):
         return
 

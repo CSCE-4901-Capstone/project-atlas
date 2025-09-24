@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .services import WeatherAPIAsync
+from .services import WeatherAPIAsync, PrecipitationAPIAsync
 import asyncio
 
 from api.models import FlightModel
@@ -50,6 +50,23 @@ class WeatherGridView(APIView):
 
         except Exception as e:
             print("WeatherGridView error:", e)
+            return Response({"error": str(e)}, status=500)
+        
+class PrecipitationGridView(APIView):
+    def get(self, request, format=None):
+        try:
+            api = PrecipitationAPIAsync()
+            refresh = request.GET.get("refresh", "false").lower() == "true"
+            grid = asyncio.run(api.fill_grid_async(force_refresh=refresh))
+
+            return Response({
+                "lon": api.rows,
+                "lat": api.cols,
+                "data": grid
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("PrecipitationGridView error:", e)
             return Response({"error": str(e)}, status=500)
         
 class CountryNews(APIView):                #handles connection to external API for AI interaction
