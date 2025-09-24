@@ -102,6 +102,10 @@ html {
     overflow-x:hidden;
     margin-top: 3%;
     border-radius: 0px;
+    padding: 20px;
+}
+#text-container > ol {
+    list-style: none;
 }
 
 
