@@ -49,6 +49,12 @@ function Weather({ radius, layerType = 'Weather', refreshTrigger }) {
       
       try {
         const res = await fetch(url);
+        
+        if (res.status === 429) {
+          console.warn(`Rate limit exceeded for ${layerType} data. Aborting texture generation.`);
+          return; 
+        }
+
         const json = await res.json();
         const grid = json.data;
 

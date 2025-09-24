@@ -7,6 +7,7 @@ import asyncio
 #library for secure key handling
 import dotenv
 from dotenv import load_dotenv
+import aiohttp
 
 load_dotenv()       #load the .env file with needed credentials
 AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
@@ -170,6 +171,12 @@ class WeatherAPIAsync:
             data = await self._fetch_weather(session, lat, lon)
             temp = data.get('main', {}).get('temp')
             self.grid[lat_index][lon_index] = temp
+        except aiohttp.ClientResponseError as e:
+            if e.status == 429:
+                print(f"Rate limit exceeded for ({lat}, {lon}). Skipping.")
+            else:
+                print(f"HTTP error for ({lat}, {lon}): {e.status} {e.message}")
+            self.grid[lat_index][lon_index] = None
         except Exception as e:
             print(f"Failed to fetch ({lat}, {lon}): {e}")
             self.grid[lat_index][lon_index] = None
@@ -183,8 +190,6 @@ class WeatherAPIAsync:
             except Exception as e:
                 print(f"Failed to load cached data from {self.cache_file}: {e}")
 
-        #Fetch live data concurrently
-        import aiohttp
         async with aiohttp.ClientSession() as session:
             tasks = []
             for lat_index in range(self.rows):
@@ -194,7 +199,6 @@ class WeatherAPIAsync:
                     tasks.append(self._fetch_and_store(session, lat_index, lon_index, lat, lon))
             await asyncio.gather(*tasks)
 
-        #Save to cache
         try:
             with open(self.cache_file, "w") as f:
                 json.dump(self.grid, f)
@@ -215,6 +219,12 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
             snow = data.get('snow', {}).get('1h', 0)
             precipitation = rain + snow
             self.grid[lat_index][lon_index] = precipitation
+        except aiohttp.ClientResponseError as e:
+            if e.status == 429:
+                print(f"Rate limit exceeded for precipitation at ({lat}, {lon}). Skipping.")
+            else:
+                print(f"HTTP error for precipitation at ({lat}, {lon}): {e.status} {e.message}")
+            self.grid[lat_index][lon_index] = None
         except Exception as e:
             print(f"Failed to fetch precipitation ({lat}, {lon}): {e}")
             self.grid[lat_index][lon_index] = None
