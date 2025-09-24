@@ -4,7 +4,7 @@ import '../../styles/Atlas.css'
 // Have the toggle menu be built using an array of names
 function ToggleMenu({ choiceMade, onFilterSelection }) {
     const [selected,setSelected] = useState(null);
-    const filters = ["Flights", "Weather"];
+    const filters = ["Flights", "Weather", "Precipitation"];
     const [active, setActive] = useState(false);
 
   function handleFilterSelection(e) {
