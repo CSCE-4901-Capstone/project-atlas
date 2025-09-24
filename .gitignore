@@ -9,4 +9,4 @@ server/api/.env
 .venv/
 venv/
 
-weather_cache.json
+# weather_cache.json
