@@ -17,7 +17,19 @@ const layerConfigs = {
     url: 'http://localhost:8000/api/precipitation/',
     min: 0.1, //Don't show transparent for 0mm
     max: 50,  //Max precipitation in mm/hr for the scale
-    scale: chroma.scale(['lightblue', 'blue', 'darkblue']).domain([0.1, 10, 50]),
+    scale: chroma.scale([
+      '#00FF00', //Light rain
+      '#00CC00', //Light rain
+      '#ADFF2F', //YellowGreen
+      '#FFFF00', //Moderate rain
+      '#FFD700', //Gold
+      '#FFA500', //Heavier rain
+      '#FF4500', //OrangeRed
+      '#DC143C', //Heavy rain
+      '#8B0000', //Severe storms
+      '#FF69B4', //Snow (assuming values > typical rain, or a separate indicator)
+      '#800080', //Very heavy snow
+    ]).domain([0.1, 0.5, 1, 2, 5, 10, 15, 25, 35, 40, 50]),
     alpha: 220, //Opacity: 85%
   },
 };
