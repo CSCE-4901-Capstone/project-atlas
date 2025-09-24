@@ -176,7 +176,7 @@ class WeatherAPIAsync:
         #Grid boundaries and resolution
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 3  # Adjust granularity here
+        self.STEP = 2  # Adjust granularity here
 
         #Grid size
         self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
@@ -252,7 +252,7 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
     async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
         try:
             data = await self._fetch_weather(session, lat, lon)
-            #Raain/Snow from last hour
+            #Rain/Snow from last hour
             rain = data.get('rain', {}).get('1h', 0)
             snow = data.get('snow', {}).get('1h', 0)
             #Sum of rain + snow
