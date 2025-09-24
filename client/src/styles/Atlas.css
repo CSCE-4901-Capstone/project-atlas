@@ -165,11 +165,9 @@ html {
     transition: max-height 1.0s ease-in-out;
 }
 /*Filter group styling*/
-#toggle-radio-group {
-    visibility: hidden;
-}
+
 #toggle-menu.active {
-    max-height: 5rem;
+    max-height: 6.5rem;
 }
 #toggle-menu{
     visibility: none;
@@ -178,8 +176,9 @@ html {
 #toggle-menu.active #toggle-radio-group{
     display: flex;
     visibility: visible;
-    animation: show 1.0s ease;
+    animation: show 1.0s ease-in-out;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
     background-color: transparent;
     align-self: center;
@@ -191,6 +190,9 @@ html {
 @keyframes show {
     0% {opacity: 0;}
     100%{opacity: 1;}
+}
+#toggle-radio-group {
+    visibility: hidden;
 }
 #toggle-radio-group > label {
     display: flex;
