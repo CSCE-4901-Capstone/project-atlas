@@ -4,13 +4,12 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .services import Gemini_API
 from .services import WeatherAPIAsync
 import asyncio
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI, Gemini_API, NEWS_API
+from api.services import FlightAPI,NEWS_API     #,Gemini_API,
 
 class FlightList(APIView):
     """
@@ -55,12 +54,15 @@ class WeatherGridView(APIView):
         
 class CountryNews(APIView):                #handles connection to external API for AI interaction
 
-        AI_Gemini = Gemini_API()
+        #AI_Gemini = Gemini_API()
         NEWS = NEWS_API()
 
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
                 CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
-                Role_choice = request.data.get("Role_choice")
+                #Role_choice = request.data.get("Role_choice")
+                
+                if not CountryChoice:
+                    return Response({"error": "No Country Passed/detected"},status=status.HTTP_400_BAD_REQUEST)
 
                 RAW_articles = self.NEWS.GatherArticles(CountryChoice)
 
@@ -69,24 +71,36 @@ class CountryNews(APIView):                #handles connection to external API f
                 #        description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
 
 
-                prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
-                        in the following format (NO CODE SNIPPET OR INSTRUCTION JUST PRINT THE CONVERTED JSON):
-                        {{"articles": [
-                                {{"title": "Title of the News Article",
-                                        "description": "Description of the news Article",
-                                        "source": "source of the news article",
-                                        "link": "web url of the news article"
-                                }}
-                                ]
-                        }}
-                        Here is the JSON data to be used:
-                        {RAW_articles}
-                        Double check formatting before response
-                        Do not give a response using markdown only the json format
-                        '''
-                result = self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
-                return Response({"response":result}, status=status.HTTP_200_OK)
+                #prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
+                #        in the following format (NO CODE SNIPPET OR INSTRUCTION JUST PRINT THE CONVERTED JSON):
+                #        {{"articles": [
+                #                {{"title": "Title of the News Article",
+                #                        "description": "Description of the news Article",
+                #                        "source": "source of the news article",
+                #                        "link": "web url of the news article"
+                #                }}
+                #                ]
+                #        }}
+                #        Here is the JSON data to be used:
+                #        {RAW_articles}
+                #        Double check formatting before response
+                #        Do not give a response using markdown only the json format
+                #        '''
+                
+                
+                #self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
+                result = self.NEWS.Parse_Spit(RAW_articles)
+                
+                #error checking for News_API to see if correct output was recieved
+                if result.get("error"):
+                    return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
+                
+                return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
 
+class Agent(APIView):
+    
+    def post(self,request,format=None):
+        return

@@ -7,11 +7,6 @@ import asyncio
 #library for secure key handling
 import dotenv
 from dotenv import load_dotenv
-#below is library for database connection and
-'''import firebase_admin
-from firebase_admin import credentials, firestore'''
-
-
 
 load_dotenv()       #load the .env file with needed credentials
 AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
@@ -271,3 +266,39 @@ class NEWS_API(ExternalAPI):
         response = requests.get(NEWS_API_url, params=params)
 
         return response.json()          #return the json response collection of article
+    
+    def Parse_Spit(self, Articles):
+        if not isinstance(Articles, dict) and Articles.get("status") == "error":
+            return {
+                "articles": [],
+                "error": Articles.get("message") or Articles.get("code") or "NewsAPI error"
+            }
+        if not isinstance(Articles, dict) or "articles" not in Articles:
+            return {
+                    "articles": [],
+                    "error": "Invalid Response from NEWS_API"
+                }
+
+        items = Articles.get("articles", [])
+        Formatted_Articles = []
+        for i, a in enumerate(items, start=1):
+            Formatted_Articles.append({
+                "Num": i,
+                "title": a.get("title"),
+                "description": a.get("description"),
+                "source": (a.get("source") or {}).get("name"),
+                "link": a.get("url"),
+            })
+        return {"articles": Formatted_Articles}
+    
+
+class Agentic_AI(ExternalAPI):
+    def Weather_Gather(self):       #function to gather prior weather information
+        return
+    def Flight_Gather(self):        #function to gather prior flight information
+        return
+    def News_Gather(self):          #function to gather prior News information
+        return
+    def Holistic_View(self):        #function to analyze all data and provide situational awareness
+        return
+
