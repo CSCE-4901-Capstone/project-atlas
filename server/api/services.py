@@ -2,15 +2,11 @@ import requests
 import time
 import json
 import os
+import asyncio
 
 #library for secure key handling
 import dotenv
 from dotenv import load_dotenv
-#below is library for database connection and
-'''import firebase_admin
-from firebase_admin import credentials, firestore'''
-
-
 
 load_dotenv()       #load the .env file with needed credentials
 AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
@@ -175,18 +171,21 @@ class Gemini_API(ExternalAPI):
     def save_history(self,NewHistory: list): #save the new history to the database or file for a specific user
         pass
 
-class WeatherAPI(ExternalAPI):
+class WeatherAPIAsync:
     def __init__(self):
-        super().__init__()
-
-        #Grid Constants
+        #Grid boundaries and resolution
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 10 #5-degree interval
+        self.STEP = 5  # Adjust granularity here
 
-        #Empty Grid
+        #Grid size
         self.rows = (self.LAT_MAX - self.LAT_MIN) // self.STEP
         self.cols = (self.LON_MAX - self.LON_MIN) // self.STEP
+
+        self.rows = ((self.LAT_MAX - self.LAT_MIN) // self.STEP) + 1
+        self.cols = ((self.LON_MAX - self.LON_MIN) // self.STEP) + 1
+
+        #Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
 
     def coords_to_index(self, lat, lon):
@@ -196,58 +195,56 @@ class WeatherAPI(ExternalAPI):
         col = int((lon - self.LON_MIN) // self.STEP)
         return row, col
 
-    def fetch_weather(self, lat, lon):
-        """
-        Fetches data based on latitude and longitude.
-        """
-        self.update_last_modified()
-
+    async def _fetch_weather(self, session, lat, lon):
         url = "https://api.openweathermap.org/data/2.5/weather"
-        parameters = {
+        params = {
             'lat': lat,
             'lon': lon,
             'appid': WEATHER_API_KEY,
             'units': 'metric'
         }
+        async with session.get(url, params=params) as response:
+            response.raise_for_status()
+            return await response.json()
 
-        response = requests.get(url, params=parameters)
-        response.raise_for_status()
-        return (response.json())
+    async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
+        try:
+            data = await self._fetch_weather(session, lat, lon)
+            temp = data.get('main', {}).get('temp')
+            self.grid[lat_index][lon_index] = temp
+        except Exception as e:
+            print(f"Failed to fetch ({lat}, {lon}): {e}")
+            self.grid[lat_index][lon_index] = None
 
-    """
-    def build_weather(self, raw_data):
+    async def fill_grid_async(self, force_refresh=False):
+        #Try loading from cache first
+        if not force_refresh and os.path.exists("weather_cache.json"):
+            try:
+                with open("weather_cache.json", "r") as f:
+                    self.grid = json.load(f)
+                    return self.grid
+            except Exception as e:
+                print("Failed to load cached weather data:", e)
 
-        Formats weather data into more simpler terms
+        #Fetch live data concurrently
+        import aiohttp
+        async with aiohttp.ClientSession() as session:
+            tasks = []
 
-        return {
-            'latitude': raw_data.get('coord', {}).get('lat'),
-            'longitude': raw_data.get('coord', {}).get('lon'),
-            'temperature': raw_data.get('main', {}).get('temp'),
-            'description': raw_data.get('weather', [{}])[0].get('description'),
-            'timestamp': raw_data.get('dt'),
-            'location_name': raw_data.get('name')
+            for lat_index in range(self.rows):
+                for lon_index in range(self.cols):
+                    lat = self.LAT_MIN + lat_index * self.STEP
+                    lon = self.LON_MIN + lon_index * self.STEP
+                    tasks.append(self._fetch_and_store(session, lat_index, lon_index, lat, lon))
 
-        }
-    """
+            await asyncio.gather(*tasks)
 
-    def fill_grid(self):
-        """
-        Given a list of coorinate points, fetch temperature and store in grid
-        """
-        for lat_index in range(self.rows):
-            for lon_index in range(self.cols):
-                lat = self.LAT_MIN + lat_index * self.STEP
-                lon = self.LON_MIN + lon_index * self.STEP
-                try:
-                    weather = self.fetch_weather(lat, lon)
-                    self.grid[lat_index][lon_index] = weather.get('main', {}).get('temp')
-                    time.sleep(0.02)
-                except Exception as e:
-                    print(f"Failed ({lat}, {lon}): {e}")
-                    continue
-
+        #Save to cache
+        try:
             with open("weather_cache.json", "w") as f:
                 json.dump(self.grid, f)
+        except Exception as e:
+            print("Failed to write cache:", e)
 
         return self.grid
 
@@ -269,3 +266,39 @@ class NEWS_API(ExternalAPI):
         response = requests.get(NEWS_API_url, params=params)
 
         return response.json()          #return the json response collection of article
+    
+    def Parse_Spit(self, Articles):
+        if not isinstance(Articles, dict) and Articles.get("status") == "error":
+            return {
+                "articles": [],
+                "error": Articles.get("message") or Articles.get("code") or "NewsAPI error"
+            }
+        if not isinstance(Articles, dict) or "articles" not in Articles:
+            return {
+                    "articles": [],
+                    "error": "Invalid Response from NEWS_API"
+                }
+
+        items = Articles.get("articles", [])
+        Formatted_Articles = []
+        for i, a in enumerate(items, start=1):
+            Formatted_Articles.append({
+                "Num": i,
+                "title": a.get("title"),
+                "description": a.get("description"),
+                "source": (a.get("source") or {}).get("name"),
+                "link": a.get("url"),
+            })
+        return {"articles": Formatted_Articles}
+    
+
+class Agentic_AI(ExternalAPI):
+    def Weather_Gather(self):       #function to gather prior weather information
+        return
+    def Flight_Gather(self):        #function to gather prior flight information
+        return
+    def News_Gather(self):          #function to gather prior News information
+        return
+    def Holistic_View(self):        #function to analyze all data and provide situational awareness
+        return
+

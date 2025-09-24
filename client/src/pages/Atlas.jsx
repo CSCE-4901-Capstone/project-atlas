@@ -4,15 +4,24 @@ import 'src/styles/Atlas.css';
 import Menu from '../components/menu/Menu';
 
 function Atlas() {
-  let [selectedCountry, setSelectedCountry] = useState(null);
-  let [activeFilter, setActiveFilter] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
     <>
-      <Environment selectedCountry={selectedCountry} onCountrySelection={setSelectedCountry} activeFilter={activeFilter}/>
-      <Menu searchVal={selectedCountry} setSearchVal={setSelectedCountry} onFilterSelection={setActiveFilter}/>
+      <Environment 
+        selectedCountry={selectedCountry} 
+        onCountrySelection={setSelectedCountry} 
+        activeFilter={activeFilter}
+      />
+      <Menu 
+        searchVal={selectedCountry} 
+        setSearchVal={setSelectedCountry} 
+        onFilterSelection={setActiveFilter} //Update toggle 
+        activeFilter={activeFilter} 
+      />
     </>
   )
 }
 
-export default Atlas
+export default Atlas;

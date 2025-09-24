@@ -10,7 +10,9 @@ function Flights({ radius }) {
     // Pull data from json file
     useEffect(() => {
       async function fetchData() {
-        await api_conn.get('/api/flights') .then(response => response.data) .then(data => {
+        await api_conn.get('/api/flights')
+          .then(response => response.data)
+          .then(data => {
             console.log(data);
             setData(data)
           })
@@ -41,20 +43,28 @@ function BuildFlights({ data, radius }) {
 
     console.log(points.length)
     console.log(data.length)
-    points.forEach(([x, y, z]) => {
-      const geometry = new BoxGeometry(0.02, 0.02, 0.002);
 
-      // Create a matrix to translate to the position
+    points.forEach(([x, y, z], i) => {
+      const geometry = new BoxGeometry(0.005, 0.005, 0.000001);
+
+      // Move geometry to position
       const translationMatrix = new Matrix4().makeTranslation(x, y, z);
 
-      // Create a temporary object to use lookAt and get rotation position
+      // Make object point at center of globe (Only back texture will be seen)
       const tempObject = new Object3D();
       tempObject.position.set(x, y, z);
-      tempObject.lookAt(0, 0, 0);
-      const rotationMatrix = new Matrix4().makeRotationFromEuler(tempObject.rotation);
+      tempObject.lookAt(0,0,0);
+      const lookAtMatrix = new Matrix4().makeRotationFromEuler(tempObject.rotation);
 
-      // Combine translation and rotation
-      const finalMatrix = new Matrix4().multiplyMatrices(translationMatrix, rotationMatrix);
+      // Make plane face correct direction
+      const dirDeg = data[i].direction;
+      const dirRad = (dirDeg * Math.PI) / 180;
+      const zRotationMatrix = new Matrix4().makeRotationZ(dirRad);
+
+      // Combine all transforms
+      const finalMatrix = new Matrix4()
+        .multiplyMatrices(translationMatrix, lookAtMatrix)
+        .multiply(zRotationMatrix);
 
       geometry.applyMatrix4(finalMatrix);
       geometries.push(geometry);
@@ -73,7 +83,6 @@ function BuildFlights({ data, radius }) {
   return mergedGeometry ? (
     <mesh ref={groupRef}>
       <primitive object={mergedGeometry} attach="geometry" />
-      <meshBasicMaterial map={texture} transparent />
     </mesh>
   ) : null;
 }
