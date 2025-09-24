@@ -6,7 +6,10 @@ import Help from "./Help";
 const Left = ({choice}) => {
     return(
         <div id="left">
-            <div id='AI'>
+            <div 
+            id='AI'
+            className={ choice ? "active" : ""}
+            >
                 <AISummary chCountry={choice}/> 
             </div>
             <div id="help">

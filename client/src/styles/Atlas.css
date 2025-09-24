@@ -85,22 +85,28 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 25vw;
-    height: 43vh;
+    width: 18rem;
+    height: 25rem;
     margin-top: 6vh;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
     background: rgba(255, 255, 255, 5%);
+    transition: width 1.0s ease, height 1.0s ease;
 }
-#AI > .text-container {
+#AI.active{
+    height: 20rem;
+    width: 35rem;
+}
+#text-container {
     max-height: 74%;
     overflow-x:hidden;
     margin-top: 3%;
     border-radius: 0px;
 }
 
+
 /*Padding for text inside of AISummary*/
-#AI > .text-container > p{
+#text-container > p{
     padding: 0.4rem;
 }
 /*Padding for country selection*/
@@ -184,7 +190,6 @@ html {
     align-self: center;
     pointer-events: all;
     padding: 5px;
-    transition: opacity 1.0s ease;
 }
 /*Animations for toggle-menu*/
 @keyframes show {

@@ -62,7 +62,7 @@ const News = ({chCountry}) =>{
 return (
   <>
     <ChoiceCountry choice={chCountry} />
-    <div className="text-container">
+    <div id="text-container" >
     {articleArray.length > 0 ? (
         <ol className="article">
         {articleArray.map((item, idx) => {
