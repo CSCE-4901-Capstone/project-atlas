@@ -19,7 +19,8 @@ const News = ({chCountry}) =>{
     //Use effect to make a call to the server
         useEffect(() => {
             if (!chCountry){
-                setArticleArray([]);setStatusText("Please select a country... ");
+                setArticleArray([]);
+                setStatusText("Please select a country... ");
                 return;
 
             }
@@ -102,6 +103,7 @@ return (
         })}
         </ol>
     ) : (
+        /* Add loading gif here when promise while promise is being fullfilled */
         <p>{statusText}</p>
     )}
     </div>
