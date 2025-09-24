@@ -10,8 +10,6 @@ delete filler text
 
 
 const News = ({chCountry}) =>{
-    //const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
-    
     const[articleArray, setArticleArray] = useState([]);
     const[statusText, setStatusText] = useState("Please select a country... ");
 
@@ -22,11 +20,10 @@ const News = ({chCountry}) =>{
                 setArticleArray([]);
                 setStatusText("Please select a country... ");
                 return;
-
             }
         
         
-        const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
+            const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
 
 
             //async function to grab data
@@ -46,12 +43,6 @@ const News = ({chCountry}) =>{
                                 setArticleArray(articles);
                                 setStatusText("Array populated!")
                             }
-
-                            /*if(response.data.response != "AI response not received"){
-                                const parsed = JSON.parse(response.data.response).articles;
-                                console.log(parsed);
-                                setArticleArray(parsed);
-                            }*/
                             else{
                             setArticleArray([]);
                             setStatusText("No articles found/no response form API...")
