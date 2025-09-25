@@ -96,6 +96,11 @@ return (
     ) : (
         <p>{statusText}</p>
     )}
+    {statusText == "fetching articles from NEWS_API" ? (
+        <img id="loading-gif" src="../../assets/loading.gif" alt="loading gif"/>
+    ) : (
+        <p></p>
+    )}
     </div>
   </>
   
