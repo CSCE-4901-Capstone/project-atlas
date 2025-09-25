@@ -94,7 +94,6 @@ return (
         })}
         </ol>
     ) : (
-        /* Add loading gif here when promise while promise is being fullfilled */
         <p>{statusText}</p>
     )}
     </div>
