@@ -107,6 +107,10 @@ html {
 #text-container > ol {
     list-style: none;
 }
+#text-container > img {
+    height: 100px;
+    width: 100px;
+}
 
 
 /*Padding for text inside of AISummary*/

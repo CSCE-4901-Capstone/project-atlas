@@ -1,6 +1,7 @@
 import React, {useState,useEffect, useRef} from "react";        // import the useState and useEffect to generate Session Tokens
 import ChoiceCountry from './ChoiceCountry'
 import api_conn from 'src/utils/api';
+import loadingGif from "../../assets/loading.gif"
 /*
 AI logic functionality will be inserted here then put the variable for the return prompt in the brackets where the comment is and 
 delete filler text
@@ -93,13 +94,11 @@ return (
             );
         })}
         </ol>
+    ) : null}
+    {statusText == "fetching articles from NEWS_API" ? (
+        <img id="loading-gif" src={loadingGif} alt="loading gif"/>
     ) : (
         <p>{statusText}</p>
-    )}
-    {statusText == "fetching articles from NEWS_API" ? (
-        <img id="loading-gif" src="../../assets/loading.gif" alt="loading gif"/>
-    ) : (
-        <p></p>
     )}
     </div>
   </>
