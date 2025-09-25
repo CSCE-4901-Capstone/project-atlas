@@ -85,26 +85,40 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 25vw;
-    height: 43vh;
+    width: 15rem;
+    height: 23rem;
     margin-top: 6vh;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
     background: rgba(255, 255, 255, 5%);
+    transition: width 1.0s ease-in-out, height 1.0s ease-in-out;
 }
-#AI > .text-container {
+#AI.active{
+    height: 18rem;
+    width: 35rem;
+}
+#text-container {
     max-height: 74%;
     overflow-x:hidden;
     margin-top: 3%;
     border-radius: 0px;
+    padding: 20px;
+}
+#text-container > ol {
+    list-style: none;
+}
+#text-container > img {
+    height: 100px;
+    width: 100px;
 }
 
+
 /*Padding for text inside of AISummary*/
-#AI > .text-container > p{
+#text-container > p{
     padding: 0.4rem;
 }
 /*Padding for country selection*/
-#AI > .country-choice{
+.country-choice{
     border-radius: 0px;
     padding: 5px;
     width: 13rem;
@@ -112,6 +126,13 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.country-choice h1{
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+.country-choice h1.hide{
+    opacity: 0;
 }
 
 #help{
@@ -147,8 +168,9 @@ html {
     display: flex;
     flex-direction: column;
     align-items: end;
-    justify-content: space-between;
     margin-right:2%;
+    position: relative;
+    gap: 12rem;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #toggle-menu{
@@ -165,11 +187,9 @@ html {
     transition: max-height 1.0s ease-in-out;
 }
 /*Filter group styling*/
-#toggle-radio-group {
-    visibility: hidden;
-}
+
 #toggle-menu.active {
-    max-height: 5rem;
+    max-height: 6.5rem;
 }
 #toggle-menu{
     visibility: none;
@@ -178,19 +198,22 @@ html {
 #toggle-menu.active #toggle-radio-group{
     display: flex;
     visibility: visible;
-    animation: show 1.0s ease;
+    animation: show 1.0s ease-in-out;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
     background-color: transparent;
     align-self: center;
     pointer-events: all;
     padding: 5px;
-    transition: opacity 1.0s ease;
 }
 /*Animations for toggle-menu*/
 @keyframes show {
     0% {opacity: 0;}
     100%{opacity: 1;}
+}
+#toggle-radio-group {
+    visibility: hidden;
 }
 #toggle-radio-group > label {
     display: flex;
@@ -254,15 +277,31 @@ textarea:focus, input:focus{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 6rem;
-    min-width: 6rem;
-    margin: 7rem;
+    height: 6rem;
+    width: 6rem;
     backdrop-filter: blur(2px);
     border-radius: 50px !important;
     background: rgba(255, 255, 255, 5%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     user-select: none;
+    /*Position absolute to prevent affecting other divs on extension*/
+    position: absolute;
+    top: 65%;
+    right: 20%;
+    /*Animation for changing selection*/
+    transition: width 1.0s ease-in-out, height 1.0s ease-in-out;
 }
+#atlas-intel.active{
+    height: 15rem;
+    width: 35rem;
+}
+
+/*Text container for the response from the AI agent*/
+#atlas-intel .atlas-response-container {
+    display:none;
+}
+
+
 #info-box > div {
     padding: 0.5rem;
 }

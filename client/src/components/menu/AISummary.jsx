@@ -1,6 +1,7 @@
 import React, {useState,useEffect, useRef} from "react";        // import the useState and useEffect to generate Session Tokens
 import ChoiceCountry from './ChoiceCountry'
 import api_conn from 'src/utils/api';
+import loadingGif from "../../assets/loading.gif"
 /*
 AI logic functionality will be inserted here then put the variable for the return prompt in the brackets where the comment is and 
 delete filler text
@@ -10,8 +11,6 @@ delete filler text
 
 
 const News = ({chCountry}) =>{
-    //const[AI_Response, SET_AI_Response] = useState("Select a country for a list of news Articles");   //declaring what to display while response is getting fetched
-    
     const[articleArray, setArticleArray] = useState([]);
     const[statusText, setStatusText] = useState("Please select a country... ");
 
@@ -22,11 +21,10 @@ const News = ({chCountry}) =>{
                 setArticleArray([]);
                 setStatusText("Please select a country... ");
                 return;
-
             }
         
         
-        const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
+            const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
 
 
             //async function to grab data
@@ -46,12 +44,6 @@ const News = ({chCountry}) =>{
                                 setArticleArray(articles);
                                 setStatusText("Array populated!")
                             }
-
-                            /*if(response.data.response != "AI response not received"){
-                                const parsed = JSON.parse(response.data.response).articles;
-                                console.log(parsed);
-                                setArticleArray(parsed);
-                            }*/
                             else{
                             setArticleArray([]);
                             setStatusText("No articles found/no response form API...")
@@ -71,7 +63,7 @@ const News = ({chCountry}) =>{
 return (
   <>
     <ChoiceCountry choice={chCountry} />
-    <div className="text-container">
+    <div id="text-container" >
     {articleArray.length > 0 ? (
         <ol className="article">
         {articleArray.map((item, idx) => {
@@ -102,8 +94,10 @@ return (
             );
         })}
         </ol>
+    ) : null}
+    {statusText == "fetching articles from NEWS_API" ? (
+        <img id="loading-gif" src={loadingGif} alt="loading gif"/>
     ) : (
-        /* Add loading gif here when promise while promise is being fullfilled */
         <p>{statusText}</p>
     )}
     </div>

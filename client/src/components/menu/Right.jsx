@@ -7,8 +7,8 @@ const Right = ({choice, onSearchChange, onFilterSelection, activeFilter}) => {
     return(
         <div id="right">
             <Search onChangeHandle={onSearchChange}/>
-            <ToggleMenu choiceMade={choice} onFilterSelection={onFilterSelection} activeFilter={activeFilter}/>
-            <AtlasIntel/>
+            <ToggleMenu choiceMade={choice} onFilterSelection={onFilterSelection}/>
+            <AtlasIntel choiceMade={choice}/>
         </div>
     )
 }
