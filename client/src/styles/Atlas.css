@@ -157,8 +157,9 @@ html {
     display: flex;
     flex-direction: column;
     align-items: end;
-    justify-content: space-between;
     margin-right:2%;
+    position: relative;
+    gap: 12rem;
 }
 /*Shared Styling for #info-box and #toggle-menu as well as their titles*/
 #toggle-menu{
@@ -265,15 +266,31 @@ textarea:focus, input:focus{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 6rem;
-    min-width: 6rem;
-    margin: 7rem;
+    height: 6rem;
+    width: 6rem;
     backdrop-filter: blur(2px);
     border-radius: 50px !important;
     background: rgba(255, 255, 255, 5%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     user-select: none;
+    /*Position absolute to prevent affecting other divs on extension*/
+    position: absolute;
+    top: 65%;
+    right: 20%;
+    /*Animation for changing selection*/
+    transition: width 1.0s ease-in-out, height 1.0s ease-in-out;
 }
+#atlas-intel.active{
+    height: 15rem;
+    width: 35rem;
+}
+
+/*Text container for the response from the AI agent*/
+#atlas-intel .atlas-response-container {
+    display:none;
+}
+
+
 #info-box > div {
     padding: 0.5rem;
 }
