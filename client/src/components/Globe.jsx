@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { TextureLoader, LinearFilter } from 'three';
+import * as THREE from 'three';
+import Shaders from 'src/components/Shaders';
 import getSelectedCountry from 'src/utils/GetSelectedCountry';
 //import Movement from 'src/components/Movement'
 
@@ -27,20 +27,32 @@ function Globe({onCountrySelection = () => {}}) {
   }
 
   // Loads the earth texture
-  const texture = useLoader(TextureLoader, "/images/earth2.jpg");
-  texture.minFilter = LinearFilter;
-  texture.generateMipmaps = false;
-  texture.needsUpdate = true;
+  const [map, specularMap, bumpMap] = useLoader(THREE.TextureLoader, [
+    "/images/earth2.jpg",
+    "/images/02_earthspec1k.jpg",
+    "/images/01_earthbump1k.jpg",
+  ]);
+
+  map.colorSpace = THREE.SRGBColorSpace
+  //texture.minFilter = LinearFilter;
+  //texture.generateMipmaps = false;
+  //texture.needsUpdate = true;
 
   return (
     <>
+      <Shaders />
       <ambientLight intensity={3} />
       <mesh 
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
       >
           <sphereGeometry args={[2, 51, 32]} />
-          <meshStandardMaterial map={texture} />
+          <meshPhongMaterial
+            map={map}
+            specularMap={specularMap}
+            bumpMap={bumpMap}
+            bumpScale={0.04}
+          />
       </mesh>
     </>
   )
