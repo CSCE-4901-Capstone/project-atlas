@@ -74,7 +74,27 @@ class Gemini_API(ExternalAPI):
     in the prompt. Assume the traveler is a United States citizen. ONLY RESPOND it in a list format
     where the list consists of necessary travel documents.'''
 
-    AI_Role2 = '''asdfasf'''
+    AI_Role2 = role = """
+    You are a geo-locator assistant. Whenever I give you a URL to a news article, your job is to determine the most likely city where the article was published from, and then respond ONLY in JSON format. Do all research, verification, and background checks silently in the background.
+
+    The JSON format must be:
+
+    {
+    "city": "<city name>",
+    "url": "<provided url>",
+    "title": "<title of article",
+    "country": "<country name>",
+    "latitude": <decimal latitude>,
+    "longitude": <decimal longitude>
+    }
+
+    Rules:
+    - Use decimal degrees for coordinates (positive = N/E, negative = S/W).
+    - Always provide up to 4 decimal places.
+    - If the city is unknown, use the nearest identifiable location (region or country) instead.
+    - Do not include any text outside the JSON.
+    """
+
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         if (Role_choice == 0):
@@ -220,7 +240,54 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
             self.grid[lat_index][lon_index] = None
 
 class NEWS_API(ExternalAPI):
+    
+    #Arrays that house the countries that could be looked at for News Congestion
+    first_20 = {
+        1: "India", 2: "China", 3: "United States", 4: "Indonesia", 5: "Pakistan",
+        6: "Nigeria", 7: "Brazil", 8: "Bangladesh", 9: "Russia", 10: "Ethiopia",
+        11: "Mexico", 12: "Japan", 13: "Egypt", 14: "Philippines", 15: "DR Congo",
+        16: "Vietnam", 17: "Iran", 18: "Turkey", 19: "Germany", 20: "Thailand"
+    }
 
+    second_20 = {
+        21: "Tanzania", 22: "United Kingdom", 23: "France", 24: "South Africa", 25: "Italy",
+        26: "Kenya", 27: "Myanmar", 28: "Colombia", 29: "South Korea", 30: "Sudan",
+        31: "Uganda", 32: "Spain", 33: "Algeria", 34: "Iraq", 35: "Argentina",
+        36: "Afghanistan", 37: "Yemen", 38: "Canada", 39: "Morocco", 40: "Saudi Arabia"
+    }
+
+    third_20 = {
+        41: "Ukraine", 42: "Uzbekistan", 43: "Peru", 44: "Angola", 45: "Malaysia",
+        46: "Mozambique", 47: "Ghana", 48: "Madagascar", 49: "Nepal", 50: "Venezuela",
+        51: "Ivory Coast", 52: "North Korea", 53: "Australia", 54: "Niger", 55: "Sri Lanka",
+        56: "Burkina Faso", 57: "Syria", 58: "Cambodia", 59: "Senegal", 60: "Chad"
+    }
+
+    fourth_20 = {
+        61: "Somalia", 62: "Zimbabwe", 63: "Guinea", 64: "Rwanda", 65: "Benin",
+        66: "Burundi", 67: "Tunisia", 68: "Bolivia", 69: "Belgium", 70: "Haiti",
+        71: "Cuba", 72: "South Sudan", 73: "Dominican Republic", 74: "Czechia", 75: "Greece",
+        76: "Jordan", 77: "Paraguay", 78: "Laos", 79: "Libya", 80: "Nicaragua"
+    }
+
+    fifth_20 = {
+        81: "Kyrgyzstan", 82: "El Salvador", 83: "Togo", 84: "Sierra Leone", 85: "Eritrea",
+        86: "Singapore", 87: "Denmark", 88: "Finland", 89: "Norway", 90: "Slovakia",
+        91: "Ireland", 92: "New Zealand", 93: "Costa Rica", 94: "Liberia", 95: "Oman",
+        96: "Panama", 97: "Kuwait", 98: "Mauritania", 99: "Croatia", 100: "Georgia"
+    }
+    
+    #Dictionary used is the data that constitutes a news point onto the globe
+    #when hovering over a point, it should give you the name of the article as a hyperlink to the news article online
+    NEWS_POINT = {
+        "city":None,
+        "url":None,
+        "title":None,
+        "country":None,
+        "latitude":None,
+        "longitude":None
+    }
+    
     def GatherArticles(self,CountryChoice):
         NEWS_API_url = 'https://newsapi.org/v2/everything'
         params = {
@@ -239,6 +306,7 @@ class NEWS_API(ExternalAPI):
             return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
         if not isinstance(Articles, dict) or "articles" not in Articles:
             return { "articles": [], "error": "Invalid Response from NEWS_API" }
+        
         items = Articles.get("articles", [])
         Formatted_Articles = []
         for i, a in enumerate(items, start=1):
