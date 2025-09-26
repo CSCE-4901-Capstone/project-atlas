@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 
 const ChoiceCountry = ({choice}) => {
     const [displayed,setDisplayed] = useState(choice)
-    console.log("Displayed: " + displayed)
-    /*Works but the effect is delayed and looks off */
     const [fade, setFade] = useState(false);
+
     useEffect(()=>{
         if(choice == displayed){
             return;
