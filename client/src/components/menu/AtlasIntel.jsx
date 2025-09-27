@@ -7,6 +7,8 @@ import api_conn from 'src/utils/api';
 
 function AtlasIntel({choiceMade}){
     //Dummy AI agent response string set to dummy data for printing the response **REMOVE THIS OR SET IT TO THE RESPONSE WHEN CONTENT IS DELIVERED**
+    
+    //set content is the text displayed. Just do setContent = response (No need for UseEffect)
     const [content,setContent] = useState("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
     //DisplayText useStates
     const [displayText,setDisplayText] = useState("");
