@@ -42,7 +42,8 @@ const News = ({chCountry}) =>{
                             //SET_AI_Response(response.data.response);
                             if (Array.isArray(articles) && articles.length > 0){
                                 setArticleArray(articles);
-                                setStatusText("Array populated!")
+                                //Prevents loading gif from being at the bottom of the articles
+                                setStatusText("");
                             }
                             else{
                             setArticleArray([]);
