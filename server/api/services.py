@@ -102,7 +102,7 @@ class Gemini_API(ExternalAPI):
         elif (Role_choice == 1):
             Role = self.AI_Role2
 
-        model = "meta-llama/llama-4-maverick:free"
+        model = "x-ai/grok-4-fast:free" #"meta-llama/llama-4-maverick:free"
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
@@ -111,10 +111,12 @@ class Gemini_API(ExternalAPI):
         SendMessage = {
             "model": model,
             "messages": [
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+                
+                    {"role": "system",
+                     "content": Role},
+                    {"role": "user",
+                    "content": prompt}
+                
             ]
         }
         response = requests.get(
@@ -333,43 +335,55 @@ class NEWS_API(ExternalAPI):
         return {"articles": Formatted_Articles}
     
     def NewsPointBuilder(self,CountryList):
-        Articles = []           #create empty list to hold articles
+        #Articles = []           #create empty list to hold articles
         AI = Gemini_API()       #make instance of AI to serve as a geolocator
         
-        if self.CountryList in globals():
-            CountryList = globals[self.CountryList]         #set the country array once matched to the global array
+        if isinstance(CountryList, str) and CountryList in globals():
+            CountryList = globals()[CountryList]         #set the country array once matched to the global array
         
-        for country in CountryList:             #Mass pull the articles for a country list
-            Articles.append(self.GatherArticles_InMass(country))
+        CountryList = list(CountryList.values())                 #ensure that the list for countries is created    
         
-        #ensure the articles were read in correctly
-        if not isinstance(Articles, dict) and Articles.get("status") == "error":
-            return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
-        if not isinstance(Articles, dict) or "articles" not in Articles:
-            return { "articles": [], "error": "Invalid Response from NEWS_API" }
-        
-        items = Articles.get("articles", [])                #used for parsing the articles
+        #items = Articles.get("articles", [])                #used for parsing the articles
         Formatted_Articles = []                 #array to hold the list of the formatted articles that are passed to AI component
         
-        for country in CountryList:                 #append articles for every country in the array
-            for i, a in enumerate(items, start=1):
+        for country in CountryList:                 #append articles for every country in the array after pulling articles
+            
+            try:    
+                Response_chunk = self.GatherArticles_InMass(country)
+                #Articles.append(Response_chunk)                             #append each recieved article for each country
+                
+            except Exception as e:
+                print(f"Error while gathering Articles for {country}: {e}")
+                continue    
+            
+            #Error handling for NewsAPI
+            if not isinstance(Response_chunk, dict):
+                print(f"{country}: non-dict response")
+                continue
+            if Response_chunk.get("status") == "error":
+                print(f"{country}: NewsAPI error -> {Response_chunk.get('message') or Response_chunk.get('code')}")
+                continue
+            
+            for a in (Response_chunk.get("articles",[]) or []):
                 Formatted_Articles.append({
                     "url": a.get("url"),
                     "title": a.get("title"),
-                    "country": {country},           #set the country to that of the country already being read in from input
+                    "country": country,           #set the country to that of the country already being read in from input
                 })
         
-        Articles.clear()                    #clear the for stuff not needed to ensure there are no memory leaks
+        #Articles.clear()                    #clear the for stuff not needed to ensure there are no memory leaks
         
         #REMOVE if slows down application significantly        
         print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
         
-        Formatted_Articles = AI.EnterPrompt_C_Data(Formatted_Articles,1)            #make JSON prompt and then assign GeoLocator Role
+        try:
+            Formatted_Articles = AI.EnterPrompt_C_Data(Formatted_Articles,1)            #make JSON prompt and then assign GeoLocator Role
+        except Exception as e:
+            print(f"AI reponse error for geolocation data of country: {e}")
         
         #REMOVE if slows down application significantly        
         print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
 
-        
         return {"articles": Formatted_Articles}
     
 class Agentic_AI(ExternalAPI):              #work on after getting the congestion filter built out completely

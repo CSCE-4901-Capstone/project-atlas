@@ -98,8 +98,8 @@ class Heatmap(APIView):
     NEWS = NEWS_API()
     
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
-        
-        Mass_Articles = self.NEWS.NewsPointBuilder("first_20")
+        #in future: optimize to also account for first_20, second_20, etc.
+        Mass_Articles = self.NEWS.NewsPointBuilder(self.NEWS.first_20)
         
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
         

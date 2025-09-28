@@ -11,7 +11,7 @@ function UpdateFilter({ activeFilter }) {
         return <Weather radius={2} layerType="Weather" />;
       case 'Precipitation': 
         return <Weather radius={2} layerType="Precipitation" />;
-      case 'Heatmap':           //filter used for News Congestion Heatmap
+      case 'News':           //filter used for News Congestion Heatmap
           return  <NewsCongestion radius={2} />;
       default:
         return null;

@@ -35,7 +35,8 @@ function BuildHeatmap({ data, radius }) {
 
   const mergedGeometry = useMemo(() => {
     // Extract coordinate data
-    let json = convertObjectsToMultiPointGeoJSON("Congestion", data);
+    const ArticleItems = data?.articles ?? [];
+    let json = convertObjectsToMultiPointGeoJSON("Congestion", ArticleItems);
     let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius)
     let points = sphereCoordinates['output_coordinate_array'];
 
@@ -45,31 +46,38 @@ function BuildHeatmap({ data, radius }) {
     let geometries = [];
 
     console.log(points.length)
-    console.log(data.length)
+    console.log(ArticleItems.length)
 
     points.forEach(([x, y, z], i) => {
-      const geometry = new PlaneGeometryGeometry(0.005, 0.005, 0.000001);     //originally was box geometry
+      //const geometry = new PlaneGeometry(0.005, 0.005, 1, 1);     //originally was box geometry
+      /*//if doesnt work use the one below
+      ///      const geometry = new BoxGeometry(0.005, 0.005, 0.000001);     //originally was box geometry
+
+
+      // Move geometry to position
+      const translationMatrix = new Matrix4().makeTranslation(x, y, z);
+      geometry.applyMatrix4(finalMatrix);
+      geometries.push(geometry);*/
+
+      const geometry = new BoxGeometry(0.005, 0.005, 0.000001);
 
       // Move geometry to position
       const translationMatrix = new Matrix4().makeTranslation(x, y, z);
 
       // Make object point at center of globe (Only back texture will be seen)
-      /*const tempObject = new Object3D();
+      const tempObject = new Object3D();
       tempObject.position.set(x, y, z);
       tempObject.lookAt(0,0,0);
-      const lookAtMatrix = new Matrix4().makeRotationFromEuler(tempObject.rotation);*/
+      const lookAtMatrix = new Matrix4().makeRotationFromEuler(tempObject.rotation);
 
-      /*// Make plane face correct direction
-      const dirDeg = data[i].direction;
-      const dirRad = (dirDeg * Math.PI) / 180;
-      const zRotationMatrix = new Matrix4().makeRotationZ(dirRad);*/
+      const zRotationMatrix = new Matrix4().makeRotationZ(0);
 
-      /*// Combine all transforms
+      // Combine all transforms
       const finalMatrix = new Matrix4()
         .multiplyMatrices(translationMatrix, lookAtMatrix)
-        .multiply(zRotationMatrix);*/
+        .multiply(zRotationMatrix);
 
-      //geometry.applyMatrix4(finalMatrix);
+      geometry.applyMatrix4(finalMatrix);
       geometries.push(geometry);
     });
 
@@ -90,4 +98,4 @@ function BuildHeatmap({ data, radius }) {
   ) : null;
 }
 
-export default Flights;
+export default NewsPopulate;
