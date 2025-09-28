@@ -75,37 +75,13 @@ class CountryNews(APIView):                #handles connection to external API f
         NEWS = NEWS_API()
 
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
-                CountryChoice = request.data.get("country")  #from the post request sent fron AISummary.jsx read in the country value and store it.
-                #Role_choice = request.data.get("Role_choice")
+                CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
                 
                 if not CountryChoice:
                     return Response({"error": "No Country Passed/detected"},status=status.HTTP_400_BAD_REQUEST)
 
                 RAW_articles = self.NEWS.GatherArticles(CountryChoice)
 
-                #prompt = f'''Give me a list of 5 articles about current events that are occurring within {country} that are LESS than 3 months old.
-                #        Return it in a JSON format where it has a list called articles where each entry has a title,
-                #        description, source and link. ONLY GIVE THE JSON, NO MARKDOWN!!!!!'''
-
-
-                #prompt = f'''I am going to give you JSON data. I need you to look at the fields, and then return the JSON
-                #        in the following format (NO CODE SNIPPET OR INSTRUCTION JUST PRINT THE CONVERTED JSON):
-                #        {{"articles": [
-                #                {{"title": "Title of the News Article",
-                #                        "description": "Description of the news Article",
-                #                        "source": "source of the news article",
-                #                        "link": "web url of the news article"
-                #                }}
-                #                ]
-                #        }}
-                #        Here is the JSON data to be used:
-                #        {RAW_articles}
-                #        Double check formatting before response
-                #        Do not give a response using markdown only the json format
-                #        '''
-                
-                
-                #self.AI_Gemini.EnterPrompt_C_Data(prompt,Role_choice)                  #calling function within gemini class to send the prompt to the API per django requirements
                 result = self.NEWS.Parse_Spit(RAW_articles)
                 
                 #error checking for News_API to see if correct output was recieved
@@ -116,6 +92,17 @@ class CountryNews(APIView):                #handles connection to external API f
 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
+
+class Heatmap(APIView):
+    
+    NEWS = NEWS_API()
+    
+    def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
+        
+        Mass_Articles = self.NEWS.NewsPointBuilder("first_20")
+        
+        return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
+        
 
 class Agent(APIView):
     

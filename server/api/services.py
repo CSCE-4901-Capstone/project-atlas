@@ -74,16 +74,16 @@ class Gemini_API(ExternalAPI):
     in the prompt. Assume the traveler is a United States citizen. ONLY RESPOND it in a list format
     where the list consists of necessary travel documents.'''
 
-    AI_Role2 = role = """
+    AI_Role2 = role ="""
     You are a geo-locator assistant. Whenever I give you a URL to a news article, your job is to determine the most likely city where the article was published from, and then respond ONLY in JSON format. Do all research, verification, and background checks silently in the background.
 
     The JSON format must be:
 
     {
     "city": "<city name>",
-    "url": "<provided url>",
-    "title": "<title of article",
-    "country": "<country name>",
+    "url": "<(provided)>",
+    "title": "<(provided)>",
+    "country": "<(provided)>",
     "latitude": <decimal latitude>,
     "longitude": <decimal longitude>
     }
@@ -294,8 +294,21 @@ class NEWS_API(ExternalAPI):
             'q': CountryChoice,
             'language': 'en',
             'sortBy': 'publishedAt',
-            'pageSize': 5,
-            'apiKey': NEWS_API_key
+            'pageSize': 10,                     #get 10 different in a general sense for the countries
+            'apiKey': NEWS_API_key       #possibly have 2 different NewsAPI keys to prevent running out of API calls
+        }
+        print(CountryChoice)
+        response = requests.get(NEWS_API_url, params=params)
+        return response.json()
+    
+    def GatherArticles_InMass(self,CountryChoice):
+        NEWS_API_url = 'https://newsapi.org/v2/everything'
+        params = {
+            'q': CountryChoice,
+            'language': 'en',
+            'sortBy': 'publishedAt',
+            'pageSize': 100,                     #get 100 different for a country when prompted
+            'apiKey': NEWS_API_key      #possibly have 2 different NewsAPI keys to prevent running out of API calls
         }
         print(CountryChoice)
         response = requests.get(NEWS_API_url, params=params)
@@ -319,7 +332,47 @@ class NEWS_API(ExternalAPI):
             })
         return {"articles": Formatted_Articles}
     
-class Agentic_AI(ExternalAPI):
+    def NewsPointBuilder(self,CountryList):
+        Articles = []           #create empty list to hold articles
+        AI = Gemini_API()       #make instance of AI to serve as a geolocator
+        
+        if self.CountryList in globals():
+            CountryList = globals[self.CountryList]         #set the country array once matched to the global array
+        
+        for country in CountryList:             #Mass pull the articles for a country list
+            Articles.append(self.GatherArticles_InMass(country))
+        
+        #ensure the articles were read in correctly
+        if not isinstance(Articles, dict) and Articles.get("status") == "error":
+            return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
+        if not isinstance(Articles, dict) or "articles" not in Articles:
+            return { "articles": [], "error": "Invalid Response from NEWS_API" }
+        
+        items = Articles.get("articles", [])                #used for parsing the articles
+        Formatted_Articles = []                 #array to hold the list of the formatted articles that are passed to AI component
+        
+        for country in CountryList:                 #append articles for every country in the array
+            for i, a in enumerate(items, start=1):
+                Formatted_Articles.append({
+                    "url": a.get("url"),
+                    "title": a.get("title"),
+                    "country": {country},           #set the country to that of the country already being read in from input
+                })
+        
+        Articles.clear()                    #clear the for stuff not needed to ensure there are no memory leaks
+        
+        #REMOVE if slows down application significantly        
+        print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
+        
+        Formatted_Articles = AI.EnterPrompt_C_Data(Formatted_Articles,1)            #make JSON prompt and then assign GeoLocator Role
+        
+        #REMOVE if slows down application significantly        
+        print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
+
+        
+        return {"articles": Formatted_Articles}
+    
+class Agentic_AI(ExternalAPI):              #work on after getting the congestion filter built out completely
     def Weather_Gather(self):
         return
     def Flight_Gather(self):
