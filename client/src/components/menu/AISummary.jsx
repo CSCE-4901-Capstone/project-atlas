@@ -23,7 +23,6 @@ const News = ({chCountry}) =>{
                 return;
             }
         
-        
             const SessionID = crypto.randomUUID(); //use built in crypto tool to randomly generate a Session ID (for database purposes)
 
 

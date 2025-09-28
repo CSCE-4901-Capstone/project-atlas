@@ -37,4 +37,3 @@ how to run backend:
     pip install -r requirements.txt         #this command ensures virual environment has all dependencies
     python manage.py runserver            #this command runs the client server
     deactivate                    #this command ends the virtual machine
-Research new models without limits

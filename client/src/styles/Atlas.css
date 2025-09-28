@@ -164,7 +164,6 @@ html {
 #right > form {
     pointer-events: all;
 }
-
 #right{
     display: flex;
     flex-direction: column;
