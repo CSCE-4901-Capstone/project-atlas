@@ -7,8 +7,8 @@ function UpdateFilter({ activeFilter }) {
   switch (activeFilter) {
       case 'Flights':
         return <Flights radius={2} />;
-      case 'Weather':
-        return <Weather radius={2} layerType="Weather" />;
+      case 'Temperature':
+        return <Weather radius={2} layerType="Temperature" />;
       case 'Precipitation': 
         return <Weather radius={2} layerType="Precipitation" />;
       case 'News':           //filter used for News Congestion Heatmap

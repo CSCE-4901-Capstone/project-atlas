@@ -4,14 +4,14 @@ import { TextureLoader, CanvasTexture, LinearFilter } from 'three';
 import chroma from 'chroma-js';
 
 const layerConfigs = {
-  Weather: {
+  Temperature: {
     url: 'http://localhost:8000/api/weather/',
     min: -50,
     max: 40,
     scale: chroma.scale([
       '#8A2BE2', '#783CD2', '#664DC2', '#545CB1', '#4169E1', '#6983E1', '#91A1E1', '#B9BEE0', '#E1DCE0', '#F0F0D2', '#FFFFE0', '#FFF0AC', '#FFDB74', '#FFC73C', '#FFB304', '#FFA500', '#FF7B00', '#FF5200', '#FF2800', '#FF0000'
     ]).domain([-50, -35.79, -31.58, -27.37, -23.16, -18.95, -14.74, -10.53, -6.32, -2.11, 2.11, 6.32, 10.53, 14.74, 18.95, 23.16, 27.37, 31.58, 35.79, 40]),
-    alpha: 195, //Opcity: 76% 
+    alpha: 195, //Opacity: 76% 
   },
   Precipitation: {
     url: 'http://localhost:8000/api/precipitation/',

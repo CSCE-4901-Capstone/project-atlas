@@ -172,8 +172,9 @@ class WeatherAPIAsync:
         #Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
         
-        # ADDED: A property for the cache filename
         self.cache_file = "weather_cache.json"
+
+        #TODO: Find a way to have switching between temp and precip filter not delayed
 
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
