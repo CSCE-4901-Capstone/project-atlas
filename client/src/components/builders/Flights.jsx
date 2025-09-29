@@ -45,7 +45,7 @@ function BuildFlights({ data, radius }) {
     console.log(data.length)
 
     points.forEach(([x, y, z], i) => {
-      const geometry = new BoxGeometry(0.005, 0.005, 0.000001);
+      const geometry = new BoxGeometry(0.008, 0.008, 0.000001);
 
       // Move geometry to position
       const translationMatrix = new Matrix4().makeTranslation(x, y, z);
@@ -83,6 +83,7 @@ function BuildFlights({ data, radius }) {
   return mergedGeometry ? (
     <mesh ref={groupRef}>
       <primitive object={mergedGeometry} attach="geometry" />
+      <meshStandardMaterial map={texture} transparent={true} depthWrite={false} />
     </mesh>
   ) : null;
 }
