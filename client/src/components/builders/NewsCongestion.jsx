@@ -34,19 +34,21 @@ function BuildHeatmap({ data, radius }) {
   const texture = new TextureLoader().load('/images/ArticlePoint.jpg');       //populate the image for a news Point on the globe
 
   const mergedGeometry = useMemo(() => {
+
+    if (!data || !Array.isArray(data)) return null;
+    console.log(data);
+    
+
     // Extract coordinate data
-    const ArticleItems = data?.articles ?? [];
-    let json = convertObjectsToMultiPointGeoJSON("Congestion", ArticleItems);
+    let json = convertObjectsToMultiPointGeoJSON("Congestion", data);
     let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius)
     let points = sphereCoordinates['output_coordinate_array'];
 
 
     /*Do something here to build out the hover and click on image function*/
 
-   let geometries = [];
+   const geometries = [];
 
-    console.log(points.length)
-    console.log(ArticleItems.length)
 
     points.forEach(([x, y, z], i) => {
       //const geometry = new PlaneGeometry(0.005, 0.005, 1, 1);     //originally was box geometry
