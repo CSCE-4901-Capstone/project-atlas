@@ -81,8 +81,15 @@ function BuildHeatmap({ data, radius }) {
       geometries.push(geometry);
     });
 
-
-      return BufferGeometryUtils.mergeGeometries(geometries, false);
+      console.log(geometries);
+      try{
+        return BufferGeometryUtils.mergeGeometries(geometries, false);
+      } catch(e){
+        console.error("Failed to load heatmap.");
+      }
+      if(geometries.length > 0){
+        return BufferGeometryUtils.mergeGeometries(geometries, false);
+      }
   }, [data, radius]);
 
   useEffect(() => {
