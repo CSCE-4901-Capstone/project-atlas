@@ -109,15 +109,22 @@ class Gemini_API(ExternalAPI):
         }
         print(prompt)
         SendMessage = {
-            "model": model,
+            "model": model,  # e.g., "xai/grok-2-mini"
             "messages": [
-                
-                    {"role": "system",
-                     "content": Role},
-                    {"role": "user",
-                    "content": prompt}
-                
-            ]
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": Role}
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt}
+                    ]
+                }
+            ],
+            "temperature": 0.2
         }
         response = requests.get(
         url="https://openrouter.ai/api/v1/key",
