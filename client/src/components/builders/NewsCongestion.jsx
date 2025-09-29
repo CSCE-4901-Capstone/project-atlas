@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { TextureLoader, Matrix4, BoxGeometry, Object3D, PlaneGeometry } from 'three';
+import { TextureLoader, Matrix4, BoxGeometry, Object3D, PlaneGeometry, MeshBasicMaterial, Mesh } from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
@@ -31,7 +31,7 @@ return (                        //build out the heatmap based on the fetched new
 function BuildHeatmap({ data, radius }) {
   const groupRef = useRef();
 
-  const texture = new TextureLoader().load('/images/ArticlePoint.jpg');       //populate the image for a news Point on the globe
+  const texture = new TextureLoader().load('/assets/ArticlePoint.jpg');       //populate the image for a news Point on the globe
 
   const mergedGeometry = useMemo(() => {
 
@@ -61,7 +61,7 @@ function BuildHeatmap({ data, radius }) {
       geometry.applyMatrix4(finalMatrix);
       geometries.push(geometry);*/
 
-      const geometry = new BoxGeometry(0.005, 0.005, 0.000001);
+      const geometry = new BoxGeometry(0.05, 0.05, 0.000001);
 
       // Move geometry to position
       const translationMatrix = new Matrix4().makeTranslation(x, y, z);
@@ -100,8 +100,10 @@ function BuildHeatmap({ data, radius }) {
      }
   }, [])
 
+  const material = new MeshBasicMaterial({color: 0xff00ff});
+
   return mergedGeometry ? (
-    <mesh ref={groupRef}>
+    <mesh ref={groupRef} material={material}>
       <primitive object={mergedGeometry} attach="geometry" />
     </mesh>
   ) : null;
