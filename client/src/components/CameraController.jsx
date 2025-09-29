@@ -16,12 +16,11 @@ function CameraController({ selectedCountry, setClickDisabled}) {
       .then(res => res.json())
       .then(json => {
         const countryFeature = json.features[0]
-        const centerPoint = extractLargestPolygonCenterPoint(countryFeature);
-        //const centerPoint = turf.center(countryFeature)
+        const { centerPoint, offsetDistance }= extractLargestPolygonCenterPointAndOffsetDistance(countryFeature);
         const sphereCoordinates = convertGeoJSONToSphereCoordinates(centerPoint, 2.0)
         const targetPos = new THREE.Vector3(...sphereCoordinates.output_coordinate_array[0])
 
-        const offsetPos = targetPos.clone().normalize().multiplyScalar(targetPos.length() + 3)
+        const offsetPos = targetPos.clone().normalize().multiplyScalar(targetPos.length() + offsetDistance);
 
         const rotated = rotateAroundPoint(
           offsetPos,
@@ -53,11 +52,15 @@ function CameraController({ selectedCountry, setClickDisabled}) {
   return null
 }
 
-function extractLargestPolygonCenterPoint(feature) {
-  // Step 1: split multipolygon into individual polygons
-  const polys = turf.flatten(feature) // gives a FeatureCollection of polygons
+function extractLargestPolygonCenterPointAndOffsetDistance(feature) {
+  // Split multipolygon into individual polygons
+  const polys = turf.flatten(feature)
+  const area = turf.area(feature);
 
-  // Step 2: find largest polygon
+  console.log(area)
+  let offset = area > 3150308664823 ? 3 : 1;
+
+  // Find largest polygon
   let largest = null
   let maxArea = -Infinity
 
@@ -69,9 +72,8 @@ function extractLargestPolygonCenterPoint(feature) {
     }
   }
 
-  // Step 3: get the center of the largest polygon
-  return turf.center(largest)  // or turf.centroid(largest)
-
+  // Get the center of the largest polygon
+  return { centerPoint: turf.center(largest), offsetDistance: offset };
 
 }
 
