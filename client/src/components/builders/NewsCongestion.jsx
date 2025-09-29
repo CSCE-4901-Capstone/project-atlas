@@ -43,7 +43,7 @@ function BuildHeatmap({ data, radius }) {
 
     /*Do something here to build out the hover and click on image function*/
 
-    let geometries = [];
+   let geometries = [];
 
     console.log(points.length)
     console.log(ArticleItems.length)
