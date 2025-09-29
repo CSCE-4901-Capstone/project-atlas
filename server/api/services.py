@@ -74,7 +74,27 @@ class Gemini_API(ExternalAPI):
     in the prompt. Assume the traveler is a United States citizen. ONLY RESPOND it in a list format
     where the list consists of necessary travel documents.'''
 
-    AI_Role2 = '''asdfasf'''
+    AI_Role2 = role ="""
+    You are a geo-locator assistant. Whenever I give you a URL to a news article, your job is to determine the most likely city where the article was published from, and then respond ONLY in JSON format. Do all research, verification, and background checks silently in the background.
+
+    The JSON format must be:
+
+    {
+    "city": "<city name>",
+    "url": "<(provided)>",
+    "title": "<(provided)>",
+    "country": "<(provided)>",
+    "latitude": <decimal latitude>,
+    "longitude": <decimal longitude>
+    }
+
+    Rules:
+    - Use decimal degrees for coordinates (positive = N/E, negative = S/W).
+    - Always provide up to 4 decimal places.
+    - If the city is unknown, use the nearest identifiable location (region or country) instead.
+    - Do not include any text outside the JSON.
+    """
+
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
         if (Role_choice == 0):
@@ -82,20 +102,29 @@ class Gemini_API(ExternalAPI):
         elif (Role_choice == 1):
             Role = self.AI_Role2
 
-        model = "meta-llama/llama-4-maverick:free"
+        model = "x-ai/grok-4-fast:free" #"meta-llama/llama-4-maverick:free"
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
         }
         print(prompt)
         SendMessage = {
-            "model": model,
+            "model": model,  # e.g., "xai/grok-2-mini"
             "messages": [
                 {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": Role}
+                    ]
+                },
+                {
                     "role": "user",
-                    "content": prompt
+                    "content": [
+                        {"type": "text", "text": prompt}
+                    ]
                 }
-            ]
+            ],
+            "temperature": 0.2
         }
         response = requests.get(
         url="https://openrouter.ai/api/v1/key",
@@ -143,8 +172,9 @@ class WeatherAPIAsync:
         #Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
         
-        # ADDED: A property for the cache filename
         self.cache_file = "weather_cache.json"
+
+        #TODO: Find a way to have switching between temp and precip filter not delayed
 
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
@@ -220,15 +250,75 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
             self.grid[lat_index][lon_index] = None
 
 class NEWS_API(ExternalAPI):
+    
+    #Arrays that house the countries that could be looked at for News Congestion
+    first_20 = {
+        1: "India", 2: "China", 3: "United States", 4: "Indonesia", 5: "Pakistan",
+        6: "Nigeria", 7: "Brazil", 8: "Bangladesh", 9: "Russia", 10: "Ethiopia",
+        11: "Mexico", 12: "Japan", 13: "Egypt", 14: "Philippines", 15: "DR Congo",
+        16: "Vietnam", 17: "Iran", 18: "Turkey", 19: "Germany", 20: "Thailand"
+    }
 
+    second_20 = {
+        21: "Tanzania", 22: "United Kingdom", 23: "France", 24: "South Africa", 25: "Italy",
+        26: "Kenya", 27: "Myanmar", 28: "Colombia", 29: "South Korea", 30: "Sudan",
+        31: "Uganda", 32: "Spain", 33: "Algeria", 34: "Iraq", 35: "Argentina",
+        36: "Afghanistan", 37: "Yemen", 38: "Canada", 39: "Morocco", 40: "Saudi Arabia"
+    }
+
+    third_20 = {
+        41: "Ukraine", 42: "Uzbekistan", 43: "Peru", 44: "Angola", 45: "Malaysia",
+        46: "Mozambique", 47: "Ghana", 48: "Madagascar", 49: "Nepal", 50: "Venezuela",
+        51: "Ivory Coast", 52: "North Korea", 53: "Australia", 54: "Niger", 55: "Sri Lanka",
+        56: "Burkina Faso", 57: "Syria", 58: "Cambodia", 59: "Senegal", 60: "Chad"
+    }
+
+    fourth_20 = {
+        61: "Somalia", 62: "Zimbabwe", 63: "Guinea", 64: "Rwanda", 65: "Benin",
+        66: "Burundi", 67: "Tunisia", 68: "Bolivia", 69: "Belgium", 70: "Haiti",
+        71: "Cuba", 72: "South Sudan", 73: "Dominican Republic", 74: "Czechia", 75: "Greece",
+        76: "Jordan", 77: "Paraguay", 78: "Laos", 79: "Libya", 80: "Nicaragua"
+    }
+
+    fifth_20 = {
+        81: "Kyrgyzstan", 82: "El Salvador", 83: "Togo", 84: "Sierra Leone", 85: "Eritrea",
+        86: "Singapore", 87: "Denmark", 88: "Finland", 89: "Norway", 90: "Slovakia",
+        91: "Ireland", 92: "New Zealand", 93: "Costa Rica", 94: "Liberia", 95: "Oman",
+        96: "Panama", 97: "Kuwait", 98: "Mauritania", 99: "Croatia", 100: "Georgia"
+    }
+    
+    #Dictionary used is the data that constitutes a news point onto the globe
+    #when hovering over a point, it should give you the name of the article as a hyperlink to the news article online
+    NEWS_POINT = {
+        "city":None,
+        "url":None,
+        "title":None,
+        "country":None,
+        "latitude":None,
+        "longitude":None
+    }
+    
     def GatherArticles(self,CountryChoice):
         NEWS_API_url = 'https://newsapi.org/v2/everything'
         params = {
             'q': CountryChoice,
             'language': 'en',
             'sortBy': 'publishedAt',
-            'pageSize': 5,
-            'apiKey': NEWS_API_key
+            'pageSize': 10,                     #get 10 different in a general sense for the countries
+            'apiKey': NEWS_API_key       #possibly have 2 different NewsAPI keys to prevent running out of API calls
+        }
+        print(CountryChoice)
+        response = requests.get(NEWS_API_url, params=params)
+        return response.json()
+    
+    def GatherArticles_InMass(self,CountryChoice):
+        NEWS_API_url = 'https://newsapi.org/v2/everything'
+        params = {
+            'q': CountryChoice,
+            'language': 'en',
+            'sortBy': 'publishedAt',
+            'pageSize': 100,                     #get 100 different for a country when prompted
+            'apiKey': NEWS_API_key      #possibly have 2 different NewsAPI keys to prevent running out of API calls
         }
         print(CountryChoice)
         response = requests.get(NEWS_API_url, params=params)
@@ -239,6 +329,7 @@ class NEWS_API(ExternalAPI):
             return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
         if not isinstance(Articles, dict) or "articles" not in Articles:
             return { "articles": [], "error": "Invalid Response from NEWS_API" }
+        
         items = Articles.get("articles", [])
         Formatted_Articles = []
         for i, a in enumerate(items, start=1):
@@ -251,7 +342,59 @@ class NEWS_API(ExternalAPI):
             })
         return {"articles": Formatted_Articles}
     
-class Agentic_AI(ExternalAPI):
+    def NewsPointBuilder(self,CountryList):
+        #Articles = []           #create empty list to hold articles
+        AI = Gemini_API()       #make instance of AI to serve as a geolocator
+        
+        if isinstance(CountryList, str) and CountryList in globals():
+            CountryList = globals()[CountryList]         #set the country array once matched to the global array
+        
+        CountryList = list(CountryList.values())                 #ensure that the list for countries is created    
+        
+        #items = Articles.get("articles", [])                #used for parsing the articles
+        Formatted_Articles = []                 #array to hold the list of the formatted articles that are passed to AI component
+        
+        for country in CountryList:                 #append articles for every country in the array after pulling articles
+            
+            try:    
+                Response_chunk = self.GatherArticles_InMass(country)
+                #Articles.append(Response_chunk)                             #append each recieved article for each country
+                
+            except Exception as e:
+                print(f"Error while gathering Articles for {country}: {e}")
+                continue    
+            
+            #Error handling for NewsAPI
+            if not isinstance(Response_chunk, dict):
+                print(f"{country}: non-dict response")
+                continue
+            if Response_chunk.get("status") == "error":
+                print(f"{country}: NewsAPI error -> {Response_chunk.get('message') or Response_chunk.get('code')}")
+                continue
+            
+            for a in (Response_chunk.get("articles",[]) or []):
+                Formatted_Articles.append({
+                    "url": a.get("url"),
+                    "title": a.get("title"),
+                    "country": country,           #set the country to that of the country already being read in from input
+                })
+        
+        #Articles.clear()                    #clear the for stuff not needed to ensure there are no memory leaks
+        
+        #REMOVE if slows down application significantly        
+        print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
+        
+        try:
+            Formatted_Articles = AI.EnterPrompt_C_Data(Formatted_Articles,1)            #make JSON prompt and then assign GeoLocator Role
+        except Exception as e:
+            print(f"AI reponse error for geolocation data of country: {e}")
+        
+        #REMOVE if slows down application significantly        
+        print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
+
+        return {"articles": Formatted_Articles}
+    
+class Agentic_AI(ExternalAPI):              #work on after getting the congestion filter built out completely
     def Weather_Gather(self):
         return
     def Flight_Gather(self):
