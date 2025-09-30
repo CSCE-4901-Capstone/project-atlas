@@ -149,17 +149,19 @@ class Agent(APIView):
     api = Agentic_AI()          #make instance of the Agentic AI class to use in the frontend
     
     def post(self,request,format=None):
+        #print recieved data from post request of frontend
         print("request.data:", request.data)
         
         CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
-
+        SessionNum = request.data.get("session")
+        
         if not CountryChoice:
             return Response({"error": "No Country Passed/detected for Agent(APIView)"},status=status.HTTP_400_BAD_REQUEST)
         
-        result = self.api.Holistic_View(CountryChoice)          #make call for the Holistic_View of the AI_Agent
+        result = self.api.Holistic_View(CountryChoice,SessionNum)          #make call for the Holistic_View of the AI_Agent
         
         #error checking for News_API to see if correct output was recieved
-        if result.get("error"):
-            return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
+        #if result.get("error"):
+        #    return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
         
         return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected

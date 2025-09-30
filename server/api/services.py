@@ -5,7 +5,8 @@ import os
 import asyncio
 import feedparser
 
-from datetime import datetime as dt         #alias datetime for ease of use
+from datetime import datetime as dt         #alias datetime for ease of use (use for crewAI)
+from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED,TimeoutError       #dependencies needed for threading
 
 #library for secure key handling
 import dotenv
@@ -107,7 +108,7 @@ class Gemini_API(ExternalAPI):
     - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
     - Connect evidence across domains (weather ↔ flights ↔ news) and add a High/Med/Low confidence tag.
     - If a section is sparse or uncertain, say so briefly rather than inventing facts.
-    '''
+    - Format the response so that it is easy to read with good sectioning as well.'''
 
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
@@ -470,12 +471,41 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         print("making request for News_gather()")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
-    def Holistic_View(self, country: str) -> str:       #notes string is not to be used in this version
+    def Holistic_View(self, country: str,SessionNum,timeout=15): 
         print("starting call for Holistic_View()")
+        print("threading data...")
         
-        Weather_Data = self.Weather_Gather(country) or ""           #return nothing if no data is found or funciton not called
-        Flight_Data = self.Flight_Gather(country) or ""
-        News_Data = self.News_Gather(country) or ""
+        Weather_Data = ""           #initialize variables before threading
+        Flight_Data = ""
+        News_Data = ""
+        
+        
+        #THREAD RESPONSES TO REDUCE LATENCY
+        with ThreadPoolExecutor(max_workers=3) as pool:       
+            W_Data_THREAD = pool.submit(self.Weather_Gather, country)
+            F_Data_THREAD = pool.submit(self.Flight_Gather, country)
+            N_Data_THREAD = pool.submit(self.News_Gather, country)
+            
+            #SET THREAD RESPONSE OF WEATHER
+            try:
+                Weather_Data = W_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"Weather_Gather failed: {e}")
+                Weather_Data = ""
+
+            #SET THREAD RESPONSE OF FLIGHTS
+            try:
+                Flight_Data = F_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"Flight_Gather failed: {e}")
+                Flight_Data = ""
+
+            #SET THREAD RESPONSE OF NEWS
+            try:
+                News_Data = N_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"News_Gather failed: {e}")
+                News_Data = ""
         
         #constructing Prompt with data for AI agent to have context for analysis
         Prompt = (
