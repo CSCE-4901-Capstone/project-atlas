@@ -5,11 +5,9 @@ client/node_modules
 __pycache__
 server/api/.env
 
-weather_cache.json
-precip_cache.json
-
 #ignore any virtual environments from tracked changes
 .venv/
 venv/
 
-# weather_cache.json
+weather_cache.json
+precip_cache.json
