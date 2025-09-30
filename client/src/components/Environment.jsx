@@ -41,8 +41,13 @@ function Environment({ selectedCountry, onCountrySelection, activeFilter }) {
         selectedCountry={selectedCountry}
         setClickDisabled={setClickDisabled}
       />
-      <OrbitControls makeDefault />
-      {activeFilter ? <UpdateFilter activeFilter={activeFilter} /> : null}
+      <OrbitControls 
+        makeDefault 
+        enablePan={false}
+        minDistance={3} 
+        maxDistance={5}
+      />
+      <UpdateFilter activeFilter={activeFilter} />
       <CountryHighlight selectedCountry={selectedCountry}/>
       <Globe onCountrySelection={onCountrySelection}/>
     </Canvas>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
-import Shaders from 'src/components/Shaders';
 import getSelectedCountry from 'src/utils/GetSelectedCountry';
 //import Movement from 'src/components/Movement'
 
@@ -17,7 +16,7 @@ function Globe({onCountrySelection = () => {}}) {
   async function handlePointerUp(e) {
     const timeDiff = Date.now() - pointerDownTime;
 
-    if (timeDiff < 1000) {
+    if (timeDiff < 100) {
       let selectedCountry = await getSelectedCountry(e.point)
       onCountrySelection(selectedCountry)
       console.log(selectedCountry)
@@ -40,7 +39,6 @@ function Globe({onCountrySelection = () => {}}) {
 
   return (
     <>
-      <Shaders />
       <ambientLight intensity={3} />
       <mesh 
         onPointerDown={handlePointerDown}
