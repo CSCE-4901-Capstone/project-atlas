@@ -7,9 +7,35 @@ import api_conn from 'src/utils/api';
 
 function AtlasIntel({choiceMade}){
     //Dummy AI agent response string set to dummy data for printing the response **REMOVE THIS OR SET IT TO THE RESPONSE WHEN CONTENT IS DELIVERED**
+    const Warning_MSG = "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute"
+
+    console.log("AtlasIntel rendered, choiceMade =", choiceMade);
     
     //set content is the text displayed. Just do setContent = response (No need for UseEffect)
-    const [content,setContent] = useState("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+    const [content,setContent] = useState(Warning_MSG);
+    
+    //Get the analysis data from the backend
+    useEffect(() => {
+        console.log("AtlasIntel rendered, choiceMade =", choiceMade);
+        if (!choiceMade) return;   //don’t send null
+
+        //reset warning between every click
+        setContent(Warning_MSG);
+
+        api_conn.post("/api/Agent/",{
+            country: choiceMade,
+            session: NEW_SessionNum,},//"session123"
+            {
+            headers : {"Content-Type": "application/json"},
+            },
+        )
+        .then((response) =>{
+            console.log("response FROM views.py:", response.data);
+            setContent(response.data);
+        })
+        .catch((error) => console.error("Error:", error));          //catch error and display if encountered
+    },[choiceMade]);
+    
     //DisplayText useStates
     const [displayText,setDisplayText] = useState("");
     const [show,setShow] = useState(false);
@@ -89,7 +115,7 @@ function AtlasIntel({choiceMade}){
             clearTimeout(timeoutID.current);
             //clearTimeout(titleTimeout)
         }
-    },[choiceMade,show])
+    },[choiceMade,show,content])
 
     return(
         <div 
@@ -107,6 +133,13 @@ function AtlasIntel({choiceMade}){
             >
                 <p
                 className={show ? "anim" : ""}
+                style={{
+                    whiteSpace: "pre-wrap",     // preserve \n and sequences of spaces, but still wrap long lines to preserve format
+                    overflowWrap: "anywhere",   // prevent overflow
+                    tabSize: 4,                 // if your text contains \t
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" // for formatting
+                }}
+
                 >
                     {displayText}
                 </p>

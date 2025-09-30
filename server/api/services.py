@@ -3,6 +3,10 @@ import time
 import json
 import os
 import asyncio
+import feedparser
+
+from datetime import datetime as dt         #alias datetime for ease of use (use for crewAI)
+from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED,TimeoutError       #dependencies needed for threading
 
 #library for secure key handling
 import dotenv
@@ -94,6 +98,17 @@ class Gemini_API(ExternalAPI):
     - If the city is unknown, use the nearest identifiable location (region or country) instead.
     - Do not include any text outside the JSON.
     """
+    AI_Role3 = '''You are an administrative analyst who is responsible for providing holistic, comprehensive, and informative
+    briefs on a selected country.
+    
+    Task: Given JSON blocks for WEATHER, FLIGHTS, and NEWS for a COUNTRY, write a HOLISTIC BRIEF.
+    
+    Rules:
+    - Output at least 25 (can be more) bullet points in Markdown.
+    - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
+    - Connect evidence across domains (weather ↔ flights ↔ news) and add a High/Med/Low confidence tag.
+    - If a section is sparse or uncertain, say so briefly rather than inventing facts.
+    - Format the response so that it is easy to read with good sectioning as well.'''
 
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
@@ -101,8 +116,12 @@ class Gemini_API(ExternalAPI):
             Role = self.AI_Role1
         elif (Role_choice == 1):
             Role = self.AI_Role2
+        elif (Role_choice == 2):
+            Role = self.AI_Role3
+        else:
+            Role = Role_choice      #if not defined as a role, simply use whatever was passed to Role_choice as the role
 
-        model = "x-ai/grok-4-fast:free" #"meta-llama/llama-4-maverick:free"
+        model = "x-ai/grok-4-fast:free" #"meta-llama/llama-4-maverick:free" #"openrouter/openai/gpt-4o-mini"
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
@@ -395,12 +414,109 @@ class NEWS_API(ExternalAPI):
         return {"articles": Formatted_Articles}
     
 class Agentic_AI(ExternalAPI):              #work on after getting the congestion filter built out completely
-    def Weather_Gather(self):
-        return
-    def Flight_Gather(self):
-        return
-    def News_Gather(self):
-        return
-    def Holistic_View(self):
-        return
+    
+    AI_model = Gemini_API()         #use instance of AI model already created earlier
+    
+    def Weather_Gather(self, country: str) -> str:
+        Role = f'''Your main goal is to act as a meteorologist for the country {country},
+        Find meaningful weather observations occuring in {country}. Your task is to analyze 
+        the weather to an extent where the information provided would be inline with what an
+        expert would provide to someone if asked for a full-on weather report
+        '''
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+        
+        print("making request for Weather_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
+    def Flight_Gather(self, country: str) -> str:
+        Role = f'''You are an Air Traffic Operations Analyst. Your job is to deliver RECENT, numbers-first flight activity for the country: {country}.
+
+        ### Mission
+        1) Report the most recent **average daily flights** (arrivals + departures) for {country} from a reputable source updated THIS WEEK if possible.
+        2) Break down flights for the **five most populous cities** in {country} (aggregate multi-airport city systems, e.g., “London = LHR+LGW+STN+LTN+LCY”).
+        3) Compute each city’s **share (%)** of {country}’s total.
+        4) Return a single JSON object (no extra text).
+
+        ### Data Freshness Rules
+        - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs). 
+        - If exact “this week” per-city numbers are not published, use the most recent monthly/weekly airport-level averages **published within the last 30 days**, and clearly label the period in the JSON.
+        - DO NOT use data older than 12 months.
+        - If a city lacks a fresh numeric value, set that city’s fields to null and add a short “note”.
+        
+        ### Calculation Rules
+        - Share (%) = (city avg_daily_flights / country_total_avg_daily_flights) * 100, rounded to 2 decimals.
+        - When aggregating a multi-airport city, sum airport averages first, then compute the share.
+        - Keep units consistent: “avg_daily_flights” counts flights (arrivals+departures).
+
+        ### Tone & Constraints
+        - Prefer precise numbers from sources; if reading off a chart, state “estimated from chart” in methodology_notes.
+        - Avoid blogs/forums; only cite primary/official or widely recognized aviation analytics.
+        '''
+        
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print("making request for Flight_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
+    def News_Gather(self, country: str) -> str:
+        Role = f'''You are a journalist who specializes in news for the country of {country}.
+        
+        Your objective is to find out what the most current topics of interest are in {country} and
+        formulate an in-depth analysis on the most talked about and also not so often touched on areas
+        of {country}'s news that might be easy to see or hard to see for an outsider to {country}
+        '''
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+        
+        print("making request for News_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    def Holistic_View(self, country: str,SessionNum,timeout=15): 
+        print("starting call for Holistic_View()")
+        print("threading data...")
+        
+        Weather_Data = ""           #initialize variables before threading
+        Flight_Data = ""
+        News_Data = ""
+        
+        
+        #THREAD RESPONSES TO REDUCE LATENCY
+        with ThreadPoolExecutor(max_workers=3) as pool:       
+            W_Data_THREAD = pool.submit(self.Weather_Gather, country)
+            F_Data_THREAD = pool.submit(self.Flight_Gather, country)
+            N_Data_THREAD = pool.submit(self.News_Gather, country)
+            
+            #SET THREAD RESPONSE OF WEATHER
+            try:
+                Weather_Data = W_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"Weather_Gather failed: {e}")
+                Weather_Data = ""
+
+            #SET THREAD RESPONSE OF FLIGHTS
+            try:
+                Flight_Data = F_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"Flight_Gather failed: {e}")
+                Flight_Data = ""
+
+            #SET THREAD RESPONSE OF NEWS
+            try:
+                News_Data = N_Data_THREAD.result(timeout=60) or ""
+            except Exception as e:
+                print(f"News_Gather failed: {e}")
+                News_Data = ""
+        
+        #constructing Prompt with data for AI agent to have context for analysis
+        Prompt = (
+            f"Country to be analyzed: {country}\n\n"
+            "Weather Data to be considered:\n" + Weather_Data + "\n\n"
+            "Flight Data to be considered:\n" + Flight_Data + "\n\n"
+            "News Data to be considered:\n" + News_Data + "\n\n"
+        )
+        
+        #update logic
+        
+        return self.AI_model.EnterPrompt_C_Data(Prompt,Role_choice=2)           #perform holistic analysis
 
