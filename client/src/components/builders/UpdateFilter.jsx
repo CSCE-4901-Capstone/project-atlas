@@ -14,9 +14,9 @@ function UpdateFilter({ activeFilter }) {
       case 'News':
         filter = <NewsCongestion radius={2} />;
         break;
-      case 'Weather':
+      case 'Temperature':
         showShaders = false
-        filter = <Weather radius={2} layerType="Weather" />;
+        filter = <Weather radius={2} layerType="Temperature" />;
         break;
       case 'Precipitation': 
         showShaders = false
