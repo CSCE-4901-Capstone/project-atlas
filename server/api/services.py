@@ -421,9 +421,12 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         the weather to an extent where the information provided would be inline with what an
         expert would provide to someone if asked for a full-on weather report
         '''
-        #finish call
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
         
-        return
+        print("making request for Weather_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
     def Flight_Gather(self, country: str) -> str:
         Role = f'''You are an Air Traffic Operations Analyst. Your job is to deliver RECENT, numbers-first flight activity for the country: {country}.
 
@@ -449,9 +452,12 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         - Avoid blogs/forums; only cite primary/official or widely recognized aviation analytics.
         '''
         
-        #finish call
-        
-        return
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print("making request for Flight_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
     def News_Gather(self, country: str) -> str:
         Role = f'''You are a journalist who specializes in news for the country of {country}.
         
@@ -459,10 +465,13 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
         of {country}'s news that might be easy to see or hard to see for an outsider to {country}
         '''
-        #finish call
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
         
-        return
-    def Holistic_View(self, country: str, notes: str = "") -> str:
+        print("making request for News_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    def Holistic_View(self, country: str) -> str:       #notes string is not to be used in this version
+        print("starting call for Holistic_View()")
         
         Weather_Data = self.Weather_Gather(country) or ""           #return nothing if no data is found or funciton not called
         Flight_Data = self.Flight_Gather(country) or ""
