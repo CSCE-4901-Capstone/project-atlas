@@ -27,9 +27,9 @@ const layerConfigs = {
     alpha: 220, //Opacity: 85%
     type: 'icon', 
     iconMap: [
-      { max: .1, icon: precipitationIcons.Rain },         // 0.1 - 5 mm/hr (Light/Moderate Rain)
-      { max: 10, icon: precipitationIcons.HeavyRain },   // 5 - 35 mm/hr (Heavy Rain/Storms)
-      { max: Infinity, icon: precipitationIcons.Snow },  // > 35 mm/hr (Treating highest as 'snow' or just a very severe indicator)
+      {max: 1, icon: precipitationIcons.Rain},         // 0.1 - .1 mm/hr (Light/Moderate Rain)
+      {max: 15, icon: precipitationIcons.HeavyRain},   // .1 - 13 mm/hr (Heavy Rain/Storms)
+      {max: Infinity, icon: precipitationIcons.Snow},  // > 13 mm/hr (Treating highest as 'snow' or just a very severe indicator)
     ],
   },
 };
