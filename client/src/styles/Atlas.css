@@ -98,7 +98,8 @@ html {
     width: 25rem;
 }
 #text-container {
-    height: 60%;
+    height: auto;
+    margin-bottom: 1rem;
     overflow-x:hidden;
     margin-top: 2%;
     padding: 20px;
@@ -286,14 +287,14 @@ textarea:focus, input:focus{
     user-select: none;
     /*Position absolute to prevent affecting other divs on extension*/
     position: absolute;
-    top: 65%;
+    top: 60%;
     right: 20%;
     /*Animation for changing selection*/
     transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
 }
 #atlas-intel.active{
-    height: 15rem;
-    width: 35rem;
+    height: 20rem;
+    width: 60rem;
 }
 #atlas-intel.active #ai-title{
     opacity: 1;
@@ -315,8 +316,9 @@ textarea:focus, input:focus{
 .atlas-response-container p.anim{
     opacity: 1;
     padding: 2px;
-    height: 10rem;
-    width: 32rem;
+    height: 12rem;
+    margin-left: 1rem;
+    width: auto;
     overflow-y: auto;
     border-radius: 0px !important;
     scrollbar-width: thin;
