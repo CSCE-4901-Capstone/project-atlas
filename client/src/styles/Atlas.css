@@ -86,22 +86,22 @@ html {
     flex-direction: column;
     align-items: center;
     width: 15rem;
-    height: 23rem;
+    height: 9rem;
     margin-top: 6vh;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
-    background: rgba(255, 255, 255, 5%);
+    background: rgba(50, 50, 50, 10%);
+    box-shadow: 5px 10px 15px black;
     transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
 }
 #AI.active{
-    height: 30rem;
+    height: 28rem;
     width: 25rem;
 }
 #text-container {
     height: auto;
     margin-bottom: 1rem;
     overflow-x:hidden;
-    margin-top: -4%;
     padding: 20px;
     scrollbar-width: thin;
     scrollbar-color: grey transparent;
@@ -183,7 +183,8 @@ html {
     padding: 7px;
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 5%);
+    background: rgba(50, 50, 50, 10%);
+    box-shadow: 5px 10px 15px black;
     user-select: none;
     position: absolute;
     top: 15rem;
@@ -265,8 +266,9 @@ html {
     padding: 4px;
     color: white;
     backdrop-filter: blur(2px);
-    background: rgba(255, 255, 255, 5%);
+    background: rgba(100, 100, 100, 10%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 10px 15px black;
 }
 /*Remove blue focus on click for search input*/
 textarea:focus, input:focus{
@@ -282,7 +284,7 @@ textarea:focus, input:focus{
     width: 6rem;
     backdrop-filter: blur(2px);
     border-radius: 50px !important;
-    background: rgba(0, 0, 0, 10%);
+    background: rgba(50, 50, 50, 10%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     box-shadow: 5px 10px 15px black;
     user-select: none;
