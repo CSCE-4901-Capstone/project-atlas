@@ -101,7 +101,7 @@ html {
     height: auto;
     margin-bottom: 1rem;
     overflow-x:hidden;
-    margin-top: 2%;
+    margin-top: -4%;
     padding: 20px;
     scrollbar-width: thin;
     scrollbar-color: grey transparent;
@@ -282,8 +282,9 @@ textarea:focus, input:focus{
     width: 6rem;
     backdrop-filter: blur(2px);
     border-radius: 50px !important;
-    background: rgba(255, 255, 255, 5%);
+    background: rgba(0, 0, 0, 10%);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 10px 15px black;
     user-select: none;
     /*Position absolute to prevent affecting other divs on extension*/
     position: absolute;
