@@ -2,8 +2,9 @@ import React from "react";
 //import Logo from './Logo'
 import AISummary from "./AISummary";
 import Help from "./Help";
+import TemperatureKey from "./TemperatureKey";
 
-const Left = ({choice}) => {
+const Left = ({choice, activeFilter}) => {
     return(
         <div id="left">
             <div 
@@ -12,8 +13,8 @@ const Left = ({choice}) => {
             >
                 <AISummary chCountry={choice}/> 
             </div>
-            <div id="help">
-                <Help/>
+            <div id="Temp-Key">
+                <TemperatureKey filter={activeFilter}/>
             </div>
 
         </div>

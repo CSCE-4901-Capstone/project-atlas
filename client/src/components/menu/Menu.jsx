@@ -4,7 +4,7 @@ import Left from "./Left"
 const Menu = ({searchVal, setSearchVal, onFilterSelection, activeFilter}) => {
     return(
         <div id="menu">
-            <Left choice={searchVal}/>
+            <Left choice={searchVal} activeFilter={activeFilter}/>
             <Right choice={searchVal} onSearchChange={setSearchVal} onFilterSelection={onFilterSelection} activeFilter={activeFilter}/>
         </div>
     )

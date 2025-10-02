@@ -360,4 +360,39 @@ textarea:focus, input:focus{
     font-size: 12px;
     margin-top: 2px;
 }
-
+/*Temp key */
+#Temp-Key{
+    backdrop-filter: blur(2px);
+    border-radius: 50px !important;
+    background: rgba(50, 50, 50, 10%);
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 10px 15px black;
+    padding: 10px;
+    margin-bottom: 1rem;
+}
+.temp-key-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.straight{
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 12px;
+}
+svg{
+    align-items: center;
+}
+.temp-key-container > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 15rem;
+    padding: 2px;
+}
+.temp-key-gradient{
+    height: 1rem;
+    width: 210px !important;
+    background: linear-gradient(90deg, #8A2BE2, #783CD2, #664DC2, #545CB1, #4169E1, #6983E1, #91A1E1, #B9BEE0, #E1DCE0, #F0F0D2, #FFFFE0, #FFF0AC, #FFDB74, #FFC73C, #FFB304, #FFA500, #FF7B00, #FF5200, #FF2800, #FF0000);
+    margin-left: 5px;
+}
