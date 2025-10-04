@@ -1,5 +1,6 @@
 import Flights from 'src/components/builders/Flights';
 import Weather from 'src/components/builders/Weather';
+import Precipitation from 'src/components/builders/Precipitation';
 import Shaders from 'src/components/builders/Shaders';
 import NewsCongestion from 'src/components/builders/NewsCongestion';
 
@@ -16,15 +17,16 @@ function UpdateFilter({ activeFilter }) {
         break;
       case 'Temperature':
         showShaders = false
-        filter = <Weather radius={2} layerType="Temperature" />;
+        filter = <Weather radius={2} />; 
         break;
       case 'Precipitation': 
         showShaders = false
-        filter = <Weather radius={2} layerType="Precipitation" />;
+        filter = <Precipitation radius={2} />;
         break;
       default:
         filter = null;
   }
+
 
   return (
     <>
