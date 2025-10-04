@@ -193,8 +193,6 @@ class WeatherAPIAsync:
         
         self.cache_file = "weather_cache.json"
 
-        #TODO: Find a way to have switching between temp and precip filter not delayed
-
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
             return None
@@ -264,6 +262,7 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
             snow = data.get('snow', {}).get('1h', 0)
             precipitation = rain + snow
             self.grid[lat_index][lon_index] = precipitation
+            self.STEP = 1
         except Exception as e:
             print(f"Failed to fetch precipitation ({lat}, {lon}): {e}")
             self.grid[lat_index][lon_index] = None

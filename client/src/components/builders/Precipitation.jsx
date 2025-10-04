@@ -137,9 +137,6 @@ function Precipitation({ radius, refreshTrigger }) {
         tex.minFilter = LinearMipmapLinearFilter;
         tex.magFilter = LinearFilter;
 
-        tex.repeat.y = 0.970; 
-        tex.offset.y = 0.025;
-
         tex.needsUpdate = true;
         setDataTexture(tex);
 
