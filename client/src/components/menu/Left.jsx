@@ -3,8 +3,23 @@ import React from "react";
 import AISummary from "./AISummary";
 import Help from "./Help";
 import TemperatureKey from "./TemperatureKey";
+import PrecipitationKey from "./PrecipitationKey"
 
 const Left = ({choice, activeFilter}) => {
+    let retFilter = null;
+    console.log(activeFilter);
+    switch(activeFilter){
+        case "Temperature":
+            retFilter = <TemperatureKey filter={activeFilter}/>;
+            break;
+        case "Precipitation":
+            //Change to new filter key for precipitation when made
+            retFilter = <PrecipitationKey filter={activeFilter}/>;
+            break;
+        default:
+            retFilter = null;
+    }
+    console.log(retFilter)
     return(
         <div id="left">
             <div 
@@ -13,8 +28,8 @@ const Left = ({choice, activeFilter}) => {
             >
                 <AISummary chCountry={choice}/> 
             </div>
-            <div id="Temp-Key">
-                <TemperatureKey filter={activeFilter}/>
+            <div id="filter-Key">
+                {retFilter}
             </div>
 
         </div>
