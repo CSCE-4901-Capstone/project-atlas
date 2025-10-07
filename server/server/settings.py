@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_4vf)3#ge34^5wzy(hh$#=kmp-v1cr=+f9&opccsdhs2%gwo6='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -125,6 +125,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [                #to make sure this runs properly, add the url for the backend and frontend server provided on your computers
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    "https://project-atlas-j8oc.onrender.com"
 ]
 CORS_ALLOW_CREDENTIALS = True
