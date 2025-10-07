@@ -127,6 +127,6 @@ CORS_ALLOWED_ORIGINS = [                #to make sure this runs properly, add th
     "http://127.0.0.1:5173",
     "http://localhost:5174",
     "https://project-atlas-j8oc.onrender.com",
-    "project-atlas-five.vercel.app",
+    "https://project-atlas-five.vercel.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
