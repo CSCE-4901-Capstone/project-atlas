@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { TextureLoader, CanvasTexture, LinearFilter, LinearMipmapLinearFilter } from 'three';
+import api_conn from 'src/utils/api';
 
 const precipitationIcons = {
   Rain: '/images/raindrop.png',
@@ -9,7 +10,7 @@ const precipitationIcons = {
 };
 
 const layerConfig = {
-    url: 'http://localhost:8000/api/precipitation/',
+    url: '/api/precipitation/',
     min: 0.1,
     max: 50,
     alpha: 220,
@@ -53,13 +54,17 @@ function Precipitation({ radius, refreshTrigger }) {
     const generateDataTexture = async (forceRefresh) => {
       setIsLoading(true);
       const config = layerConfig;
-      const url = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+      const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+
+      if (forceRefresh) {
+       console.log(`Data refresh triggered for ${layerType}.`);
+      }
       
       if (Object.keys(iconTextures).length === 0) return;
 
       try {
-        const res = await fetch(url);
-        const json = await res.json();
+        const response = await api_conn.get(urlPath);
+        const json = response.data;
         const grid = json.data;
 
         const height = grid.length;
