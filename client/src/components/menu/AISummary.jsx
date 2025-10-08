@@ -79,7 +79,7 @@ return (
                     href={item?.link ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ color: "#00FFFF", textDecoration: "none" }}  // link color here
+                    style={{fontSize: "1rem", color: "#00FFFF", textDecoration: "none" }}  // link color here
                 >
                     {safeTitle}
                 </a>

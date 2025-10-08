@@ -100,11 +100,12 @@ html {
 }
 #text-container {
     height: auto;
+    max-width: 23rem;
     margin-bottom: 1rem;
     overflow-x:hidden;
-    padding: 20px;
     scrollbar-width: thin;
     scrollbar-color: grey transparent;
+    border-radius: 0px !important;
 }
 #text-container > ol {
     list-style: none;
