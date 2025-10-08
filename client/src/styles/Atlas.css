@@ -412,18 +412,18 @@ svg{
 .snow-color{
     height: 1rem;
     width: 1rem;
-    border-radius: 0px !important;
+    border-radius: 5px !important;
     background: white;
 }
 .rain-color{
     height: 1rem;
     width: 1rem;
-    border-radius: 0px !important;
+    border-radius: 5px !important;
     background: blue;
 }
 .storm-color{
     height: 1rem;
     width: 1rem;
-    border-radius: 0px !important;
+    border-radius: 5px !important;
     background: orange;
 }
