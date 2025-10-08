@@ -9,7 +9,7 @@ import asyncio
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI,NEWS_API,Agentic_AI     #,Gemini_API,
+from api.services import FlightAPI,NEWS_API,Agentic_AI, DisasterAPI     #,Gemini_API,
 
 class FlightList(APIView):
     """
@@ -25,7 +25,7 @@ class FlightList(APIView):
 
 
                 #return Response({"response":result})
-        
+
 
 class WeatherGridView(APIView):
     """
@@ -51,7 +51,7 @@ class WeatherGridView(APIView):
         except Exception as e:
             print("WeatherGridView error:", e)
             return Response({"error": str(e)}, status=500)
-        
+
 class PrecipitationGridView(APIView):
     def get(self, request, format=None):
         try:
@@ -68,7 +68,7 @@ class PrecipitationGridView(APIView):
         except Exception as e:
             print("PrecipitationGridView error:", e)
             return Response({"error": str(e)}, status=500)
-        
+
 class CountryNews(APIView):                #handles connection to external API for AI interaction
 
         #AI_Gemini = Gemini_API()
@@ -76,35 +76,35 @@ class CountryNews(APIView):                #handles connection to external API f
 
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
                 CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
-                
+
                 if not CountryChoice:
                     return Response({"error": "No Country Passed/detected for CountryNews(APIView)"},status=status.HTTP_400_BAD_REQUEST)
 
                 RAW_articles = self.NEWS.GatherArticles(CountryChoice)
 
                 result = self.NEWS.Parse_Spit(RAW_articles)
-                
+
                 #error checking for News_API to see if correct output was recieved
                 if result.get("error"):
                     return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
-                
+
                 return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.
 #prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
 
 class Heatmap(APIView):
-    
+
     NEWS = NEWS_API()
-    
+
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
         #in future: optimize to also account for first_20, second_20, etc.
-        
-        
-        
+
+
+
         #Would Work, but NEWS API wants $500 USD monthly.... we are figuring out a workaround
         #Mass_Articles = self.NEWS.NewsPointBuilder(self.NEWS.first_20)
-        
+
         Mass_Articles = [
             { "city": "Berlin", "url": "https://example.com/news/berlin", "title": "Berlin update", "country": "Germany", "latitude": 52.5200, "longitude": 13.4050 },
             { "city": "Munich", "url": "https://example.com/news/munich", "title": "Munich update", "country": "Germany", "latitude": 48.1374, "longitude": 11.5755 },
@@ -140,28 +140,39 @@ class Heatmap(APIView):
 
 
 
-        
+
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
-        
+
 
 class Agent(APIView):
-    
+
     api = Agentic_AI()          #make instance of the Agentic AI class to use in the frontend
-    
+
     def post(self,request,format=None):
         #print recieved data from post request of frontend
         print("request.data:", request.data)
-        
+
         CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
         SessionNum = request.data.get("session")
-        
+
         if not CountryChoice:
             return Response({"error": "No Country Passed/detected for Agent(APIView)"},status=status.HTTP_400_BAD_REQUEST)
-        
+
         result = self.api.Holistic_View(CountryChoice,SessionNum)          #make call for the Holistic_View of the AI_Agent
-        
+
         #error checking for News_API to see if correct output was recieved
         #if result.get("error"):
         #    return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
-        
+
         return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
+
+class DisasterList(APIView):
+    """
+    Handles the connection to the external disaster api
+    """
+    api = DisasterAPI()
+
+    def get(self, request, format=None):
+        disasters = self.api.fetch_data()
+        return Response(disasters, status=status.HTTP_200_OK)
+
