@@ -2,10 +2,11 @@ import { useEffect, useState, useRef } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { TextureLoader, CanvasTexture, LinearFilter } from 'three';
 import chroma from 'chroma-js';
+import api_conn from 'src/utils/api';
 
 const layerConfigs = {
   Temperature: {
-    url: 'http://localhost:8000/api/weather/',
+    url: '/api/weather/',
     min: -50,
     max: 40,
     scale: chroma.scale([
@@ -30,11 +31,11 @@ function Weather({ radius, refreshTrigger }) {
     const generateDataTexture = async (forceRefresh) => {
       setIsLoading(true);
       const config = layerConfigs[layerType];
-      const url = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+      const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
       
       try {
-        const res = await fetch(url);
-        const json = await res.json();
+        const response = await api_conn.get(urlPath);
+        const json = response.data;
         const grid = json.data;
 
         const height = grid.length;
