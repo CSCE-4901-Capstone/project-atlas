@@ -4,6 +4,8 @@ import json
 import os
 import asyncio
 import feedparser
+from shapely.geometry import MultiPoint
+import statistics
 
 from datetime import datetime as dt         #alias datetime for ease of use (use for crewAI)
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED,TimeoutError       #dependencies needed for threading
@@ -100,9 +102,9 @@ class Gemini_API(ExternalAPI):
     """
     AI_Role3 = '''You are an administrative analyst who is responsible for providing holistic, comprehensive, and informative
     briefs on a selected country.
-    
+
     Task: Given JSON blocks for WEATHER, FLIGHTS, and NEWS for a COUNTRY, write a HOLISTIC BRIEF.
-    
+
     Rules:
     - Output at least 25 (can be more) bullet points in Markdown.
     - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
@@ -190,7 +192,7 @@ class WeatherAPIAsync:
 
         #Initialize empty grid
         self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
-        
+
         self.cache_file = "weather_cache.json"
 
     def coords_to_index(self, lat, lon):
@@ -268,7 +270,7 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
             self.grid[lat_index][lon_index] = None
 
 class NEWS_API(ExternalAPI):
-    
+
     #Arrays that house the countries that could be looked at for News Congestion
     first_20 = {
         1: "India", 2: "China", 3: "United States", 4: "Indonesia", 5: "Pakistan",
@@ -304,7 +306,7 @@ class NEWS_API(ExternalAPI):
         91: "Ireland", 92: "New Zealand", 93: "Costa Rica", 94: "Liberia", 95: "Oman",
         96: "Panama", 97: "Kuwait", 98: "Mauritania", 99: "Croatia", 100: "Georgia"
     }
-    
+
     #Dictionary used is the data that constitutes a news point onto the globe
     #when hovering over a point, it should give you the name of the article as a hyperlink to the news article online
     NEWS_POINT = {
@@ -315,7 +317,7 @@ class NEWS_API(ExternalAPI):
         "latitude":None,
         "longitude":None
     }
-    
+
     def GatherArticles(self,CountryChoice):
         NEWS_API_url = 'https://newsapi.org/v2/everything'
         params = {
@@ -328,7 +330,7 @@ class NEWS_API(ExternalAPI):
         print(CountryChoice)
         response = requests.get(NEWS_API_url, params=params)
         return response.json()
-    
+
     def GatherArticles_InMass(self,CountryChoice):
         NEWS_API_url = 'https://newsapi.org/v2/everything'
         params = {
@@ -341,13 +343,13 @@ class NEWS_API(ExternalAPI):
         print(CountryChoice)
         response = requests.get(NEWS_API_url, params=params)
         return response.json()
-    
+
     def Parse_Spit(self, Articles):
         if not isinstance(Articles, dict) and Articles.get("status") == "error":
             return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
         if not isinstance(Articles, dict) or "articles" not in Articles:
             return { "articles": [], "error": "Invalid Response from NEWS_API" }
-        
+
         items = Articles.get("articles", [])
         Formatted_Articles = []
         for i, a in enumerate(items, start=1):
@@ -359,29 +361,29 @@ class NEWS_API(ExternalAPI):
                 "link": a.get("url"),
             })
         return {"articles": Formatted_Articles}
-    
+
     def NewsPointBuilder(self,CountryList):
         #Articles = []           #create empty list to hold articles
         AI = Gemini_API()       #make instance of AI to serve as a geolocator
-        
+
         if isinstance(CountryList, str) and CountryList in globals():
             CountryList = globals()[CountryList]         #set the country array once matched to the global array
-        
-        CountryList = list(CountryList.values())                 #ensure that the list for countries is created    
-        
+
+        CountryList = list(CountryList.values())                 #ensure that the list for countries is created
+
         #items = Articles.get("articles", [])                #used for parsing the articles
         Formatted_Articles = []                 #array to hold the list of the formatted articles that are passed to AI component
-        
+
         for country in CountryList:                 #append articles for every country in the array after pulling articles
-            
-            try:    
+
+            try:
                 Response_chunk = self.GatherArticles_InMass(country)
                 #Articles.append(Response_chunk)                             #append each recieved article for each country
-                
+
             except Exception as e:
                 print(f"Error while gathering Articles for {country}: {e}")
-                continue    
-            
+                continue
+
             #Error handling for NewsAPI
             if not isinstance(Response_chunk, dict):
                 print(f"{country}: non-dict response")
@@ -389,45 +391,45 @@ class NEWS_API(ExternalAPI):
             if Response_chunk.get("status") == "error":
                 print(f"{country}: NewsAPI error -> {Response_chunk.get('message') or Response_chunk.get('code')}")
                 continue
-            
+
             for a in (Response_chunk.get("articles",[]) or []):
                 Formatted_Articles.append({
                     "url": a.get("url"),
                     "title": a.get("title"),
                     "country": country,           #set the country to that of the country already being read in from input
                 })
-        
+
         #Articles.clear()                    #clear the for stuff not needed to ensure there are no memory leaks
-        
-        #REMOVE if slows down application significantly        
+
+        #REMOVE if slows down application significantly
         print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
-        
+
         try:
             Formatted_Articles = AI.EnterPrompt_C_Data(Formatted_Articles,1)            #make JSON prompt and then assign GeoLocator Role
         except Exception as e:
             print(f"AI reponse error for geolocation data of country: {e}")
-        
-        #REMOVE if slows down application significantly        
+
+        #REMOVE if slows down application significantly
         print(Formatted_Articles)           #print out the parsed data to ensure that data was created and stored properly
 
         return {"articles": Formatted_Articles}
-    
+
 class Agentic_AI(ExternalAPI):              #work on after getting the congestion filter built out completely
-    
+
     AI_model = Gemini_API()         #use instance of AI model already created earlier
-    
+
     def Weather_Gather(self, country: str) -> str:
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
-        Find meaningful weather observations occuring in {country}. Your task is to analyze 
+        Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would be inline with what an
         expert would provide to someone if asked for a full-on weather report
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
-        
+
         print("making request for Weather_gather()")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
-    
+
     def Flight_Gather(self, country: str) -> str:
         Role = f'''You are an Air Traffic Operations Analyst. Your job is to deliver RECENT, numbers-first flight activity for the country: {country}.
 
@@ -438,11 +440,11 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         4) Return a single JSON object (no extra text).
 
         ### Data Freshness Rules
-        - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs). 
+        - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs).
         - If exact “this week” per-city numbers are not published, use the most recent monthly/weekly airport-level averages **published within the last 30 days**, and clearly label the period in the JSON.
         - DO NOT use data older than 12 months.
         - If a city lacks a fresh numeric value, set that city’s fields to null and add a short “note”.
-        
+
         ### Calculation Rules
         - Share (%) = (city avg_daily_flights / country_total_avg_daily_flights) * 100, rounded to 2 decimals.
         - When aggregating a multi-airport city, sum airport averages first, then compute the share.
@@ -452,40 +454,40 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         - Prefer precise numbers from sources; if reading off a chart, state “estimated from chart” in methodology_notes.
         - Avoid blogs/forums; only cite primary/official or widely recognized aviation analytics.
         '''
-        
+
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print("making request for Flight_gather()")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
-    
+
     def News_Gather(self, country: str) -> str:
         Role = f'''You are a journalist who specializes in news for the country of {country}.
-        
+
         Your objective is to find out what the most current topics of interest are in {country} and
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
         of {country}'s news that might be easy to see or hard to see for an outsider to {country}
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
-        
+
         print("making request for News_gather()")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
-    def Holistic_View(self, country: str,SessionNum,timeout=15): 
+    def Holistic_View(self, country: str,SessionNum,timeout=15):
         print("starting call for Holistic_View()")
         print("threading data...")
-        
+
         Weather_Data = ""           #initialize variables before threading
         Flight_Data = ""
         News_Data = ""
-        
-        
+
+
         #THREAD RESPONSES TO REDUCE LATENCY
-        with ThreadPoolExecutor(max_workers=3) as pool:       
+        with ThreadPoolExecutor(max_workers=3) as pool:
             W_Data_THREAD = pool.submit(self.Weather_Gather, country)
             F_Data_THREAD = pool.submit(self.Flight_Gather, country)
             N_Data_THREAD = pool.submit(self.News_Gather, country)
-            
+
             #SET THREAD RESPONSE OF WEATHER
             try:
                 Weather_Data = W_Data_THREAD.result(timeout=60) or ""
@@ -506,7 +508,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
             except Exception as e:
                 print(f"News_Gather failed: {e}")
                 News_Data = ""
-        
+
         #constructing Prompt with data for AI agent to have context for analysis
         Prompt = (
             f"Country to be analyzed: {country}\n\n"
@@ -514,8 +516,52 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
             "Flight Data to be considered:\n" + Flight_Data + "\n\n"
             "News Data to be considered:\n" + News_Data + "\n\n"
         )
-        
+
         #update logic
-        
+
         return self.AI_model.EnterPrompt_C_Data(Prompt,Role_choice=2)           #perform holistic analysis
+
+
+class DisasterAPI(ExternalAPI):
+    def __init__(self):
+        super().__init__()
+
+    def fetch_data(self):
+        self.update_last_modified()
+        url = "https://eonet.gsfc.nasa.gov/api/v3/events?status=open"
+
+        try:
+            response = requests.get(url, )
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f"Error, An HTTP error has occurred:\n{e}")
+            return []
+        except requests.exceptions.RequestException as e:
+            print(f"A request error has occured:\n{e}")
+            return []
+
+        return self.build_output(response.json())
+
+    def build_output(self, default_output):
+        events_list = default_output['events']
+        output = []
+
+        for event in events_list:
+            events_dict = {}
+            events_dict['type'] = event['categories'][0]['id']
+            geometry_list = event['geometry']
+            magnitudes = []
+            coordinate_list = []
+            for geometry in geometry_list:
+                magnitudes.append(geometry['magnitudeValue'])
+                coordinate_list.append(geometry['coordinates'])
+
+            center = MultiPoint(coordinate_list).centroid
+            #mean_magnitude = statistics.mean(magnitudes)
+            events_dict['longitude'] = center.x
+            events_dict['latitude'] = center.y
+            #events_dict['magnitude'] = mean_magnitude
+
+            output.append(events_dict)
+        return output
 

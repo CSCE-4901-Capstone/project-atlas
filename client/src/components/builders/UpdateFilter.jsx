@@ -1,4 +1,5 @@
 import Flights from 'src/components/builders/Flights';
+import Disasters from 'src/components/builders/Disasters';
 import Weather from 'src/components/builders/Weather';
 import Precipitation from 'src/components/builders/Precipitation';
 import Shaders from 'src/components/builders/Shaders';
@@ -11,6 +12,9 @@ function UpdateFilter({ activeFilter }) {
   switch (activeFilter) {
       case 'Flights':
         filter = <Flights radius={2} />;
+        break;
+      case 'Disasters':
+        filter = <Disasters radius={2} />;
         break;
       case 'News':
         filter = <NewsCongestion radius={2} />;
