@@ -55,6 +55,10 @@ function Precipitation({ radius, refreshTrigger }) {
       setIsLoading(true);
       const config = layerConfig;
       const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+
+      if (forceRefresh) {
+       console.log(`Data refresh triggered for ${layerType}.`);
+      }
       
       if (Object.keys(iconTextures).length === 0) return;
 

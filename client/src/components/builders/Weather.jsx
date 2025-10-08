@@ -32,6 +32,10 @@ function Weather({ radius, refreshTrigger }) {
       setIsLoading(true);
       const config = layerConfigs[layerType];
       const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+
+      if (forceRefresh) {
+       console.log(`Data refresh triggered for ${layerType}.`);
+      }
       
       try {
         const response = await api_conn.get(urlPath);
