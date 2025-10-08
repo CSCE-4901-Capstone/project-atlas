@@ -95,8 +95,8 @@ html {
     transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
 }
 #AI.active{
-    height: 28rem;
-    width: 25rem;
+    height: 40vh;
+    width: 23vw;
 }
 #text-container {
     height: auto;
@@ -297,8 +297,8 @@ textarea:focus, input:focus{
     transition: width 0.6s ease-in-out, height 0.6s ease-in-out;
 }
 #atlas-intel.active{
-    height: 20rem;
-    width: 60rem;
+    height: 30vh;
+    width: 45vw;
 }
 #atlas-intel.active #ai-title{
     opacity: 1;
