@@ -396,3 +396,34 @@ svg{
     background: linear-gradient(90deg, #8A2BE2, #783CD2, #664DC2, #545CB1, #4169E1, #6983E1, #91A1E1, #B9BEE0, #E1DCE0, #F0F0D2, #FFFFE0, #FFF0AC, #FFDB74, #FFC73C, #FFB304, #FFA500, #FF7B00, #FF5200, #FF2800, #FF0000);
     margin-left: 5px;
 }
+/*Precipitation Key*/
+.precip-key-container{
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    padding: 2px;
+}
+.color-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.snow-color{
+    height: 1rem;
+    width: 1rem;
+    border-radius: 0px !important;
+    background: white;
+}
+.rain-color{
+    height: 1rem;
+    width: 1rem;
+    border-radius: 0px !important;
+    background: blue;
+}
+.storm-color{
+    height: 1rem;
+    width: 1rem;
+    border-radius: 0px !important;
+    background: orange;
+}
