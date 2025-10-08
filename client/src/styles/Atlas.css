@@ -179,8 +179,9 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 3rem;
-    width: 60%;
+    transform: scale(1,1);
+    width: 15vw;
+    height: 3rem;
     padding: 7px;
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
@@ -189,19 +190,18 @@ html {
     user-select: none;
     position: absolute;
     top: 15rem;
-    transition: max-height 0.50s ease-in-out, width 0.50s ease-in-out;
+    transition: height 1.0s ease-in-out;
 }
 /*Filter group styling*/
 
 #toggle-menu.active {
-    max-height: 6.5rem;
-    width: 14rem;
+    height: 10rem;
 }
 /*Code for when the filters are toggled on*/
 #toggle-menu.active #toggle-radio-group{
     display: flex;
     visibility: visible;
-    animation: show 1.0s ease-in-out;
+    animation: show 1.75s ease-in-out;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1rem;
@@ -217,6 +217,7 @@ html {
 }
 #toggle-radio-group {
     visibility: hidden;
+    display: none;
 }
 #toggle-radio-group > label {
     display: flex;
