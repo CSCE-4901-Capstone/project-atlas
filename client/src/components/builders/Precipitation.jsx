@@ -1,67 +1,45 @@
 import { useEffect, useState, useRef } from 'react';
 import { useLoader } from '@react-three/fiber';
-import { TextureLoader, CanvasTexture, LinearFilter, LinearMipmapLinearFilter } from 'three';
+import { TextureLoader, CanvasTexture, LinearFilter } from 'three';
+import chroma from 'chroma-js';
 import api_conn from 'src/utils/api';
 
-const precipitationIcons = {
-  Rain: '/images/raindrop.png',
-  HeavyRain: '/images/lightning.png',
-  Snow: '/images/snowflake.png',
-};
-
-const layerConfig = {
+const layerConfigs = {
+  Precipitation: {
     url: '/api/precipitation/',
-    min: 0.1,
-    max: 50,
-    alpha: 220,
-    type: 'icon', 
-    iconMap: [
-      {max: 1, icon: precipitationIcons.Rain},
-      {max: 15, icon: precipitationIcons.HeavyRain},
-      {max: Infinity, icon: precipitationIcons.Snow},
-    ],
+    min: 0,
+    max: 10, 
+    scale: chroma.scale([
+        '#00FF00', 
+        '#FFFF00', 
+        '#FF0000', 
+        '#E839A4'  
+    ]).domain([0.1, 3, 6, 10]), 
+    alpha: 200, 
+    type: 'color', 
+  },
 };
 
 function Precipitation({ radius, refreshTrigger }) {
-  const layerType = 'Precipitation';
-  console.log(`Precipitation component rendered`); 
+  const layerType = 'Precipitation'; 
+  console.log(`Precipitation component rendered with layerType: ${layerType}`); 
   const [dataTexture, setDataTexture] = useState(null);
-  const [iconTextures, setIconTextures] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const fallbackTexture = useLoader(TextureLoader, '/images/earth2.jpg');
   
   const isInitialMount = useRef(true);
   const canvasRef = useRef(document.createElement('canvas'));
 
   useEffect(() => {
-    const config = layerConfig;
-    const loader = new TextureLoader();
-    const newIconTextures = {};
-    const uniqueIcons = [...new Set(config.iconMap.map(item => item.icon))];
-    
-    const loadPromises = uniqueIcons.map(url => new Promise((resolve, reject) => {
-      loader.load(url, (texture) => {
-        newIconTextures[url] = texture.image;
-        resolve();
-      }, undefined, reject);
-    }));
-
-    Promise.all(loadPromises)
-      .then(() => setIconTextures(newIconTextures))
-      .catch(error => console.error("Failed to load precipitation icons:", error));
-  }, []);
-
-  useEffect(() => {
     const generateDataTexture = async (forceRefresh) => {
       setIsLoading(true);
-      const config = layerConfig;
+      const config = layerConfigs[layerType];
       const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
 
       if (forceRefresh) {
        console.log(`Data refresh triggered for ${layerType}.`);
       }
       
-      if (Object.keys(iconTextures).length === 0) return;
-
       try {
         const response = await api_conn.get(urlPath);
         const json = response.data;
@@ -81,67 +59,31 @@ function Precipitation({ radius, refreshTrigger }) {
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         
-        const scaleFactor = 16; 
-        const highResCanvas = document.createElement('canvas');
-        highResCanvas.width = width * scaleFactor;
-        highResCanvas.height = height * scaleFactor;
-        const highResCtx = highResCanvas.getContext('2d');
+        const imageData = ctx.createImageData(width, height);
 
-        highResCtx.clearRect(0, 0, highResCanvas.width, highResCanvas.height);
-        highResCtx.imageSmoothingEnabled = true;
-        
-        highResCtx.save(); 
-        
-        const baseIconStep = 4;
-        const iconSize = baseIconStep * scaleFactor; 
+        for (let y = 0; y < height; y++) {
+          const flippedY = height - 1 - y; 
+          for (let x = 0; x < width; x++) {
+            const i = (y * width + x) * 4; 
+            const value = grid[flippedY][x];
 
-        const poleExclusionZone = Math.floor(height * 0.05); 
-
-        for (let y = 0; y < height; y += baseIconStep) { 
-          
-          if (y < poleExclusionZone || y > (height - 1 - poleExclusionZone)) {
-              continue; 
-          }
-
-          const dataY = height - 1 - Math.floor(y);
-
-          for (let x = 0; x < width; x += baseIconStep) { 
-            
-            const dataX = Math.floor(x);
-            
-            if (dataY >= 0 && dataX < width) {
-              const value = grid[dataY][dataX];
+            if (value !== null && value !== undefined && value > config.min) {
+              const [r, g, b] = config.scale(value).rgb();
               
-              if (value !== null && value !== undefined && value >= config.min) {
-                const iconConfig = config.iconMap.find(item => value <= item.max);
-                
-                if (iconConfig) {
-                  const iconImage = iconTextures[iconConfig.icon];
-                  
-                  if (iconImage) {
-                    highResCtx.drawImage(
-                      iconImage, 
-                      x * scaleFactor, 
-                      y * scaleFactor, 
-                      iconSize, 
-                      iconSize
-                    );
-                  }
-                }
-              }
+              imageData.data[i] = r;      
+              imageData.data[i + 1] = g;  
+              imageData.data[i + 2] = b;  
+              imageData.data[i + 3] = config.alpha; 
+            } else {
+              imageData.data[i + 3] = 0;
             }
           }
         }
-        highResCtx.restore();
-        
-        ctx.clearRect(0, 0, width, height);
-        ctx.drawImage(highResCanvas, 0, 0, width, height);
+        ctx.putImageData(imageData, 0, 0);
 
         const tex = new CanvasTexture(canvas);
-        
-        tex.minFilter = LinearMipmapLinearFilter;
+        tex.minFilter = LinearFilter;
         tex.magFilter = LinearFilter;
-
         tex.needsUpdate = true;
         setDataTexture(tex);
 
@@ -154,25 +96,29 @@ function Precipitation({ radius, refreshTrigger }) {
 
     const isRefresh = !isInitialMount.current;
                          
-    if (Object.keys(iconTextures).length > 0) {
-      generateDataTexture(isRefresh);
-    }
+    generateDataTexture(isRefresh);
     
     isInitialMount.current = false;
 
-  }, [refreshTrigger, iconTextures]);
+  }, [refreshTrigger]);
 
   return (
-    dataTexture && (
+    <>
       <mesh>
-        <sphereGeometry args={[radius + 0.01, 64, 32]} />
-        <meshStandardMaterial 
-          map={dataTexture}
-          transparent={true}
-          depthWrite={false} 
-        />
+        <sphereGeometry args={[radius, 64, 32]} />
+        <meshStandardMaterial map={fallbackTexture} />
       </mesh>
-    )
+      {dataTexture && (
+        <mesh>
+          <sphereGeometry args={[radius + 0.01, 64, 32]} />
+          <meshStandardMaterial 
+            map={dataTexture}
+            transparent={true} 
+            depthWrite={true} 
+          />
+        </mesh>
+      )}
+    </>
   );
 }
 
