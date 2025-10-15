@@ -2,11 +2,15 @@
 
 @font-face{
     font-family: 'inter';
-    src:url('../assets/Inter-VariableFont_opsz,wght.ttf') format('truetype')
+    src:url('../assets/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+@font-face{
+    font-family: 'Notosans JP';
+    src:url('../assets/NotoSansJP-VariableFont_wght.ttf') format('truetype');
 }
 
 * {
-    font-family: 'inter';
+    font-family: 'inter', 'Notosans JP';
     font-weight: 300;
     margin: 0;
     padding: 0;
