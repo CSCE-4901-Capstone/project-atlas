@@ -31,14 +31,24 @@ function Weather({ radius, refreshTrigger }) {
     const generateDataTexture = async (forceRefresh) => {
       setIsLoading(true);
       const config = layerConfigs[layerType];
-      const urlPath = `${config.url}${forceRefresh ? '?refresh=true' : ''}`;
+      
+      let urlPath = config.url;
 
       if (forceRefresh) {
-       console.log(`Data refresh triggered for ${layerType}.`);
+        const cacheBuster = Date.now();
+        urlPath = `${config.url}?cb=${cacheBuster}`;
+        console.log(`Data refresh triggered for ${layerType}.`);
       }
       
       try {
-        const response = await api_conn.get(urlPath);
+        const response = await api_conn.get(urlPath, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        
         const json = response.data;
         const grid = json.data;
 
