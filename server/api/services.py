@@ -528,7 +528,7 @@ class DisasterAPI(ExternalAPI):
 
     def fetch_data(self):
         self.update_last_modified()
-        url = "https://eonet.gsfc.nasa.gov/api/v3/events?status=open"
+        url = "https://eonet.gsfc.nasa.gov/api/v3/events"
 
         try:
             response = requests.get(url, )
@@ -549,6 +549,8 @@ class DisasterAPI(ExternalAPI):
         for event in events_list:
             events_dict = {}
             events_dict['type'] = event['categories'][0]['id']
+            if event['categories'][0]['id'] != 'wildfires':
+                print(event['categories'][0]['id'])
             geometry_list = event['geometry']
             magnitudes = []
             coordinate_list = []

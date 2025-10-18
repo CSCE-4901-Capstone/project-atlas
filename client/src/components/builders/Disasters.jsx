@@ -42,7 +42,18 @@ function BuildDisasters({ data, radius }) {
       severeStorms: loader.load('/images/storm.png'),
       volcanoes: loader.load('/images/volcano.png'),
       seaLakeIce: loader.load('/images/ice.png'),
+      drought: loader.load('/images/drought.png'),
+      earthquakes: loader.load('/images/earthquakes.png')
     };
+
+    const disasterSizes = {
+     wildfires: 0.02,
+     severeStorms: 0.06,
+     volcanoes: 0.06,
+     seaLakeIce: 0.06,
+     drought: 0.06,
+     earthquakes: 0.06
+    }
 
     // Creates disaster types based on any new disaster types introduced by the api
     const grouped = {};
@@ -61,7 +72,7 @@ function BuildDisasters({ data, radius }) {
       const points = tranformationHackUtility(rawPoints);
 
       points.forEach(([x, y, z]) => {
-        const geometry = new BoxGeometry(0.03, 0.03, 0.000001);
+        const geometry = new BoxGeometry(disasterSizes[type], disasterSizes[type], 0.000001);
 
         // Sets the geometry position
         const translationMatrix = new Matrix4().makeTranslation(x, y, z);
