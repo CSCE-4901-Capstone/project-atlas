@@ -4,6 +4,7 @@ import Loading from 'src/components/builders/Loading';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
+import tranformationHackUtility from 'src/utils/transformationHackUtility';
 import api_conn from 'src/utils/api';
 
 function Flights({ radius }) {
@@ -38,12 +39,10 @@ function BuildFlights({ data, radius }) {
     // Extract coordinate data
     let json = convertObjectsToMultiPointGeoJSON("Flights", data);
     let sphereCoordinates = convertGeoJSONToSphereCoordinates(json, radius)
-    let points = sphereCoordinates['output_coordinate_array'];
+    let rawPoints = sphereCoordinates['output_coordinate_array'];
+    let points = tranformationHackUtility(rawPoints);
 
     let geometries = [];
-
-    console.log(points.length)
-    console.log(data.length)
 
     points.forEach(([x, y, z], i) => {
       const geometry = new BoxGeometry(0.015, 0.015, 0.000001);
@@ -74,12 +73,6 @@ function BuildFlights({ data, radius }) {
 
       return BufferGeometryUtils.mergeGeometries(geometries, false);
   }, [data, radius]);
-
-  useEffect(() => {
-     if (groupRef.current) {
-      groupRef.current.rotation.x = -Math.PI * 0.5; // Quick hack to fix rotation
-     }
-  }, [])
 
   return mergedGeometry ? (
     <mesh ref={groupRef}>

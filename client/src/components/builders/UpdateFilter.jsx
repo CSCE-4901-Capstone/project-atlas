@@ -31,7 +31,6 @@ function UpdateFilter({ activeFilter }) {
         filter = null;
   }
 
-
   return (
     <>
       { showShaders && <Shaders /> }

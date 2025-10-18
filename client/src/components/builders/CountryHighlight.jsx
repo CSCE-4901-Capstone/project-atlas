@@ -2,7 +2,6 @@ import CountryOutline from 'src/components/builders/CountryOutline'
 
 function CountryHighlight({ selectedCountry }) {
 
-
   return (
     <>
       {selectedCountry ? <CountryOutline filename={`${selectedCountry}.geojson`} radius={2.001} color={'rgb(255,255,255)'}/> : null}
