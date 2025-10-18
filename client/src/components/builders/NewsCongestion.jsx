@@ -5,7 +5,7 @@ import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPo
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
 import api_conn from 'src/utils/api';
 
-function NewsPopulate({ radius }) {       //function used to load in articles for the countries
+function NewsPopulate({ radius, visible }) {       //function used to load in articles for the countries
   const [data, setData] = useState(null)
     // Pull data from NewsAPI
     useEffect(() => {
@@ -21,6 +21,8 @@ function NewsPopulate({ radius }) {       //function used to load in articles fo
 
       fetchData();
     }, [radius]); 
+
+  if (!visible) return null;
 return (                        //build out the heatmap based on the fetched news points
         <>
           {data ? <BuildHeatmap data={data} radius={radius}/> : null}     

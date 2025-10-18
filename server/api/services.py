@@ -549,8 +549,6 @@ class DisasterAPI(ExternalAPI):
         for event in events_list:
             events_dict = {}
             events_dict['type'] = event['categories'][0]['id']
-            if event['categories'][0]['id'] != 'wildfires':
-                print(event['categories'][0]['id'])
             geometry_list = event['geometry']
             magnitudes = []
             coordinate_list = []

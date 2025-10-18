@@ -4,25 +4,23 @@ import Loading from 'src/components/builders/Loading';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
+import fetchData from 'src/utils/fetchData';
 import tranformationHackUtility from 'src/utils/transformationHackUtility';
-import api_conn from 'src/utils/api';
 
-function Flights({ radius }) {
-  const [data, setData] = useState(null)
-    // Pull data from json file
-    useEffect(() => {
-      async function fetchData() {
-        await api_conn.get('/api/flights')
-          .then(response => response.data)
-          .then(data => {
-            console.log(data);
-            setData(data)
-          })
-          .catch(error => console.error('Error fetching json file:', error));
-        }
+function Flights({ radius, visible }) {
+  const [data, setData] = useState(null);
 
-      fetchData();
-    }, [radius]); 
+  useEffect(() => {
+    let mounted = true;
+
+    fetchData('/api/flights').then((res) => {
+      if (mounted) setData(res);
+    });
+
+    return () => { mounted = false };
+  }, [radius]);
+
+  if (!visible) return null;
 return (
         <>
           {data ? <BuildFlights data={data} radius={radius}/> : <Loading />}
