@@ -11,7 +11,7 @@ const scale = chroma.scale([
         '#E839A4'  
     ]).domain([0.1, 3, 6, 10])
 const alpha = 200;
-const min = 0;
+const min = 0.1;
 
 function Precipitation({ radius, visible }) {
   const [data, setData] = useState(null);

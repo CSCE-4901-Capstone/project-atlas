@@ -242,21 +242,43 @@ class WeatherAPIAsync:
 
 
 class PrecipitationAPIAsync(WeatherAPIAsync):
-    def __init__(self):
-        super().__init__()
-        self.cache_file = "precip_cache.json"
+    def __init__(self, step=2):
+        super().__init__(step=step) 
 
-    async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
+    async def _fetch_cell(self, session, lat_index, lon_index, lat, lon):
         try:
-            data = await self._fetch_weather(session, lat, lon)
+            data = await self._fetch_weather(session, lat, lon) 
             rain = data.get('rain', {}).get('1h', 0)
             snow = data.get('snow', {}).get('1h', 0)
+            
             precipitation = rain + snow
-            self.grid[lat_index][lon_index] = precipitation
-            self.STEP = 1
+            
+            return lat_index, lon_index, precipitation
         except Exception as e:
             print(f"Failed to fetch precipitation ({lat}, {lon}): {e}")
-            self.grid[lat_index][lon_index] = None
+            return lat_index, lon_index, None
+
+    async def fill_grid_async(self, **kwargs):
+        
+        grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+        tasks = []
+
+        async with aiohttp.ClientSession() as session:
+            for lat_index in range(self.rows):
+                for lon_index in range(self.cols):
+                    lat = self.LAT_MIN + lat_index * self.STEP
+                    lon = self.LON_MIN + lon_index * self.STEP
+                    
+                    tasks.append(self._fetch_cell(session, lat_index, lon_index, lat, lon))
+
+            results = await asyncio.gather(*tasks)
+
+        for lat_index, lon_index, value in results:
+            grid[lat_index][lon_index] = value
+
+        print(grid)
+
+        return grid
 
 class NEWS_API(ExternalAPI):
 
