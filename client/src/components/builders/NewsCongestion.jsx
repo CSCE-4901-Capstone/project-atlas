@@ -3,6 +3,7 @@ import { TextureLoader, Matrix4, BoxGeometry, Object3D, PlaneGeometry, MeshBasic
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
+import Error from 'src/components/builders/Error';
 import api_conn from 'src/utils/api';
 
 function NewsPopulate({ radius, visible }) {       //function used to load in articles for the countries
@@ -23,6 +24,7 @@ function NewsPopulate({ radius, visible }) {       //function used to load in ar
     }, [radius]); 
 
   if (!visible) return null;
+  if (data && data.length === 0) return <Error />;
 return (                        //build out the heatmap based on the fetched news points
         <>
           {data ? <BuildHeatmap data={data} radius={radius}/> : null}     

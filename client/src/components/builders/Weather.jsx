@@ -2,6 +2,7 @@ import { useMemo, useEffect, useState, useRef } from 'react';
 import { CanvasTexture, LinearFilter } from 'three';
 import chroma from 'chroma-js';
 import Loading from 'src/components/builders/Loading';
+import Error from 'src/components/builders/Error';
 import fetchData from 'src/utils/fetchData';
 
 const scale = chroma.scale([
@@ -24,6 +25,7 @@ function Weather({ radius, visible }) {
   }, [radius]);
 
   if (!visible) return null;
+  if (data && data.length === 0) return <Error />;
 
   return data ? <BuildWeather data={data} radius={radius} /> : <Loading />;
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { TextureLoader, Matrix4, BoxGeometry, Object3D } from 'three';
 import Loading from 'src/components/builders/Loading';
+import Error from 'src/components/builders/Error';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
@@ -21,8 +22,8 @@ function Flights({ radius, visible }) {
     return () => { mounted = false };
   }, [radius]);
 
-  if (data && data.length === 0) return null;
   if (!visible) return null;
+  if (data && data.length === 0) return <Error />;
 
   return (
           <>
