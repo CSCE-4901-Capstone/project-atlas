@@ -242,7 +242,7 @@ class WeatherAPIAsync:
 
 
 class PrecipitationAPIAsync(WeatherAPIAsync):
-    def __init__(self, step=2):
+    def __init__(self, step=1):
         super().__init__(step=step) 
 
     async def _fetch_cell(self, session, lat_index, lon_index, lat, lon):
