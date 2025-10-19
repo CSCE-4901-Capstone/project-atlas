@@ -6,6 +6,7 @@ import asyncio
 import feedparser
 from shapely.geometry import MultiPoint
 import statistics
+import aiohttp
 
 from datetime import datetime as dt         #alias datetime for ease of use (use for crewAI)
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED,TimeoutError       #dependencies needed for threading
@@ -180,20 +181,15 @@ class Gemini_API(ExternalAPI):
         pass
 
 class WeatherAPIAsync:
-    def __init__(self):
-        #Grid boundaries and resolution
+    def __init__(self, step=2):
+        # Grid boundaries and resolution
         self.LAT_MIN, self.LAT_MAX = -90, 90
         self.LON_MIN, self.LON_MAX = -180, 180
-        self.STEP = 2  # Keep this at a high-resolution value
+        self.STEP = step
 
-        #Grid size
-        self.rows = ((self.LAT_MAX - self.LAT_MIN) // self.STEP) + 1
-        self.cols = ((self.LON_MAX - self.LON_MIN) // self.STEP) + 1
-
-        #Initialize empty grid
-        self.grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
-
-        self.cache_file = "weather_cache.json"
+        # Grid size
+        self.rows = int(((self.LAT_MAX - self.LAT_MIN) // self.STEP) + 1)
+        self.cols = int(((self.LON_MAX - self.LON_MIN) // self.STEP) + 1)
 
     def coords_to_index(self, lat, lon):
         if not (self.LAT_MIN <= lat < self.LAT_MAX) or not (self.LON_MIN <= lon < self.LON_MAX):
@@ -205,52 +201,45 @@ class WeatherAPIAsync:
     async def _fetch_weather(self, session, lat, lon):
         url = "https://api.openweathermap.org/data/2.5/weather"
         params = {
-            'lat': lat,
-            'lon': lon,
-            'appid': WEATHER_API_KEY,
-            'units': 'metric'
+            "lat": lat,
+            "lon": lon,
+            "appid": WEATHER_API_KEY,
+            "units": "metric",
         }
         async with session.get(url, params=params) as response:
             response.raise_for_status()
             return await response.json()
 
-    async def _fetch_and_store(self, session, lat_index, lon_index, lat, lon):
+    async def _fetch_cell(self, session, lat_index, lon_index, lat, lon):
         try:
             data = await self._fetch_weather(session, lat, lon)
-            temp = data.get('main', {}).get('temp')
-            self.grid[lat_index][lon_index] = temp
+            temp = data.get("main", {}).get("temp")
+            return lat_index, lon_index, temp
         except Exception as e:
             print(f"Failed to fetch ({lat}, {lon}): {e}")
-            self.grid[lat_index][lon_index] = None
+            return lat_index, lon_index, None
 
-    async def fill_grid_async(self, force_refresh=False):
-        if not force_refresh and os.path.exists(self.cache_file):
-            try:
-                with open(self.cache_file, "r") as f:
-                    self.grid = json.load(f)
-                    return self.grid
-            except Exception as e:
-                print(f"Failed to load cached data from {self.cache_file}: {e}")
+    async def fill_grid_async(self):
+        """Fetch live temperature data for every grid cell and return 2D array."""
+        grid = [[None for _ in range(self.cols)] for _ in range(self.rows)]
+        tasks = []
 
-        #Fetch live data concurrently
-        import aiohttp
         async with aiohttp.ClientSession() as session:
-            tasks = []
             for lat_index in range(self.rows):
                 for lon_index in range(self.cols):
                     lat = self.LAT_MIN + lat_index * self.STEP
                     lon = self.LON_MIN + lon_index * self.STEP
-                    tasks.append(self._fetch_and_store(session, lat_index, lon_index, lat, lon))
-            await asyncio.gather(*tasks)
+                    tasks.append(self._fetch_cell(session, lat_index, lon_index, lat, lon))
 
-        #Save to cache
-        try:
-            with open(self.cache_file, "w") as f:
-                json.dump(self.grid, f)
-        except Exception as e:
-            print(f"Failed to write cache to {self.cache_file}: {e}")
+            results = await asyncio.gather(*tasks)
 
-        return self.grid
+        for lat_index, lon_index, value in results:
+            grid[lat_index][lon_index] = value
+
+        print(grid)
+
+        return grid
+
 
 class PrecipitationAPIAsync(WeatherAPIAsync):
     def __init__(self):

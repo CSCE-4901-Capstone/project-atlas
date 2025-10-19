@@ -33,8 +33,6 @@ function BuildWeather ({ data, radius }) {
 
   const dataTexture = useMemo(() => {
     const grid = data;
-    console.log(grid)
-    console.log('test')
 
     const height = grid.length;
     const width = grid[0]?.length || 0;

@@ -15,17 +15,20 @@ function Flights({ radius, visible }) {
 
     fetchData('/api/flights').then((res) => {
       if (mounted) setData(res);
+      console.log(res)
     });
 
     return () => { mounted = false };
   }, [radius]);
 
+  if (data && data.length === 0) return null;
   if (!visible) return null;
-return (
-        <>
-          {data ? <BuildFlights data={data} radius={radius}/> : <Loading />}
-        </>
-      );
+
+  return (
+          <>
+            {data ? <BuildFlights data={data} radius={radius}/> : <Loading />}
+          </>
+        );
 }
 
 function BuildFlights({ data, radius }) {
