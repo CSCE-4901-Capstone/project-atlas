@@ -199,6 +199,7 @@ class WeatherAPIAsync:
         return row, col
 
     async def _fetch_weather(self, session, lat, lon):
+        await asyncio.sleep(30)
         url = "https://api.openweathermap.org/data/2.5/weather"
         params = {
             "lat": lat,
