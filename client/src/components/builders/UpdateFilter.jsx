@@ -7,18 +7,6 @@ import NewsCongestion from 'src/components/builders/NewsCongestion';
 
 function UpdateFilter({ activeFilter }) {
   const showShaders = !['Temperature', 'Precipitation'].includes(activeFilter);
-  let filter;
-
-  switch (activeFilter) {
-      case 'Temperature':
-        filter = <Weather radius={2} />; 
-        break;
-      case 'Precipitation': 
-        filter = <Precipitation radius={2} />;
-        break;
-      default:
-        filter = null;
-  }
 
   return (
     <>
@@ -27,9 +15,9 @@ function UpdateFilter({ activeFilter }) {
         <Flights radius={2} visible={activeFilter === 'Flights'} />
         <Disasters radius={2} visible={activeFilter === 'Disasters'} />
         <NewsCongestion radius={2} visible={activeFilter === 'News'} />
+        <Weather radius={2} visible={activeFilter === 'Temperature'} />
+        <Precipitation radius={2} visible={activeFilter === 'Precipitation'} />
       </group>
-
-      {filter}
       
     </>
   );
