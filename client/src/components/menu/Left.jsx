@@ -4,10 +4,11 @@ import AISummary from "./AISummary";
 import Help from "./Help";
 import TemperatureKey from "./TemperatureKey";
 import PrecipitationKey from "./PrecipitationKey"
+import DisasterKey from "./DisasterKey";
 
 const Left = ({choice, activeFilter}) => {
     let retFilter = null;
-    console.log(activeFilter);
+    console.log(activeFilter)
     switch(activeFilter){
         case "Temperature":
             retFilter = <TemperatureKey filter={activeFilter}/>;
@@ -15,6 +16,9 @@ const Left = ({choice, activeFilter}) => {
         case "Precipitation":
             //Change to new filter key for precipitation when made
             retFilter = <PrecipitationKey filter={activeFilter}/>;
+            break;
+        case "Disasters":
+            retFilter = <DisasterKey filter={activeFilter}/>
             break;
         default:
             retFilter = null;

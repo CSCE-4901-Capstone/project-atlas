@@ -127,7 +127,7 @@ CORS_ALLOWED_ORIGINS = [                #to make sure this runs properly, add th
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:5174",
-    os.environ["SITE_1"],
-    os.environ["SITE_2"],
+    #os.environ["SITE_1"],
+    #os.environ["SITE_2"],
 ]
 CORS_ALLOW_CREDENTIALS = True
