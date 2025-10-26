@@ -1,7 +1,6 @@
 import React from "react";
 //import Logo from './Logo'
 import AISummary from "./AISummary";
-import Help from "./Help";
 import TemperatureKey from "./TemperatureKey";
 import PrecipitationKey from "./PrecipitationKey"
 import DisasterKey from "./DisasterKey";

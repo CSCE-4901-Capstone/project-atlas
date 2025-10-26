@@ -40,7 +40,7 @@ const DisasterKey = ({filter}) =>{
                     <div className="disaster-container">
                         {/*Ice*/}
                         <img src={ice} alt="ice image" />
-                        <p>Droughts</p>
+                        <p>Snow</p>
                     </div>
                 </div>
             )}
