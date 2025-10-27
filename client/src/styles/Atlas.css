@@ -399,7 +399,7 @@ svg{
 .temp-key-gradient{
     height: 1rem;
     width: 210px !important;
-    background: linear-gradient(90deg,#E839A4FF,#FF0000FF,#FFFF00FF,#00FF00FF);
+    background: linear-gradient(90deg,#8A2BE2, #783CD2, #664DC2, #545CB1, #4169E1, #6983E1, #91A1E1, #B9BEE0, #E1DCE0, #F0F0D2, #FFFFE0, #FFF0AC, #FFDB74, #FFC73C, #FFB304, #FFA500,#FF7B00, #FF5200, #FF2800, #FF0000);
     margin-left: 5px;
 }
 /*Precipitation Key*/
