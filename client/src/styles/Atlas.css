@@ -184,9 +184,11 @@ html {
     flex-direction: column;
     align-items: center;
     transform: scale(1,1);
-    width: 10vw;
-    height: 3rem;
-    padding: 7px;
+    width: 11vw;
+    height: 5vh;
+    min-width: 8rem;
+    min-height: 3rem;
+    padding: 12px;
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     background: rgba(50, 50, 50, 10%);
@@ -194,12 +196,13 @@ html {
     user-select: none;
     position: absolute;
     top: 15rem;
-    transition: height 1.0s ease-in-out;
+    transition: height 1.0s ease-in-out, width 1.0s ease-in-out;
 }
 /*Filter group styling*/
 
 #toggle-menu.active {
-    height: 10rem;
+    height: 11vh;
+    width: 13vw;
 }
 /*Code for when the filters are toggled on*/
 #toggle-menu.active #toggle-radio-group{
@@ -227,7 +230,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 7px;
 }
 /*Remove Default styling for radio buttons*/
 #toggle-radio-group > label > input {
