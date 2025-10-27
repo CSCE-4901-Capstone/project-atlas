@@ -405,34 +405,25 @@ svg{
 /*Precipitation Key*/
 .precip-key-container{
     display: flex;
-    flex-direction: row;
-    gap: 1vw;
-    padding: 2px;
-}
-.color-container{
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.snow-color{
+.precip-key-gradient{
     height: 1rem;
-    width: 1rem;
-    border-radius: 5px !important;
-    background: white;
+    width: 210px !important;
+    background: linear-gradient(90deg,#E839A4FF,#FF0000FF,#FFFF00FF,#00FF00FF);
+    margin-left: 5px;
 }
-.rain-color{
-    height: 1rem;
-    width: 1rem;
-    border-radius: 5px !important;
-    background: blue;
+.precip-key-container > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 15rem;
+    padding: 2px;
 }
-.storm-color{
-    height: 1rem;
-    width: 1rem;
-    border-radius: 5px !important;
-    background: orange;
-}
+
+/*Disaster key*/
 .disaster-key-container{
     display: flex;
     flex-direction: row;

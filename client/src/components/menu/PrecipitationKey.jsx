@@ -18,20 +18,19 @@ const PrecipitationKey = ({filter}) =>{
         <>
             {active && (
                 <div className="precip-key-container">
-                    <div className="color-container">
-                        {/*Snow - white */}
-                        <div className="snow-color"></div>
-                        <p>Snow</p>
+                    <div className="precip-key-gradient"></div>
+                    <div>
+                        <svg width="240" height="10">
+                            <line 
+                            x1="16" y1="10" x2="230" y2="10"
+                            className="straight"
+                            />
+                        </svg>
                     </div>
-                    <div className="color-container">
-                        {/*Rain - Blue */}
-                        <div className="rain-color"></div>
-                        <p>Rain</p>
-                    </div>
-                    <div className="color-container">
-                        {/*Storms - Orange*/}
-                        <div className="storm-color"></div>
-                        <p>Storm</p>
+
+                    <div>
+                        <p>0.1</p>
+                        <p>10</p>
                     </div>
                 </div>
             )}
