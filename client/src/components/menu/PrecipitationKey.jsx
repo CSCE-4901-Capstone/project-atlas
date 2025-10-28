@@ -18,6 +18,10 @@ const PrecipitationKey = ({filter}) =>{
         <>
             {active && (
                 <div className="precip-key-container">
+                    <div className="text-container">
+                        <h3>Precipitation</h3><p>(mmHg)</p>
+                    </div>
+                    
                     <div className="precip-key-gradient"></div>
                     <div>
                         <svg width="240" height="10">
