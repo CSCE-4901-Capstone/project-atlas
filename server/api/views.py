@@ -4,6 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .services import get_population
 from .services import WeatherAPIAsync, PrecipitationAPIAsync
 import asyncio
 
@@ -175,4 +176,22 @@ class DisasterList(APIView):
     def get(self, request, format=None):
         disasters = self.api.fetch_data()
         return Response(disasters, status=status.HTTP_200_OK)
+
+
+class PopulationView(APIView):
+    """Return population for a given country. Query param: ?country=Country Name"""
+
+    def get(self, request, format=None):
+        country = request.GET.get("country")
+        if not country:
+            return Response({"error": "country query param required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        pop, source = get_population(country)
+        if pop is None:
+            # Distinguish notfound vs error
+            if source == "notfound":
+                return Response({"error": "population not found", "source": source}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "population lookup failed", "source": source}, status=status.HTTP_502_BAD_GATEWAY)
+
+        return Response({"country": country, "population": pop, "source": source}, status=status.HTTP_200_OK)
 

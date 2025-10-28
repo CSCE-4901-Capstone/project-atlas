@@ -7,6 +7,8 @@ import feedparser
 from shapely.geometry import MultiPoint
 import statistics
 import aiohttp
+from pathlib import Path
+from django.core.cache import cache
 
 from datetime import datetime as dt         #alias datetime for ease of use (use for crewAI)
 from concurrent.futures import ThreadPoolExecutor,wait,ALL_COMPLETED,TimeoutError       #dependencies needed for threading
@@ -576,3 +578,124 @@ class DisasterAPI(ExternalAPI):
             output.append(events_dict)
         return output
 
+class PopulationAPI(ExternalAPI):
+    def __init__(self):
+        super().__init__()
+
+    def fetch_data(self):
+        self.update_last_modified()
+        url = "https://world-population.p.rapidapi.com/worldpopulation"
+
+        headers = {
+            "X-RapidAPI-Key": os.getenv("RAPIDAPI_KEY"),
+            "X-RapidAPI-Host": "world-population.p.rapidapi.com"
+        }
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f"Error, An HTTP error has occurred:\n{e}")
+            return {}
+        except requests.exceptions.RequestException as e:
+            print(f"A request error has occured:\n{e}")
+            return {}
+
+        return self.build_output(response.json())
+
+    def build_output(self, default_output):
+        population = default_output.get('body', {}).get('world_population', None)
+        return {'world_population': population}
+
+
+# --- Population helper that prefers a local top-20 JSON, then cache, then API Ninjas ---
+TOP20_PATH = Path(__file__).resolve().parent / "top20_population.json"
+
+def _load_top20():
+    try:
+        with open(TOP20_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+TOP20_POPS = _load_top20()
+
+API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
+
+def _fetch_population_ninjas(country: str, timeout=10):
+    """Call API Ninjas population endpoint. Returns int population or None."""
+    if not API_NINJAS_KEY:
+        raise RuntimeError("API_NINJAS_KEY not set in environment")
+
+    url = "https://api.api-ninjas.com/v1/population"
+    headers = {"X-Api-Key": API_NINJAS_KEY}
+    params = {"country": country}
+    try:
+        r = requests.get(url, params=params, headers=headers, timeout=timeout)
+        r.raise_for_status()
+        data = r.json()
+        # API Ninjas may return a list or dict; handle both
+        if isinstance(data, list) and len(data) > 0:
+            item = data[0]
+        elif isinstance(data, dict):
+            item = data
+        else:
+            return None
+
+        # item may have "population" or "total_population" etc.
+        pop = item.get("population") or item.get("total_population") or item.get("total")
+        if pop is None:
+            # Try nested keys
+            if isinstance(item, dict):
+                for v in item.values():
+                    if isinstance(v, (int, float)) and v > 0:
+                        return int(v)
+            return None
+        return int(pop)
+    except Exception as e:
+        print(f"Population API Ninjas error for {country}: {e}")
+        return None
+
+
+def get_population(country: str, cache_ttl: int = 86400):
+    """Return (population:int or None, source:str).
+
+    source is one of: "local", "cache", "api", "error", "notfound".
+    """
+    if not country:
+        return None, "invalid"
+
+    name = country.strip()
+
+    # Prefer exact-match from top20 JSON
+    if name in TOP20_POPS:
+        try:
+            return int(TOP20_POPS[name]), "local"
+        except Exception:
+            return None, "error"
+
+    # Check cache (case-insensitive key)
+    cache_key = f"population:{name.lower()}"
+    cached = None
+    try:
+        cached = cache.get(cache_key)
+    except Exception:
+        cached = None
+
+    if cached:
+        return int(cached), "cache"
+
+    # Fallback to API Ninjas
+    try:
+        pop = _fetch_population_ninjas(name)
+        if pop is not None:
+            try:
+                cache.set(cache_key, int(pop), cache_ttl)
+            except Exception:
+                pass
+            return int(pop), "api"
+        else:
+            return None, "notfound"
+    except RuntimeError as e:
+        print(e)
+        return None, "error"
