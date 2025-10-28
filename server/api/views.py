@@ -106,7 +106,7 @@ class Heatmap(APIView):
         #Mass_Articles = self.NEWS.NewsPointBuilder(self.NEWS.first_20)
 
         Mass_Articles = [
-            { "city": "Berlin", "url": "https://example.com/news/berlin", "title": "Berlin update", "country": "Germany", "latitude": 52.5200, "longitude": 13.4050 },
+            { "city": "Berlin", "url": "https://www.reuters.com/world/china/china-downplays-tension-after-german-foreign-minister-cancels-beijing-trip-2025-10-27/", "title": "Berlin update", "country": "Germany", "latitude": 52.5200, "longitude": 13.4050 },
             { "city": "Munich", "url": "https://example.com/news/munich", "title": "Munich update", "country": "Germany", "latitude": 48.1374, "longitude": 11.5755 },
             { "city": "Hamburg", "url": "https://example.com/news/hamburg", "title": "Hamburg update", "country": "Germany", "latitude": 53.5511, "longitude": 9.9937 },
             { "city": "Paris", "url": "https://example.com/news/paris", "title": "Paris update", "country": "France", "latitude": 48.8566, "longitude": 2.3522 },
@@ -137,9 +137,6 @@ class Heatmap(APIView):
             { "city": "Melbourne", "url": "https://example.com/news/melbourne", "title": "Melbourne update", "country": "Australia", "latitude": -37.8136, "longitude": 144.9631 },
             { "city": "São Paulo", "url": "https://example.com/news/sao-paulo", "title": "São Paulo update", "country": "Brazil", "latitude": -23.5505, "longitude": -46.6333 }
         ]
-
-
-
 
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
 

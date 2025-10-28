@@ -16,9 +16,24 @@ import dotenv
 from dotenv import load_dotenv
 
 load_dotenv()       #load the .env file with needed credentials
+
+#OR_Keys
 AI_API_key = os.getenv("OPENROUTER_API_KEY")  #fetch the API_key from environment variables of the server (for the AI model)
+AI_API_key2 = os.getenv("OPENROUTER_API_KEY2")  #fetch the API_key from environment variables of the server (for the AI model)
+AI_API_key3 = os.getenv("OPENROUTER_API_KEY3")  #fetch the API_key from environment variables of the server (for the AI model)
+AI_API_key4 = os.getenv("OPENROUTER_API_KEY4")  #fetch the API_key from environment variables of the server (for the AI model)
+AI_API_key5 = os.getenv("OPENROUTER_API_KEY5")  #fetch the API_key from environment variables of the server (for the AI model)
+
+
+#weather_Keys
 WEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY") #fetch the API_key from environment variables of the server (for the Weather)
+
+#News_Keys
 NEWS_API_key = os.getenv("NEWS_API_KEY")
+NEWS_API_key2 = os.getenv("NEWS_API_KEY2")
+NEWS_API_key3 = os.getenv("NEWS_API_KEY3")
+NEWS_API_key4 = os.getenv("NEWS_API_KEY4")
+NEWS_API_key5 = os.getenv("NEWS_API_KEY5")
 
 class ExternalAPI():
     def __init__(self):
@@ -124,7 +139,7 @@ class Gemini_API(ExternalAPI):
         else:
             Role = Role_choice      #if not defined as a role, simply use whatever was passed to Role_choice as the role
 
-        model = "x-ai/grok-4-fast:free" #"meta-llama/llama-4-maverick:free" #"openrouter/openai/gpt-4o-mini"
+        model = "nvidia/nemotron-nano-12b-v2-vl:free" #"meta-llama/llama-4-maverick:free" #"openrouter/openai/gpt-4o-mini"
         headers = {
         "Authorization": f"Bearer {AI_API_key}",
         "Content-Type": "application/json"
@@ -236,7 +251,10 @@ class WeatherAPIAsync:
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
 
-        print(grid)
+        if grid is not None:
+            print("fill_grid_async(self): Weather Data Cached")
+        elif grid is None:
+            print("fill_grid_async(self): Error recieving Weather Data. Weather Data was cached unsuccessfully")
 
         return grid
 
@@ -276,7 +294,11 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
 
-        print(grid)
+        
+        if grid is not None:
+            print("fill_grid_async(self,**kwargs): Data cached Successfully")
+        elif grid is None:
+            print("fill_grid_async(self,**kwargs): Attempt Unsuccessful. Data not cached.")
 
         return grid
 
