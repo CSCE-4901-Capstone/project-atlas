@@ -236,8 +236,6 @@ class WeatherAPIAsync:
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
 
-        print(grid)
-
         return grid
 
 
@@ -275,8 +273,6 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
 
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
-
-        print(grid)
 
         return grid
 
