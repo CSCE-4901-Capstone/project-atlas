@@ -92,6 +92,7 @@ html {
     width: 15rem;
     height: 9rem;
     margin-top: 6vh;
+    padding: 10px;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
     background: rgba(50, 50, 50, 10%);
