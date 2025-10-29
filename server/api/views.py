@@ -91,7 +91,7 @@ class CountryNews(APIView):                #handles connection to external API f
                 return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
 
 #TODO: MAKE ANOTHER VIEW THAT DOES THE TRAVEL INFORMATION AS WELL.
-#prompt = f"the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
+#prompt = f"Plain text, no markdown.the country in question is {country}. ONLY RETURN a list of important documents needed for travel to the country!" #reformat the recieved county into the prompt for the model
 
 class Heatmap(APIView):
 
@@ -117,7 +117,7 @@ class Heatmap(APIView):
             { "city": "Valencia", "url": "https://example.com/news/valencia", "title": "Valencia update", "country": "Spain", "latitude": 39.4699, "longitude": -0.3763 },
             { "city": "Rome", "url": "https://example.com/news/rome", "title": "Rome update", "country": "Italy", "latitude": 41.9028, "longitude": 12.4964 },
             { "city": "Milan", "url": "https://example.com/news/milan", "title": "Milan update", "country": "Italy", "latitude": 45.4642, "longitude": 9.1900 },
-            { "city": "Naples", "url": "https://example.com/news/naples", "title": "Naples update", "country": "Italy", "latitude": 40.8518, "longitude": 14.2681 },
+            { "city": "Naples", "url": "https://example.com/news/naples", "title": "Seeing the National Guard on our streets is bad — but we must beware Trump's Plan B", "country": "Italy", "latitude": 40.8518, "longitude": 14.2681 },
             { "city": "London", "url": "https://example.com/news/london", "title": "London update", "country": "United Kingdom", "latitude": 51.5074, "longitude": -0.1278 },
             { "city": "Manchester", "url": "https://example.com/news/manchester", "title": "Manchester update", "country": "United Kingdom", "latitude": 53.4808, "longitude": -2.2426 },
             { "city": "Edinburgh", "url": "https://example.com/news/edinburgh", "title": "Edinburgh update", "country": "United Kingdom", "latitude": 55.9533, "longitude": -3.1883 },

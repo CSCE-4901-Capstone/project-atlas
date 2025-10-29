@@ -443,3 +443,25 @@ svg{
     height: 50px;
     width: 50px;
 }
+.news-congestion-link{
+    display: inline;
+    background: rgba(50, 50, 50, 10%);
+    backdrop-filter: blur(2px);
+    border-radius: 50px !important;
+    border: 2.0px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 5px 10px 15px black;
+    color: #00FFFF;     
+    padding: 4px 8px;       /*white original*/
+    border-radius: 8;
+    font-size: 25;
+    min-width: 10vw;
+    width: 20vw;
+    max-height: 10vh;
+    overflow-wrap: normal;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+    position: absolute;
+    right: 25rem;
+    top: 2rem;
+}

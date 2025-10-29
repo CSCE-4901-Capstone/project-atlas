@@ -3,6 +3,7 @@ import { TextureLoader, Matrix4, BoxGeometry, Object3D, PlaneGeometry, MeshBasic
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
+import { Canvas } from '@react-three/fiber'
 import Error from 'src/components/builders/Error';
 import api_conn from 'src/utils/api';
 import { Html } from '@react-three/drei'                    //for floting link on articles
@@ -277,22 +278,13 @@ return mergedGeometry ? (
 
    </mesh>
    {hoverIdx != null && hoverPos && dataRef.current[hoverIdx]?.url && (
-     <Html position={hoverPos} center distanceFactor={8}>
+     <Html>
        <a
          href={dataRef.current[hoverIdx].url}
          target="_blank"
          rel="noopener noreferrer"
          onPointerDown={(e) => e.stopPropagation()}       // ensure that we can still drag the globe
-         style={{
-           background: 'rgba(0,0,0,0.75)',
-           color: 'white',
-           padding: '4px 8px',
-           borderRadius: 8,
-           fontSize: 12,
-           textDecoration: 'none',
-           whiteSpace: 'nowrap',
-           boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
-         }}
+         className='news-congestion-link'
       >
          {dataRef.current[hoverIdx]?.title || 'Open article'}
        </a>
