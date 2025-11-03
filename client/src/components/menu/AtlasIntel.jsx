@@ -2,11 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import ChoiceCountry from './ChoiceCountry'     //Import the country choice
 import NEW_SessionNum from './AISummary'        //Import the Session Number generated from AISummary
 import api_conn from 'src/utils/api';
+import ReactMarkdown from 'react-markdown';
 
 //This is where Atlas Intelligence will export its summary from the agent.
 
 function AtlasIntel({choiceMade}){
-    //Dummy AI agent response string set to dummy data for printing the response **REMOVE THIS OR SET IT TO THE RESPONSE WHEN CONTENT IS DELIVERED**
     const Warning_MSG = "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute"
 
     console.log("AtlasIntel rendered, choiceMade =", choiceMade);
@@ -45,27 +45,6 @@ function AtlasIntel({choiceMade}){
     //Necessary timeoutID useRef variable for precision timeout clearing 
     const timeoutID = useRef(null);
 
-    // Title Fade in and out animation
-    /*
-    useEffect(() => {
-        // start fade-out immediately
-        setFade(true);
-
-        // timeout slightly longer than CSS transition to ensure browser registers it
-        const timeout = setTimeout(() => {
-            // swap text after fade-out completes
-            setDisplayTitle(show ? "Atlas Intelligence" : "AI");
-            // trigger fade-in
-            setFade(false);
-        }, 600);
-
-        // cleanup to prevent multiple timers
-        return () => clearTimeout(timeout);
-    }, [show]);
-    */
-
-
-
 
     //Apply animation for Agent response when text is available
     useEffect(()=>{
@@ -78,11 +57,6 @@ function AtlasIntel({choiceMade}){
         } else {
             setShow(true);
         }
-
-        //Start title fade expand logic
-
-
-        //End title fade expand logic
 
         //Check if show is true
         if(show){
@@ -131,18 +105,8 @@ function AtlasIntel({choiceMade}){
             <div 
             className="atlas-response-container"
             >
-                <p
-                className={show ? "anim" : ""}
-                style={{
-                    whiteSpace: "pre-wrap",     // preserve \n and sequences of spaces, but still wrap long lines to preserve format
-                    overflowWrap: "anywhere",   // prevent overflow
-                    tabSize: 4,                 // if your text contains \t
-                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" // for formatting
-                }}
-
-                >
-                    {displayText}
-                </p>
+                
+                <ReactMarkdown>{displayText}</ReactMarkdown>
             </div>
         </div>
     )
