@@ -92,6 +92,7 @@ html {
     width: 15rem;
     height: 9rem;
     margin-top: 6vh;
+    padding: 10px;
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2px);
     background: rgba(50, 50, 50, 10%);
@@ -183,12 +184,12 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: scale(1,1);
-    width: 11vw;
-    height: 5vh;
-    min-width: 8rem;
-    min-height: 3rem;
     padding: 12px;
+    max-height: 10vh;
+    width: 15vw;
+    min-height: 2rem;
+    min-width: 10rem;
+    overflow: hidden;
     backdrop-filter: blur(2px);
     border: 2.0px solid rgba(255, 255, 255, 0.1);
     background: rgba(50, 50, 50, 10%);
@@ -196,14 +197,17 @@ html {
     user-select: none;
     position: absolute;
     top: 15rem;
-    transition: height 1.0s ease-in-out, width 1.0s ease-in-out;
+    transition: max-height 1.0s ease-out;
 }
 /*Filter group styling*/
-
-#toggle-menu.active {
-    height: 11vh;
-    width: 13vw;
+#toggle-menu.active{
+    max-height: 20vh;
 }
+
+#toggle-radio-group{
+    visibility: hidden;
+}
+
 /*Code for when the filters are toggled on*/
 #toggle-menu.active #toggle-radio-group{
     display: flex;
@@ -415,7 +419,7 @@ svg{
 .precip-key-gradient{
     height: 1rem;
     width: 210px !important;
-    background: linear-gradient(90deg,#E839A4FF,#FF0000FF,#FFFF00FF,#00FF00FF);
+    background: linear-gradient(90deg,#00FF00FF,#FFFF00FF, #FF0000FF,#E839A4FF);
     margin-left: 5px;
 }
 .precip-key-container > div{
@@ -424,6 +428,12 @@ svg{
     justify-content: space-between;
     width: 15rem;
     padding: 2px;
+}
+.precip-key-container > .text-container{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
 }
 
 /*Disaster key*/

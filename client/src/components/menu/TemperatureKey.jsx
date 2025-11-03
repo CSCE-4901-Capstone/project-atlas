@@ -18,6 +18,7 @@ const TemperatureKey = ({filter}) =>{
         <>
             {active && (
                 <div className="temp-key-container">
+                    <h3>Temperature (&deg;C)</h3>
                     <div className="temp-key-gradient"></div>
                     <div>
                         <svg width="240" height="10">

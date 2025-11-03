@@ -74,6 +74,7 @@ function BuildWeather ({ data, radius }) {
     const tex = new CanvasTexture(canvas);
     tex.minFilter = LinearFilter;
     tex.magFilter = LinearFilter;
+    tex.offset.x = -0.003;
     tex.needsUpdate = true;
     return tex
   }, [data])
