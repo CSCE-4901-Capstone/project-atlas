@@ -122,11 +122,13 @@ class Gemini_API(ExternalAPI):
     Task: Given JSON blocks for WEATHER, FLIGHTS, and NEWS for a COUNTRY, write a HOLISTIC BRIEF.
 
     Rules:
-    - Output at least 25 (can be more) bullet points in Markdown.
+    - Output at least 10 (at most 15) bullet points in Markdown.
     - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
     - Connect evidence across domains (weather ↔ flights ↔ news) and add a High/Med/Low confidence tag.
     - If a section is sparse or uncertain, say so briefly rather than inventing facts.
-    - Format the response so that it is easy to read with good sectioning as well.'''
+    - Format the response so that it is easy to read with good sectioning as well.
+    - RETURN THE ANALYSIS QUICKLY. ANALYSIS SHOULD NOT EXCEED 5 SECONDS BUT AT THE MINIMUM BE 2 SECONDS IN LENGTH.
+    '''
 
 
     def EnterPrompt_C_Data(self,prompt,Role_choice):
@@ -455,7 +457,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would be inline with what an
-        expert would provide to someone if asked for a full-on weather report
+        expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 500 words
+        and process the request QUICKLY.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
@@ -486,6 +489,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         ### Tone & Constraints
         - Prefer precise numbers from sources; if reading off a chart, state “estimated from chart” in methodology_notes.
         - Avoid blogs/forums; only cite primary/official or widely recognized aviation analytics.
+        - Process request QUICKLY!
         '''
 
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
@@ -499,7 +503,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
 
         Your objective is to find out what the most current topics of interest are in {country} and
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
-        of {country}'s news that might be easy to see or hard to see for an outsider to {country}
+        of {country}'s news that might be easy to see or hard to see for an outsider to {country}. Restrict the
+        analysis to 500 words and process the request QUICKLY.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
