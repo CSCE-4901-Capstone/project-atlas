@@ -97,7 +97,9 @@ class Gemini_API(ExternalAPI):
     where the list consists of necessary travel documents.'''
 
     AI_Role2 = role ="""
-    You are a geo-locator assistant. Whenever I give you a URL to a news article, your job is to determine the most likely city where the article was published from, and then respond ONLY in JSON format. Do all research, verification, and background checks silently in the background.
+    You are a geo-locator assistant. Whenever I give you a json containing a URL to a news article, the title of the article, and a country field, 
+    your job is to determine the most likely city where the article was published from and its country of origin based on the latitude and longitude, 
+    and then respond ONLY in JSON format. Do all research, verification, and background checks silently in the background. PROCESS QUICKLY!
 
     The JSON format must be:
 
@@ -396,6 +398,22 @@ class NEWS_API(ExternalAPI):
                 "link": a.get("url"),
             })
         return {"articles": Formatted_Articles}
+    
+    def Parse_Spit_Mass(self, Articles):
+        if not isinstance(Articles, dict) and Articles.get("status") == "error":
+            return { "articles": [], "error": Articles.get("message") or Articles.get("code") or "NewsAPI error" }
+        if not isinstance(Articles, dict) or "articles" not in Articles:
+            return { "articles": [], "error": "Invalid Response from NEWS_API" }
+
+        items = Articles.get("articles", [])
+        Formatted_Articles = []
+        for i, a in enumerate(items, start=1):
+            Formatted_Articles.append({
+                "title": a.get("title"),
+                "url": a.get("url"),
+                "country": a.get("queried_country"),
+            })
+        return {"articles": Formatted_Articles}
 
     def NewsPointBuilder(self,CountryList):
         #Articles = []           #create empty list to hold articles
@@ -412,6 +430,9 @@ class NEWS_API(ExternalAPI):
         for country in CountryList:                 #append articles for every country in the array after pulling articles
 
             try:
+                #use different Parse_spit function, but this new one retains the country field.
+                
+                
                 Response_chunk = self.GatherArticles_InMass(country)
                 #Articles.append(Response_chunk)                             #append each recieved article for each country
 

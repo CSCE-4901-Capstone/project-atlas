@@ -80,7 +80,7 @@ function BuildHeatmap({ data, radius }) {
 
     points.forEach(([x, y, z], i) => {
 
-      const geometry = new BoxGeometry(0.015, 0.015, 0.2);        //the elongated box size to be rendered on the globe
+      const geometry = new BoxGeometry(0.02, 0.005, 0.2);        //the elongated box size to be rendered on the globe
 
       // Move geometry to position
       const translationMatrix = new Matrix4().makeTranslation(x, y, z);
