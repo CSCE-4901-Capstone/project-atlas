@@ -24,6 +24,7 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
 
         api_conn.post("/api/Agent/",{               //HERE ADD A VARIABLE TO RETRIVE THE ACTIVE FILTER NAME {FilterName} variable!!!!
             country: choiceMade,
+            FilterSelected: FilterName,
             session: NEW_SessionNum,},//"session123"
             {
             headers : {"Content-Type": "application/json"},
@@ -34,7 +35,7 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
             setContent(response.data);
         })
         .catch((error) => console.error("Error:", error));          //catch error and display if encountered
-    },[choiceMade]);        //ADD FilterName only AI has been fully optimized
+    },[choiceMade,FilterName]);        //ADD FilterName only AI has been fully optimized
     
     //DisplayText useStates
     const [displayText,setDisplayText] = useState("");

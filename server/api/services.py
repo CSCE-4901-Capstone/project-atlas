@@ -175,29 +175,65 @@ class Gemini_API(ExternalAPI):
         )
         print(json.dumps(response.json(), indent=2))
         print("🧠 Sending prompt to OpenRouter:", json.dumps(SendMessage, indent=2))
+        
         try:
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers = headers,
                 json = SendMessage
             )
+            
             data = response.json()
             if response.status_code == 200 and "choices" in data:
                 RETURNED_response =  response.json()["choices"][0]["message"]["content"]
                 print(RETURNED_response)
                 return RETURNED_response
-            else:
-                print(f"[OpenRouter] Error {response.status_code}: {response.text}")
-                return "AI response not recieved."
-        except Exception as e:
-            print(f"[OpenRouter] Request failed: {e}")
-            return "AI service error. Connection failed to be made."
+            
+            #CODE EXECUTES ONLY WHEN THE FIRST AI_API_KEY FAILED
+            # treat 401/402/429 or error text mentioning rate/quota/insufficient as "limit ran out"
+            resp_text_lower = (response.text or "").lower()
+            
+            #CHECK whether in fact the api key ran into its call limitation
+            is_limit_error = (
+                response.status_code in (401, 402, 429) or
+                ("error" in data and isinstance(data["error"], dict) and any(
+                    s in str(data["error"]).lower() for s in ["rate", "quota", "insufficient", "overloaded"]
+                )) or
+                any(s in resp_text_lower for s in ["rate", "quota", "insufficient", "overloaded", "limit"])
+            )
 
-    def get_history(self):
-        return []
+            #try the other keys until you get a response
+            if is_limit_error:
+                # try next keys in order; swap AI_API_key and re-use the same headers/SendMessage
+                for next_key in [k for k in [AI_API_key2, AI_API_key3, AI_API_key4, AI_API_key5] if k]:
+                    if not next_key:
+                        continue
 
-    def save_history(self,NewHistory: list):
-        pass
+                    headers["Authorization"] = f"Bearer {next_key}"
+                    print("🔁 Quota/limit hit; swapping key and retrying...")
+
+                    response = requests.post(
+                        "https://openrouter.ai/api/v1/chat/completions",
+                        headers=headers,
+                        json=SendMessage
+                    )
+                    try:
+                        data = response.json()
+                    except Exception as e:
+                        print(f"[OpenRouter] Request failed: {e}")
+                        return "AI response not recieved."
+
+                    #Send out the correct response once sure that its a good response
+                    if response.status_code == 200 and "choices" in data:
+                        RETURNED_response = data["choices"][0]["message"]["content"]
+                        print(RETURNED_response)
+                        return RETURNED_response
+        
+        #return error message in event that that a non-key related issue is preventing the response
+        except:
+            print(f"[OpenRouter] Error {response.status_code}: {response.text}")
+            print("Trying with another AI_API_key")
+            return "AI response not recieved."
 
 class WeatherAPIAsync:
     def __init__(self, step=2):
@@ -478,12 +514,52 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would be inline with what an
-        expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 500 words
-        and process the request QUICKLY.
+        expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 20 BULLETS
+        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETURN IT AS A STRING with good formatting.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print("making request for Weather_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
+    def Temperature_Weather_Gather(self,country:str) -> str:
+        Role = f'''Your main goal is to act as a meteorologist for the country {country},
+        Find meaningful weather observations occuring in {country}. Your task is to analyze
+        the weather to an extent where the information provided would provide meaningful insights on
+        TEMPERATURE/climate of the country in question. Restrict the analysis to 20 BULLETS
+        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
+        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print("making request for Temperature_Weather_gather()")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+    
+    def Percipitation_Weather_Gather(self,country:str) -> str:
+        Role = f'''Your main goal is to act as a meteorologist for the country {country},
+        Find meaningful weather observations occuring in {country}. Your task is to analyze
+        the weather to an extent where the information provided would provide meaningful insights on
+        Precipitaiton (including snow, hail, sleet) of the country in question. Restrict the analysis to 20 BULLETS
+        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
+        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print(f"making request for Percipitation_Weather_gather({country})")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+
+    def Disaster_Gather(self,country:str) -> str:
+        Role = f'''Your main goal is to act as a Natural Scientist for the country {country}. Your area of
+        expertise is seismology, volcanology, hydrology, and fire science (interms of wild fires).
+        Find meaningful weather observations occuring in {country} relating to recent natural disasters occuring
+        within {country}. Your task is to analyze the natural disasters to an extent where the information provided would provide 
+        meaningful insights on natual disasters occuring for the country in question. Restrict the analysis to 20 BULLETS
+        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
+        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print(f"making request for Disaster_gather({country})")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
 
@@ -515,7 +591,41 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
 
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
-        print("making request for Flight_gather()")
+        print(f"making request for Flight_gather({country})")
+        #make call to api and return the data
+        return self.AI_model.EnterPrompt_C_Data(prompt,Role)
+
+    def Flight_Trend_Gather(self, country: str) -> str:
+        Role = f'''You are an Air Traffic Operations Analyst. Your job is to deliver RECENT, numbers-first flight activity for the country: {country}.
+
+        ### Mission
+        1) Report the most recent **average daily flights** (arrivals + departures) for {country} from a reputable source updated THIS WEEK if possible.
+        2) Break down flights for the **five most populous cities** in {country} (aggregate multi-airport city systems, e.g., “London = LHR+LGW+STN+LTN+LCY”).
+        3) Compute each city’s **share (%)** of {country}’s total.
+        4) Return a series of bullets with the analysis no longer than 20 bullet points
+        5) Process request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
+        6) ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.
+        
+        ### Data Freshness Rules
+        - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs).
+        - If exact “this week” per-city numbers are not published, use the most recent monthly/weekly airport-level averages **published within the last 30 days**, and clearly label the period in the JSON.
+        - DO NOT use data older than 12 months.
+        - If a city lacks a fresh numeric value, set that city’s fields to null and add a short “note”.
+
+        ### Calculation Rules
+        - Share (%) = (city avg_daily_flights / country_total_avg_daily_flights) * 100, rounded to 2 decimals.
+        - When aggregating a multi-airport city, sum airport averages first, then compute the share.
+        - Keep units consistent: “avg_daily_flights” counts flights (arrivals+departures).
+
+        ### Tone & Constraints
+        - Prefer precise numbers from sources; if reading off a chart, state “estimated from chart” in methodology_notes.
+        - Avoid blogs/forums; only cite primary/official or widely recognized aviation analytics.
+        - Process request QUICKLY!
+        '''
+
+        prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
+
+        print(f"making request for Flight_Trend_gather({country})")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
 
@@ -525,14 +635,14 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Your objective is to find out what the most current topics of interest are in {country} and
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
         of {country}'s news that might be easy to see or hard to see for an outsider to {country}. Restrict the
-        analysis to 500 words and process the request QUICKLY.
+        analysis to 20 bullets and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
-        print("making request for News_gather()")
+        print(f"making request for News_gather({country})")
         #make call to api and return the data
         return self.AI_model.EnterPrompt_C_Data(prompt,Role)
-    def Holistic_View(self, country: str,SessionNum,timeout=15):
+    def Holistic_View(self, country: str,timeout=15):        #SessionNum,
         print("starting call for Holistic_View()")
         print("threading data...")
 

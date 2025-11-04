@@ -76,10 +76,12 @@ class CountryNews(APIView):                #handles connection to external API f
 
         def post(self,request,format=None):                             #this method is used to post the initial travel prompt to the GPT_API
                 CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
-
+                
                 if not CountryChoice:
                     return Response({"error": "No Country Passed/detected for CountryNews(APIView)"},status=status.HTTP_400_BAD_REQUEST)
 
+                
+                
                 RAW_articles = self.NEWS.GatherArticles(CountryChoice)
 
                 result = self.NEWS.Parse_Spit(RAW_articles)
@@ -201,15 +203,36 @@ class Agent(APIView):
 
         CountryChoice = request.data.get("country")             #from the post request sent fron AISummary.jsx read in the country value and store it.
         SessionNum = request.data.get("session")
+        SelectedFilter = request.data.get("FilterSelected")             #retrieve name of the filter currently selected
+
+
+        #print values to terminal to verify were recieved
+        print(f"CountryChoice: {CountryChoice}\nSessionNum: {SessionNum}\nSelectedFilter: {SelectedFilter}")
 
         if not CountryChoice:
-            return Response({"error": "No Country Passed/detected for Agent(APIView)"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "No Country Passed/detected for Agent(APIView). REQUIRED AS IT IS ESSENTIAL PARAMETER FOR AGENT FUNCTIONALITY"},status=status.HTTP_400_BAD_REQUEST)
 
-        result = self.api.Holistic_View(CountryChoice,SessionNum)          #make call for the Holistic_View of the AI_Agent
+        
+        if SelectedFilter ==  None:             #on even that no filter is selected provide a holistic view
+            result = self.api.Holistic_View(CountryChoice)    #,SessionNum      #make call for the Holistic_View of the AI_Agent
 
-        #error checking for News_API to see if correct output was recieved
-        #if result.get("error"):
-        #    return Response(result, status=status.HTTP_502_BAD_GATEWAY)     #flag if invalid output was recieved
+        elif SelectedFilter == "Flights":       #set results to a summary of flight data from the AI
+            result = self.api.Flight_Trend_Gather(CountryChoice)    
+            
+        elif SelectedFilter == "Disasters":         #set results to a summary of flight data from the AI
+            result = self.api.Disaster_Gather(CountryChoice)    
+        
+        elif SelectedFilter == "Temperature":           #set results to a summary of Temperature specific weather data from the AI
+            result = self.api.Temperature_Weather_Gather(CountryChoice)        
+            
+        elif SelectedFilter == "Precipitation":         #set results to a summary of Percipitation specific weather data from the AI
+            result = self.api.Percipitation_Weather_Gather(CountryChoice)  
+            
+        elif SelectedFilter == "News":        #set results to a summary of current News trends from the AI
+            result = self.api.News_Gather(CountryChoice)
+        
+        #print out the response just to make sure it was recieved properly
+        print(f"{result}")
 
         return Response(result, status=status.HTTP_200_OK)      #return good output if nothing wrong was detected
 
