@@ -30,8 +30,8 @@ const TemperatureKey = ({filter}) =>{
                     </div>
 
                     <div>
-                        <p>-50C</p>
-                        <p>40C</p>
+                        <p>-50</p>
+                        <p>40</p>
                     </div>
                 </div>
             )}
