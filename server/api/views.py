@@ -9,7 +9,7 @@ import asyncio
 
 from api.models import FlightModel
 from api.serializers import FlightSerializer
-from api.services import FlightAPI,NEWS_API,Agentic_AI, DisasterAPI     #,Gemini_API,
+from api.services import FlightAPI,NEWS_API,Agentic_AI, DisasterAPI, DB_Manager_NEWS    #,Gemini_API,
 
 class FlightList(APIView):
     """
@@ -97,7 +97,8 @@ class CountryNews(APIView):                #handles connection to external API f
 
 class Heatmap(APIView):
 
-    NEWS = NEWS_API()
+    NEWS = NEWS_API()               #Initiate the instance of the NEWS_API class for NEWS API article gathering
+    DB = DB_Manager_NEWS()          #Initiate the instance o the DB_Manager_NEWS  for Database communication
 
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
         #in future: optimize to also account for first_20, second_20, etc.
@@ -106,7 +107,9 @@ class Heatmap(APIView):
 
         #Would Work, but NEWS API wants $500 USD monthly.... we are figuring out a workaround
         #Mass_Articles = self.NEWS.NewsPointBuilder(self.NEWS.first_20)
-
+        
+        #This section of the code gathers all the articles Mass_Articles and returns it to the frontend
+        
         Mass_Articles = [
   {
     "city": "Mumbai",
@@ -189,6 +192,11 @@ class Heatmap(APIView):
     "longitude": 144.9631
   }
 ]
+
+
+        #This section of code calls for new articles to be pulled and updated to database (Not Returned to Frontend)
+        
+        
 
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
 
