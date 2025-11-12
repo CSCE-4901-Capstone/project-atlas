@@ -7,7 +7,8 @@ import 'ldrs/react/Quantum.css'
 
 //This is where Atlas Intelligence will export its summary from the agent.
 
-function AtlasIntel({choiceMade}){
+function AtlasIntel({choiceMade,FilterName}){                   //FilterName is the name of the filter being currently selected
+    //Dummy AI agent response string set to dummy data for printing the response **REMOVE THIS OR SET IT TO THE RESPONSE WHEN CONTENT IS DELIVERED**
     const Warning_MSG = "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute"
 
     console.log("AtlasIntel rendered, choiceMade =", choiceMade);
@@ -23,8 +24,9 @@ function AtlasIntel({choiceMade}){
         //reset warning between every click
         setContent(Warning_MSG);
 
-        api_conn.post("/api/Agent/",{
+        api_conn.post("/api/Agent/",{               //HERE ADD A VARIABLE TO RETRIVE THE ACTIVE FILTER NAME {FilterName} variable!!!!
             country: choiceMade,
+            FilterSelected: FilterName,
             session: NEW_SessionNum,},//"session123"
             {
             headers : {"Content-Type": "application/json"},
@@ -35,7 +37,7 @@ function AtlasIntel({choiceMade}){
             setContent(response.data);
         })
         .catch((error) => console.error("Error:", error));          //catch error and display if encountered
-    },[choiceMade]);
+    },[choiceMade,FilterName]);        //ADD FilterName only AI has been fully optimized
     
     //DisplayText useStates
     const [displayText,setDisplayText] = useState("");
