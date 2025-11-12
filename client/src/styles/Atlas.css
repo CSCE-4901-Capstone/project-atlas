@@ -310,7 +310,7 @@ textarea:focus, input:focus{
 }
 #atlas-intel.active{
     height: 30vh;
-    width: 45vw;
+    width: 50vw;
 }
 #atlas-intel.active #ai-title{
     opacity: 1;
@@ -329,16 +329,35 @@ textarea:focus, input:focus{
     width: 0px;
     transition: opacity 0.6s ease-in-out, padding 0.6s ease-in-out, height 0.6s ease-in-out, width  0.6s ease-in-out;
 }
-.atlas-response-container p.anim{
+.atlas-response-container-anim{
+    display: flex;
     opacity: 1;
     padding: 3px;
-    height: 12rem;
-    margin-left: 1rem;
-    width: auto;
-    overflow-y: auto;
+    height: 14rem;
+    width: 49vw;
+    align-items: center;
+    justify-content: center;
     border-radius: 0px !important;
+
+}
+.atlas-response-container-anim ul,.atlas-response-container-anim ol{
+    width: inherit;
+    height: 14rem;
+    padding: 5px;
+    padding-left: 1.5rem;
+    list-style-position: outside;
+    list-style-type: disc;
+    overflow-y: scroll;
+    overflow-x: visible;
     scrollbar-width: thin;
     scrollbar-color: grey rgba(59, 59, 59, 0.255);
+}
+.atlas-response-container-anim ul li strong,.atlas-response-container-anim ol li strong{
+    font-weight: bold;
+}
+.atlas-response-container-anim ul li {
+    font-size: medium;
+    list-style: circle;
 }
 
 
