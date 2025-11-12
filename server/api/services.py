@@ -162,6 +162,7 @@ class Gemini_API(ExternalAPI):
     - Always provide up to 4 decimal places.
     - If the city is unknown, use the nearest identifiable location (region or country) instead.
     - Do not include any text outside the JSON.
+    - Do not number the bullet points
     """
     AI_Role3 = '''You are an administrative analyst who is responsible for providing holistic, comprehensive, and informative
     briefs on a selected country.
@@ -169,7 +170,8 @@ class Gemini_API(ExternalAPI):
     Task: Given JSON blocks for WEATHER, FLIGHTS, and NEWS for a COUNTRY, write a HOLISTIC BRIEF.
 
     Rules:
-    - Output at least 10 (at most 15) bullet points in Markdown.
+    - Output at least 10 (at most 15) bullet points in Markdown do not number the bullet points.
+    - Do not number the list and only print the list no other words or sentences
     - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
     - Connect evidence across domains (weather ↔ flights ↔ news) and add a High/Med/Low confidence tag.
     - If a section is sparse or uncertain, say so briefly rather than inventing facts.
@@ -850,6 +852,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
             "Weather Data to be considered:\n" + Weather_Data + "\n\n"
             "Flight Data to be considered:\n" + Flight_Data + "\n\n"
             "News Data to be considered:\n" + News_Data + "\n\n"
+            "Do not number the list and only print the list no other words or sentences"
         )
 
         #update logic
@@ -1573,7 +1576,3 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                 print(f"  ❌ Unexpected error in {filename}: {e}")
 
         print("\n🏁 Sequential geolocation complete.\n")
-
-
-
-        
