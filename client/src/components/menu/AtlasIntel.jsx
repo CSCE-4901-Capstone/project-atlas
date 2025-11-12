@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import ChoiceCountry from './ChoiceCountry'     //Import the country choice
 import NEW_SessionNum from './AISummary'        //Import the Session Number generated from AISummary
 import api_conn from 'src/utils/api';
-import ReactMarkdown from 'react-markdown';
+import { Quantum } from 'ldrs/react';
+import 'ldrs/react/Quantum.css'
 
 //This is where Atlas Intelligence will export its summary from the agent.
 
@@ -105,8 +106,19 @@ function AtlasIntel({choiceMade}){
             <div 
             className="atlas-response-container"
             >
-                
-                <ReactMarkdown>{displayText}</ReactMarkdown>
+                {
+                    content == Warning_MSG ? 
+                    <Quantum
+                    size = "45"
+                    speed = "1.75"
+                    color = "white"
+                    />
+                    :
+                    <p>
+                        {displayText}
+                    </p>
+                }
+
             </div>
         </div>
     )
