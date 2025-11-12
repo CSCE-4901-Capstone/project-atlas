@@ -101,26 +101,17 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
         >
             <div
             id="ai-title" 
-            className={fade ? "ai-hide" : ""}
             >
                 <h1>{displayTitle}</h1>
             </div>
             <div 
             className="atlas-response-container"
             >
-                {
-                    content == Warning_MSG ? 
-                    <Quantum
-                    size = "45"
-                    speed = "1.75"
-                    color = "white"
-                    />
-                    :
-                    <p>
-                        {displayText}
-                    </p>
-                }
-
+                <p 
+                className={choiceMade ? "anim" : ""}
+                >
+                    {displayText}
+                </p>
             </div>
         </div>
     )

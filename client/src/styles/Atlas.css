@@ -331,7 +331,7 @@ textarea:focus, input:focus{
 }
 .atlas-response-container p.anim{
     opacity: 1;
-    padding: 2px;
+    padding: 3px;
     height: 12rem;
     margin-left: 1rem;
     width: auto;
