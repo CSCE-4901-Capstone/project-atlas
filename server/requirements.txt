@@ -1,3 +1,5 @@
+# Cross-platform requirements.txt
+
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.1
 aiosignal==1.4.0
@@ -163,13 +165,16 @@ pypdfium2==4.30.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
 pyRdfa3==3.6.4
-pyreadline3==3.5.4
+
+# These 2 specific for windows (MacOS will ignore as appropriate)
+pyreadline3==3.5.4; sys_platform == "win32"
+pywin32>=305; sys_platform == "win32"
+
 python-dateutil==2.9.0.post0
 python-docx==1.2.0
 python-dotenv==1.0.1
 pytube==15.0.0
 pyvis==0.3.2
-pywin32==311
 PyYAML==6.0.3
 rdflib==7.4.0
 referencing==0.36.2
