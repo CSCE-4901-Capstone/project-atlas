@@ -1,4 +1,5 @@
 import time
+import threading
 from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
@@ -99,18 +100,46 @@ class Heatmap(APIView):
 
     NEWS = NEWS_API()               #Initiate the instance of the NEWS_API class for NEWS API article gathering
     DB = DB_Manager_NEWS()          #Initiate the instance o the DB_Manager_NEWS  for Database communication
-
+    
+    def Start_DB_refresh(self):
+        #run funciton to push new geolocated articles after an hour of use
+        
+        while True:
+            try:
+                time.sleep(600)  # wait 10 minutes before first refresh
+                print("[Background] Starting periodic article refresh...")
+                self.NEWS.Gather_DB_for_Save()     # fetch and geolocate new articles
+                self.DB.GetNew_Articles()          #Geolocate new articles in server/api/Article_cache and store them to server/api/Geolocated_cache
+                
+                self.DB.DB_Push()             # push only new ones to Firestore
+                
+                self.DB.delete_geolocated_cache()           #delete the articles in the cache to free up space in the server
+                print("[Background] Refresh complete. Waiting 1 hour...")
+                
+            except Exception as e:
+                print(f"[Background] Error during refresh: {e}")
+            time.sleep(3600)  # wait 1 hour before repeating
+    
+    
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
-        #in future: optimize to also account for first_20, second_20, etc.
+        # --- start background refresh thread  ---
+        if not hasattr(self, "refresh_thread") or not self.refresh_thread.is_alive():
+            self.refresh_thread = threading.Thread(target=self.Start_DB_refresh, daemon=True)
+            self.refresh_thread.start()
+            print("[Heatmap] Background refresh thread started for DB.")
 
-
-
-        #Would Work, but NEWS API wants $500 USD monthly.... we are figuring out a workaround
-        #Mass_Articles = self.NEWS.NewsPointBuilder(self.NEWS.first_20)
         
         #This section of the code gathers all the articles Mass_Articles and returns it to the frontend
+        try:
+            Mass_Articles = self.DB.DB_Pull()               #gather all the articles currently in the collections of DB
         
-        Mass_Articles = [
+        except Exception as e:
+            print(f"Error encountered during DB_Pull: {e}")
+            Mass_Articles = None        #set to none to execute default code
+        
+        if Mass_Articles is None:       #default to following pre-defined json data if data doesn't load
+            
+            Mass_Articles[0] = [
   {
     "city": "Mumbai",
     "url": "https://economictimes.indiatimes.com/news/india/shah-banos-daughter-sends-legal-notice-to-emraan-hashmi-yami-gautams-haq/articleshow/125047347.cms",
@@ -192,10 +221,17 @@ class Heatmap(APIView):
     "longitude": 144.9631
   }
 ]
-
+        else:
+            print("Data from firebase collections retrieved successfully!")
 
         #This section of code calls for new articles to be pulled and updated to database (Not Returned to Frontend)
         
+        
+        #print first retrieved json file from firebae upon successful retrieval of data!!! 
+        #(revert to static JSON array in event that firebase code does not return any values to give illusion of functional filter)
+        #Display error message to terminal in case we don't have a successulf DB call
+        
+        print(f"{Mass_Articles[0]}")
         
 
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import requests
 import socket
 import math
@@ -9,7 +10,6 @@ import os
 import asyncio
 import feedparser
 from shapely.geometry import MultiPoint
-from __future__ import annotations
 from pathlib import Path
 import statistics
 import aiohttp
@@ -436,49 +436,105 @@ class NEWS_API(ExternalAPI):
         "longitude":None
     }
 
-    def GatherArticles(self,CountryChoice):
-        NEWS_API_url = 'https://newsapi.org/v2/everything'
-        params = {
-            'q': CountryChoice,
-            'language': 'en',
-            'sortBy': 'publishedAt',
-            'pageSize': 10,                     #get 10 different in a general sense for the countries
-            'apiKey': NEWS_API_key       #possibly have 2 different NewsAPI keys to prevent running out of API calls
-        }
-        print(CountryChoice)
-        response = requests.get(NEWS_API_url, params=params)
-        return response.json()
+    def GatherArticles(self, CountryChoice):
+        NEWS_API_url = "https://newsapi.org/v2/everything"
+
+        for key in [k for k in [NEWS_API_key, NEWS_API_key2, NEWS_API_key3, NEWS_API_key4, NEWS_API_key5] if k]:
+            params = {
+                "q": CountryChoice,
+                "language": "en",
+                "sortBy": "publishedAt",
+                "pageSize": 10,
+                "apiKey": key,
+            }
+            try:
+                print(f"Gathering articles for {CountryChoice} with key {key[:6]}...")
+                response = requests.get(NEWS_API_url, params=params, timeout=10)
+                data = response.json()
+            except Exception:
+                continue  # skip to next key if a connection or parse error occurs
+
+            # if success, return immediately
+            if response.status_code == 200 and data.get("status") == "ok":
+                return data
+
+            # rotate only on rate-limit or quota errors
+            code = str(data.get("code", "")).lower()
+            msg = str(data.get("message", "")).lower()
+            if not (response.status_code in (401, 429)
+                    or code in {"apikeyexhausted", "apikeydisabled", "ratelimited", "maximumresultsreached"}
+                    or any(s in msg for s in ["rate", "quota", "exhaust", "over quota", "limit"])):
+                return data  # non-quota error, return as-is and stop trying
+
+        return {"status": "error", "message": "All NewsAPI keys failed or are rate-limited."}
+
 
     def GatherArticles_InMass(self,CountryChoice):
-        NEWS_API_url = 'https://newsapi.org/v2/everything'
-        params = {
-            'q': CountryChoice,
-            'language': 'en',
-            'sortBy': 'publishedAt',
-            'pageSize': 100,                     #get 100 different for a country when prompted
-            'apiKey': NEWS_API_key      #possibly have 2 different NewsAPI keys to prevent running out of API calls
-        }
-        print(CountryChoice)
-        response = requests.get(NEWS_API_url, params=params)
-        return response.json()
+
+        NEWS_API_url = "https://newsapi.org/v2/everything"
+
+        for key in [k for k in [NEWS_API_key, NEWS_API_key2, NEWS_API_key3, NEWS_API_key4, NEWS_API_key5] if k]:
+            params = {
+                "q": CountryChoice,
+                "language": "en",
+                "sortBy": "publishedAt",
+                "pageSize": 100,
+                "apiKey": key,
+            }
+            try:
+                print(f"Gathering articles for {CountryChoice} with key {key[:6]}...")
+                response = requests.get(NEWS_API_url, params=params, timeout=10)
+                data = response.json()
+            except Exception:
+                continue  # skip to next key if a connection or parse error occurs
+
+            # if success, return immediately
+            if response.status_code == 200 and data.get("status") == "ok":
+                return data
+
+            # rotate only on rate-limit or quota errors
+            code = str(data.get("code", "")).lower()
+            msg = str(data.get("message", "")).lower()
+            if not (response.status_code in (401, 429)
+                    or code in {"apikeyexhausted", "apikeydisabled", "ratelimited", "maximumresultsreached"}
+                    or any(s in msg for s in ["rate", "quota", "exhaust", "over quota", "limit"])):
+                return data  # non-quota error, return as-is and stop trying
+
+        return {"status": "error", "message": "All NewsAPI keys failed or are rate-limited."}
+
 
     def GatherArticles_DB_Refresh(self,CountryChoice: str) -> dict:     #ensure that a dict of country names can be passed as an argument
-    
-        NEWS_API_url = 'https://newsapi.org/v2/everything'
-        params = {
-            "q": CountryChoice,          # IMPORTANT: must be the country string, not an int
-            "language": "en",
-            "sortBy": "publishedAt",
-            "pageSize": 5,            # max allowed by NewsAPI for /everything
-            "apiKey": NEWS_API_key
-        }
-        resp = requests.get(NEWS_API_url, params=params, timeout=30)
-        # Raise for non-2xx so we can handle/log it
-        resp.raise_for_status()
-        data = resp.json()
+        NEWS_API_url = "https://newsapi.org/v2/everything"
 
-        # return raw response and have it get cleanded with parse_spit for expected arguments
-        return data
+        for key in [k for k in [NEWS_API_key, NEWS_API_key2, NEWS_API_key3, NEWS_API_key4, NEWS_API_key5] if k]:
+            params = {
+                "q": CountryChoice,
+                "language": "en",
+                "sortBy": "publishedAt",
+                "pageSize": 5,
+                "apiKey": key,
+            }
+            try:
+                print(f"Gathering articles for {CountryChoice} with key {key[:6]}...")
+                response = requests.get(NEWS_API_url, params=params, timeout=10)
+                data = response.json()
+            except Exception:
+                continue  # skip to next key if a connection or parse error occurs
+
+            # if success, return immediately
+            if response.status_code == 200 and data.get("status") == "ok":
+                return data
+
+            # rotate only on rate-limit or quota errors
+            code = str(data.get("code", "")).lower()
+            msg = str(data.get("message", "")).lower()
+            if not (response.status_code in (401, 429)
+                    or code in {"apikeyexhausted", "apikeydisabled", "ratelimited", "maximumresultsreached"}
+                    or any(s in msg for s in ["rate", "quota", "exhaust", "over quota", "limit"])):
+                return data  # non-quota error, return as-is and stop trying
+
+        return {"status": "error", "message": "All NewsAPI keys failed or are rate-limited."}
+
 
     def Gather_DB_for_Save(self, *country_groups: dict) -> None:                #funciton used to gather new articles
         file_idx = 1          # current output file number
@@ -898,17 +954,122 @@ class DB_Manager_NEWS(ExternalAPI):
     #Variable used to define a news point from the pulled, stored, and cleaned articles from NEWS_API
     News_Point = ("city", "country", "latitude", "longitude", "title", "url")
     
-    def DB_Push(Articles):              #function used to push new refresed articles to the database
+    def load_geolocated_cache_arrays(self,out_dir_geo) -> List[List[Dict]]:
+        """
+        Returns [file1_items[], file2_items[], ...],
+        one inner list per *_geolocated.json file.
+        """
+        data: List[List[Dict]] = []
         
-        if Articles is None:                    #show error in event that new articles to be pushed weren't processed
-            print("ERROR DB_Push(): New Articles not successfully recieved")
-            return
-        
-        
-        
-        return
+        for p in sorted(out_dir_geo.glob("CountriesGroup*_geolocated.json")):
+            try:
+                with p.open("r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, list):
+                    data.append(data)
+                else:
+                    print(f"[warn] {p.name} is not a JSON array; skipped")
+            except Exception as e:
+                print(f"[warn] failed to read {p.name}: {e}")
+        return data
     
-    def DB_Pull():                      #function used to pull articles from collections in the database for News filter
+    def norm_url(self,u: Optional[str]) -> Optional[str]:
+        if not isinstance(u, str):
+            return None
+        return u.strip().rstrip("/")
+
+
+    def fetch_DB_urls(self,db, collection_names: List[str]) -> set[str]:
+        """
+        Streams all docs from the given collections and returns a set of 'url' fields.
+        Simple & explicit; fine unless your collections are massive.
+        """
+        urls: set[str] = set()
+        for col in collection_names:
+            for snap in db.collection(col).stream():
+                d = snap.to_dict() or {}
+                u = DB_Manager_NEWS.norm_url(d.get("url"))
+                if u:
+                    urls.add(u)
+        return urls
+    
+    def DB_Push(self):              
+        """Push new refreshed articles from Geolocated_cache into Firestore."""
+        print("=== Starting Firestore push ===")
+
+        # get server/api directory
+        api_dir = Path(__file__).resolve().parent           
+        out_dir_geo = api_dir / "Geolocated_cache"          
+
+        # make connection to Firestore using firebase_admin credentials
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(info)
+            firebase_admin.initialize_app(cred)
+        
+        db = firestore.client()
+        
+        # load cached geolocated articles + already recorded URLs
+        cols = [f"CountriesGroup{i}" for i in range(1, 20)]
+        data = self.load_geolocated_cache_arrays(out_dir_geo)
+        recorded_urls = self.fetch_DB_urls(db, cols)
+
+        seen_now = set(recorded_urls)
+        created, skipped = 0, 0
+        batch = db.batch()
+        in_batch, batch_size = 0, 400      # commit every ~400 for safety
+        col_idx = 0
+
+        # flatten all lists (in case load_geolocated_cache_arrays returns nested arrays)
+        flat_data = []
+        for group in data:
+            if isinstance(group, list):
+                flat_data.extend(group)
+            elif isinstance(group, dict):
+                flat_data.append(group)
+
+        print(f"Total candidate articles: {len(flat_data)}")
+        print(f"Already in DB: {len(recorded_urls)}")
+
+        for article in flat_data:
+            url = self.norm_url(article.get("url"))
+            if not url:
+                continue
+
+            if url in seen_now:
+                skipped += 1
+                continue
+
+            seen_now.add(url)
+            created += 1
+
+            # rotate through the 19 collections (CountriesGroup1 → 19)
+            col_name = cols[col_idx % len(cols)]
+            col_idx += 1
+
+            # make a Firestore-safe doc ID
+            doc_id = url.replace("/", "_")[:500]
+
+            ref = db.collection(col_name).document(doc_id)
+            batch.set(ref, article)
+            in_batch += 1
+
+            # commit when reaching limit
+            if in_batch >= batch_size:
+                batch.commit()
+                print(f"Committed {in_batch} new docs so far...")
+                batch = db.batch()
+                in_batch = 0
+
+        # commit any remaining writes
+        if in_batch > 0:
+            batch.commit()
+            print(f"Committed {in_batch} remaining docs.")
+
+        print(f"=== Done pushing: {created} new, {skipped} skipped ===")
+        return
+
+    
+    def DB_Pull(self):                      #function used to pull articles from collections in the database for News filter
             #refer to info dict constructed from .env variable for DB credentials to firestore
         if not firebase_admin._apps:
             cred = credentials.Certificate(info)
@@ -925,56 +1086,26 @@ class DB_Manager_NEWS(ExternalAPI):
             
             for snap in db.collection(coll.id).stream():            # all docs in this collection
                 data = snap.to_dict() or {}
+                items.append(data)
+
 
             collections.append(items)
         
         return collections      #return the constructed array with all the json data
     
-    def delete_article_cache():                 #function to delete files in Article_cache server/api/Article_cache once files are processed
+    def delete_article_cache(self):                 #function to delete files in Article_cache server/api/Article_cache once files are processed
         api_dir = Path(__file__).resolve().parent           #get server/api directory
         out_dir = api_dir / "Article_cache"                 #add on Article_cache subdirectory to path
         for p in out_dir.glob("CountriesGroup*.json"):
             p.unlink(missing_ok=True)
         print("Article_cache cleared.")
         
-    def delete_geolocated_cache():
+    def delete_geolocated_cache(self):
         api_dir = Path(__file__).resolve().parent           #get server/api directory
         out_dir = api_dir / "Geolocated_cache"                 #add on Article_cache subdirectory to path
         for p in out_dir.glob("CountriesGroup*_geolocated.json"):
             p.unlink(missing_ok=True)
         print("Geolocated_cache cleared.")
-    
-    def DB_Update_Collection():             #update Collections with new articles if they haven't been recorded yet
-        
-        NEWS = NEWS_API()
-        
-        #get the names of all countries that need to be processed
-        first_20_C = NEWS_API.first_20
-        second_20_C = NEWS_API.second_20
-        third_20_C = NEWS_API.third_20
-        fourth_20_C = NEWS_API.fourth_20
-        fifth_20_C = NEWS_API.fifth_20
-        
-        Articles = {}           #create variable to hold the articles that will be collected
-        
-        
-        #Make call to NEWS API to get some articles for refresh
-        try:
-            
-            #collect about 500 total articles (5 for each 100 countries)
-            Articles = NEWS_API.Gather_DB_for_Save(first_20_C,second_20_C,third_20_C,fourth_20_C,fifth_20_C)            
-            
-            #Clean the gathered articles once found
-            Articles = NEWS_API.Parse_Spit_Mass(Articles)   
-        
-        
-        except Exception as e:          #if error encountered print message to the terminal
-            print(f"[NEWS_API] Request failed in DB_Update_Collection: {e}")
-            return "There was an error recieving and processing articles for DB collection update."
-        
-        
-        
-        return
     
 class Geolocator(ExternalAPI):                  #class that will be used for geolocation of articles
     # -----------------------------------------------------------------------------
