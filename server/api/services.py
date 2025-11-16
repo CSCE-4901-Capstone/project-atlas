@@ -170,10 +170,13 @@ class Gemini_API(ExternalAPI):
     Task: Given JSON blocks for WEATHER, FLIGHTS, and NEWS for a COUNTRY, write a HOLISTIC BRIEF.
 
     Rules:
-    - Output at least 10 (at most 15) bullet points in Markdown do not number the bullet points.
-    - Do not number the list and only print the list no other words or sentences
+    - Output 3 bullet points in Markdown do not number the bullet points.
+    - Use only paragraphs for each bullet point and use one bullet point to give a recommendation based on current events
+    - Avoid negative connotation or outlook determine
+    - Do not number the list
+    - Only print the list no other p elements or unnecessary text 
     - Each bullet must include at least one numeric fact (e.g., °C, wind m/s, aircraft count, timestamp or date).
-    - Connect evidence across domains (weather ↔ flights ↔ news) and add a High/Med/Low confidence tag.
+    - Use tags that define the summarization through emojis
     - If a section is sparse or uncertain, say so briefly rather than inventing facts.
     - Format the response so that it is easy to read with good sectioning as well.
     - RETURN THE ANALYSIS QUICKLY. ANALYSIS SHOULD NOT EXCEED 5 SECONDS BUT AT THE MINIMUM BE 2 SECONDS IN LENGTH.
@@ -682,8 +685,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would be inline with what an
-        expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 20 BULLETS
-        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETURN IT AS A STRING with good formatting.
+        expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 1 paragraph of text in markdown
+        and process the request QUICKLY.Only return the paragraph text. Do not include any other text.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
@@ -695,9 +698,9 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would provide meaningful insights on
-        TEMPERATURE/climate of the country in question. Restrict the analysis to 20 BULLETS
-        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
-        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        TEMPERATURE/climate of the country in question. Restrict to 1 paragraph of text in markdown
+        and process the request QUICKLY.
+        Only return the paragraph text. Do not include any other text.'''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print("making request for Temperature_Weather_gather()")
@@ -708,9 +711,9 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Role = f'''Your main goal is to act as a meteorologist for the country {country},
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would provide meaningful insights on
-        Precipitaiton (including snow, hail, sleet) of the country in question. Restrict the analysis to 20 BULLETS
-        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
-        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        Precipitaiton (including snow, hail, sleet) of the country in question. Restrict to 1 paragraph of text in markdown
+        and process the request QUICKLY.
+        Only return the paragraph text. Do not include any other text.'''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print(f"making request for Percipitation_Weather_gather({country})")
@@ -722,9 +725,9 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         expertise is seismology, volcanology, hydrology, and fire science (interms of wild fires).
         Find meaningful weather observations occuring in {country} relating to recent natural disasters occuring
         within {country}. Your task is to analyze the natural disasters to an extent where the information provided would provide 
-        meaningful insights on natual disasters occuring for the country in question. Restrict the analysis to 20 BULLETS
-        and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
-        ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.'''
+        meaningful insights on natual disasters occuring for the country in question. Restrict to 1 paragraph of text in markdown
+        and process the request QUICKLY.
+        Only return the paragraph text. Do not include any other text.'''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print(f"making request for Disaster_gather({country})")
@@ -803,7 +806,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Your objective is to find out what the most current topics of interest are in {country} and
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
         of {country}'s news that might be easy to see or hard to see for an outsider to {country}. Restrict the
-        analysis to 20 bullets and process the request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
+        analysis to 1 paragraph in markdown. Only return the paragraph text. Do not include any other text.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
@@ -852,7 +855,6 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
             "Weather Data to be considered:\n" + Weather_Data + "\n\n"
             "Flight Data to be considered:\n" + Flight_Data + "\n\n"
             "News Data to be considered:\n" + News_Data + "\n\n"
-            "Do not number the list and only print the list no other words or sentences"
         )
 
         #update logic

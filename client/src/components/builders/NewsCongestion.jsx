@@ -35,6 +35,9 @@ return (                        //build out the heatmap based on the fetched new
         </>
       );
 }
+function sizeIncrease(){
+  
+}
 
 function BuildHeatmap({ data, radius }) {
   const groupRef = useRef();
