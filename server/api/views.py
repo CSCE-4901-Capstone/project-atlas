@@ -1,5 +1,11 @@
-import time
 import threading
+_refresh_thread_started = False
+_refresh_thread_lock = threading.Lock()
+_refresh_is_running = threading.Lock()                  # prevents overlapping refresh runs
+_stop_event = threading.Event()                         # if you ever need to stop gracefully
+
+
+import time
 from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
