@@ -338,11 +338,6 @@ class WeatherAPIAsync:
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
 
-        if grid is not None:
-            print("fill_grid_async(self): Weather Data Cached")
-        elif grid is None:
-            print("fill_grid_async(self): Error recieving Weather Data. Weather Data was cached unsuccessfully")
-
         return grid
 
 
@@ -380,12 +375,6 @@ class PrecipitationAPIAsync(WeatherAPIAsync):
 
         for lat_index, lon_index, value in results:
             grid[lat_index][lon_index] = value
-
-        
-        if grid is not None:
-            print("fill_grid_async(self,**kwargs): Data cached Successfully")
-        elif grid is None:
-            print("fill_grid_async(self,**kwargs): Attempt Unsuccessful. Data not cached.")
 
         return grid
 
