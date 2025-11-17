@@ -151,9 +151,11 @@ class Heatmap(APIView):
         
         if Mass_Articles is None:    '''   #default to following pre-defined json data if data doesn't load
             
-        Mass_Articles[0] = data_1
+            
+            
+        Mass_Articles.insert(0, data_1)
         
-        Mass_Articles[1] = data_2
+        Mass_Articles.insert(1, data_2)
             
         '''else:
             print("Data from firebase collections retrieved successfully!")'''
