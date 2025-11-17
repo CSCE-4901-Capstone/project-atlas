@@ -1,17 +1,19 @@
 import threading
 _refresh_thread_started = False
 _refresh_thread_lock = threading.Lock()
-_refresh_is_running = threading.Lock()                  # prevents overlapping refresh runs
-_stop_event = threading.Event()                         # if you ever need to stop gracefully
+_refresh_is_running = threading.Lock()                  # lock to prevent overlapping the thread upon refreshing the filter
+_stop_event = threading.Event()                         # stops thread gracefully
 
 
 import time
+import os
 from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .services import WeatherAPIAsync, PrecipitationAPIAsync
+from django.conf import settings        #settings imported for thread management
 import asyncio
 
 from api.models import FlightModel
@@ -114,31 +116,55 @@ class Heatmap(APIView):
     def Start_DB_refresh(self):
         #run funciton to push new geolocated articles after an hour of use
         
-        while True:
-            try:
-                time.sleep(600)  # wait 10 minutes before first refresh
-                print("[Background] Starting periodic article refresh...")
-                self.NEWS.Gather_DB_for_Save()     # fetch and geolocate new articles
-                self.DB.GetNew_Articles()          #Geolocate new articles in server/api/Article_cache and store them to server/api/Geolocated_cache
+        if not _stop_event.wait(timeout = 10):     #wait 10 secs before starting first refresh
+            pass
+        
+        while not _stop_event.is_set():
+            
+            if _refresh_is_running.acquire(blocking = False):       #ensure that there aren't overlapping threads (don't run 2 threads at the same time)
+                try:
+                    # NOTE: refresh the DB once every hour 
+                    
+                    print("[Background] Starting periodic article refresh...")
+                    
+                    self.DB.GetNew_Articles()          #Geolocate new articles in server/api/Article_cache and store them to server/api/Geolocated_cache, also start the Gather_DB_for_save() function
+                    
+                    self.DB.DB_Push()             # push only new ones to Firestore
+                    
+                    self.DB.delete_geolocated_cache()           #delete the articles in the cache to free up space in the server
+                    print("[Background] Refresh complete. Waiting 1 hour...")
+                    
+                except Exception as e:
+                    print(f"[Background] Error during refresh: {e}")
                 
-                self.DB.DB_Push()             # push only new ones to Firestore
+                finally:
+                    _refresh_is_running.release()
                 
-                self.DB.delete_geolocated_cache()           #delete the articles in the cache to free up space in the server
-                print("[Background] Refresh complete. Waiting 1 hour...")
-                
-            except Exception as e:
-                print(f"[Background] Error during refresh: {e}")
-            time.sleep(3600)  # wait 1 hour before repeating
+            _stop_event.wait(timeout = 3600)  # wait 1 hour before repeating
     
+    def _ensure_refresh_thread(self):
+        global _refresh_thread_started
+        with _refresh_thread_lock:
+            if not _refresh_thread_started:
+                # In Django dev server, the auto-reloader runs code twice.
+                # Only start in the main process.
+                if os.environ.get("RUN_MAIN") == "true" or not settings.DEBUG:
+                    t = threading.Thread(target=self.Start_DB_refresh, daemon=True)
+                    t.start()
+                    _refresh_thread_started = True
+                    print("[Heatmap] Background refresh thread started for DB.")
     
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
+        
+        self._ensure_refresh_thread()           #start the refresh thread once
+        
         Mass_Articles = []
         
         '''# --- start background refresh thread  ---
         if not hasattr(self, "refresh_thread") or not self.refresh_thread.is_alive():
             self.refresh_thread = threading.Thread(target=self.Start_DB_refresh, daemon=True)
             self.refresh_thread.start()
-            print("[Heatmap] Background refresh thread started for DB.")
+            print("[Heatmap] Background refresh thread started for DB.")'''
 
         
         #This section of the code gathers all the articles Mass_Articles and returns it to the frontend
@@ -149,16 +175,11 @@ class Heatmap(APIView):
             print(f"Error encountered during DB_Pull: {e}")
             Mass_Articles = None        #set to none to execute default code
         
-        if Mass_Articles is None:    '''   #default to following pre-defined json data if data doesn't load
+        if Mass_Articles is None:       #default to following pre-defined json data if data doesn't load 
+            Mass_Articles[data_1, data_2]           #import data from 2 collections in variables.py in event that DB calls are unsuccessful so the application looks funcitonally correct
             
-            
-            
-        Mass_Articles.insert(0, data_1)
-        
-        Mass_Articles.insert(1, data_2)
-            
-        '''else:
-            print("Data from firebase collections retrieved successfully!")'''
+        else:
+            print("\nData from firebase collections retrieved successfully!\n\n")
 
         #This section of code calls for new articles to be pulled and updated to database (Not Returned to Frontend)
         

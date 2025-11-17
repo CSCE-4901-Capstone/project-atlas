@@ -17,6 +17,10 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
     //set content is the text displayed. Just do setContent = response (No need for UseEffect)
     const [content,setContent] = useState(Warning_MSG);
     
+    //variable used to keep track of currently active post requests so they can be cancelled if needed
+    const requestAbortRef = useRef(null);
+
+
     //Get the analysis data from the backend
     useEffect(() => {
         console.log("AtlasIntel rendered, choiceMade =", choiceMade);
@@ -24,6 +28,17 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
 
         //reset warning between every click
         setContent(Warning_MSG);
+        
+
+        //Cancel the Previous request if one is currently active so we are sure only selected country is queried
+        if(requestAbortRef.current){
+            requestAbortRef.current.abort()
+        }
+
+        //Create a controller for the post request
+        const controller = new AbortController();
+        requestAbortRef.current = controller;
+
 
         api_conn.post("/api/Agent/",{               //HERE ADD A VARIABLE TO RETRIVE THE ACTIVE FILTER NAME {FilterName} variable!!!!
             country: choiceMade,
@@ -31,15 +46,36 @@ function AtlasIntel({choiceMade,FilterName}){                   //FilterName is 
             session: NEW_SessionNum,},//"session123"
             {
             headers : {"Content-Type": "application/json"},
+            signal: controller.signal                       //Pass an abort signal every post request to prevent queing post requests
             },
         )
         .then((response) =>{
             console.log("response FROM views.py:", response.data);
             setContent(response.data);
         })
-        .catch((error) => console.error("Error:", error));          //catch error and display if encountered
+        .catch((error) => {
+
+            if(error?.name === "AbortError" || error?.code === "ERR_CANCELED"){
+                console.log("Previous POST request for Agent cancelled.");
+                return;
+            }
+
+            console.error("Error:", error);      //catch error and display if encountered
+        });          
+    
+        //ensure that that the request is cancelled upon selection of another country
+        return() => {
+            if(requestAbortRef.current){
+                requestAbortRef.current.abort();
+            }
+        };
+    
     },[choiceMade,FilterName]);        //ADD FilterName only AI has been fully optimized
     
+
+
+
+
     //DisplayText useStates
     const [displayText,setDisplayText] = useState("");
     const [show,setShow] = useState(false);

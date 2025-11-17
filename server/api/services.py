@@ -179,6 +179,7 @@ class Gemini_API(ExternalAPI):
     - Use tags that define the summarization through emojis
     - If a section is sparse or uncertain, say so briefly rather than inventing facts.
     - Format the response so that it is easy to read with good sectioning as well.
+    - DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.
     - RETURN THE ANALYSIS QUICKLY. ANALYSIS SHOULD NOT EXCEED 5 SECONDS BUT AT THE MINIMUM BE 2 SECONDS IN LENGTH.
     '''
 
@@ -675,7 +676,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         Find meaningful weather observations occuring in {country}. Your task is to analyze
         the weather to an extent where the information provided would be inline with what an
         expert would provide to someone if asked for a full-on weather report. Restrict the analysis to 1 paragraph of text in markdown
-        and process the request QUICKLY.Only return the paragraph text. Do not include any other text.
+        and process the request QUICKLY.Only return the paragraph text. Do not include any other text. DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.
         '''
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
@@ -689,7 +690,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         the weather to an extent where the information provided would provide meaningful insights on
         TEMPERATURE/climate of the country in question. Restrict to 1 paragraph of text in markdown
         and process the request QUICKLY.
-        Only return the paragraph text. Do not include any other text.'''
+        Only return the paragraph text. Do not include any other text. DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.'''
+        
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print("making request for Temperature_Weather_gather()")
@@ -702,7 +704,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         the weather to an extent where the information provided would provide meaningful insights on
         Precipitaiton (including snow, hail, sleet) of the country in question. Restrict to 1 paragraph of text in markdown
         and process the request QUICKLY.
-        Only return the paragraph text. Do not include any other text.'''
+        Only return the paragraph text. Do not include any other text. DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.'''
+        
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print(f"making request for Percipitation_Weather_gather({country})")
@@ -716,7 +719,9 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         within {country}. Your task is to analyze the natural disasters to an extent where the information provided would provide 
         meaningful insights on natual disasters occuring for the country in question. Restrict to 1 paragraph of text in markdown
         and process the request QUICKLY.
-        Only return the paragraph text. Do not include any other text.'''
+        Only return the paragraph text. Do not include any other text. DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.'''
+        
+        
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print(f"making request for Disaster_gather({country})")
@@ -731,7 +736,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         2) Break down flights for the **five most populous cities** in {country} (aggregate multi-airport city systems, e.g., “London = LHR+LGW+STN+LTN+LCY”).
         3) Compute each city’s **share (%)** of {country}’s total.
         4) Return a single JSON object (no extra text).
-
+        5) DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.
+        
         ### Data Freshness Rules
         - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs).
         - If exact “this week” per-city numbers are not published, use the most recent monthly/weekly airport-level averages **published within the last 30 days**, and clearly label the period in the JSON.
@@ -765,6 +771,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         4) Return a series of bullets with the analysis no longer than 20 bullet points
         5) Process request QUICKLY. DO NOT GIVE THE RESPONSE IN MARKDOWN, SIMPLY RETRN IT AS A STRING with good formatting.
         6) ONLY RETURN THE BUULLETS, NO OTHER INTRODUCTORY TEXT. ENSURE THERE IS AT LEAST ONE SPACE BETWEEN THE BULLETS.
+        7) DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.
         
         ### Data Freshness Rules
         - PRIORITIZE sources updated this week (e.g., EUROCONTROL/NATS/FAA/ICAO/state ANSPs).
@@ -796,7 +803,8 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
         formulate an in-depth analysis on the most talked about and also not so often touched on areas
         of {country}'s news that might be easy to see or hard to see for an outsider to {country}. Restrict the
         analysis to 1 paragraph in markdown. Only return the paragraph text. Do not include any other text.
-        '''
+        DO NOT USE THE CODE ELEMENT OR THE PRESERVE ELEMENT IN THE MARKDOWN RESPONSE.'''
+        
         prompt = f"for the country of {country} find the most relevant data for today relevant to your role"
 
         print(f"making request for News_gather({country})")
@@ -844,6 +852,7 @@ class Agentic_AI(ExternalAPI):              #work on after getting the congestio
             "Weather Data to be considered:\n" + Weather_Data + "\n\n"
             "Flight Data to be considered:\n" + Flight_Data + "\n\n"
             "News Data to be considered:\n" + News_Data + "\n\n"
+            
         )
 
         #update logic
@@ -896,7 +905,7 @@ class DisasterAPI(ExternalAPI):
 
 class DB_Manager_NEWS(ExternalAPI):
     
-    def GetNew_Articles():                  #function used to get new geolocated Articles from NewsAPI 
+    def GetNew_Articles(self):                  #function used to get new geolocated Articles from NewsAPI 
         NEWS = NEWS_API()                   #create instance of NEWS_API class to gain access to necessary functions
         
         #get the names of all countries that need to be processed
@@ -958,9 +967,9 @@ class DB_Manager_NEWS(ExternalAPI):
         for p in sorted(out_dir_geo.glob("CountriesGroup*_geolocated.json")):
             try:
                 with p.open("r", encoding="utf-8") as f:
-                    data = json.load(f)
-                if isinstance(data, list):
-                    data.append(data)
+                    file_items = json.load(f)
+                if isinstance(file_items, list):
+                    data.append(file_items)         #write document contents to each inner list
                 else:
                     print(f"[warn] {p.name} is not a JSON array; skipped")
             except Exception as e:

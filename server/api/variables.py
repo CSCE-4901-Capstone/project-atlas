@@ -17,7 +17,6 @@ import aiohttp
 
 
 
-
 data_1 = [
   {
     "city": "Mumbai",
