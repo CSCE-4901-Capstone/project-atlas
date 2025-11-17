@@ -91,13 +91,15 @@ pointsRef.current = [];
 for (const [key, entries] of grouped.entries()) {
   const count = entries.length;
 
-  const baseSize = 0.03;        // width along tangent
-  const minHeight = 0.03;       // base radial length
-  const heightFactor = 0.015;   // extra length per overlap
-  const radialLength = minHeight + (count - 1) * heightFactor;
+  const baseSize = 0.03;      // width along tangent
+  const minHeight = 0.03;     // base radial length
+  const heightFactor = 0.015; // extra length per overlapping point
+  const maxHeight = 0.3;      // cap height
+
+  // Cap the radial length
+  const radialLength = Math.min(minHeight + (count - 1) * heightFactor, maxHeight);
 
   const { latitude, longitude } = entries[0];
-
   const [x, y, z] = convertGeoJSONToSphereCoordinates(
     convertObjectsToMultiPointGeoJSON("Congestion", [entries[0]]),
     radius
@@ -105,35 +107,34 @@ for (const [key, entries] of grouped.entries()) {
 
   pointsRef.current.push([x, y, z]);
 
-  // Step 1: Create a flat BoxGeometry (height along Z initially)
+  // Create box geometry
   const geometry = new BoxGeometry(baseSize, 0.03, radialLength);
 
-  // Step 2: Compute the radial vector (direction away from globe center)
+  // Compute radial vector
   const len = Math.hypot(x, y, z) || 1;
   const dx = x / len;
   const dy = y / len;
   const dz = z / len;
 
-  // Step 3: Translate the box along radial vector by half its height so base sits on sphere
+  // Translate along radial direction so base sits on sphere
   const translationMatrix = new Matrix4().makeTranslation(
     x + dx * radialLength / 2,
     y + dy * radialLength / 2,
     z + dz * radialLength / 2
   );
 
-  // Step 4: Rotate box to face outward (away from globe center)
-  const tempObj = new Object3D();
-  tempObj.position.set(x, y, z);
-  tempObj.lookAt(0, 0, 0);
-  const lookAtMatrix = new Matrix4().makeRotationFromEuler(tempObj.rotation);
+  // Rotate box to face outward
+  const tempObject = new Object3D();
+  tempObject.position.set(x, y, z);
+  tempObject.lookAt(0, 0, 0);
+  const lookAtMatrix = new Matrix4().makeRotationFromEuler(tempObject.rotation);
 
-  const finalMatrix = new Matrix4()
-    .multiplyMatrices(translationMatrix, lookAtMatrix);
+  const finalMatrix = new Matrix4().multiplyMatrices(translationMatrix, lookAtMatrix);
 
   geometry.applyMatrix4(finalMatrix);
-
   geometries.push(geometry);
 }
+
 
 
 
