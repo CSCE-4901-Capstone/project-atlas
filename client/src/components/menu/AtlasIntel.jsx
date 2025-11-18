@@ -12,7 +12,7 @@ function AtlasIntel({choiceMade, FilterName}) {
         "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute";
 
     const [content, setContent] = useState(Warning_MSG);
-
+    const requestIdRef = useRef(0)
     // ================================
     // FETCH AI SUMMARY
     // ================================
@@ -95,7 +95,18 @@ function AtlasIntel({choiceMade, FilterName}) {
 
             <div className={show ? "atlas-response-container-anim" : "atlas-response-container"}>
                 {content === Warning_MSG && displayText !== "" ? (
-                    <Quantum size="100" speed="2.75" color="white" />
+                    <div
+                    style={{
+                        height: "inherit",
+                        width: "inherit",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}
+                    >
+                        <Quantum size="130" speed="2.75" color="white" />
+                    </div>
+
                 ) : (
                     <ReactMarkdown>{displayText}</ReactMarkdown>
                 )}
