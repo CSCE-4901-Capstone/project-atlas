@@ -3,6 +3,7 @@ import { TextureLoader, Matrix4, BoxGeometry, Object3D, PlaneGeometry, MeshBasic
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import convertObjectsToMultiPointGeoJSON from 'src/utils/convertObjectsToMultiPointGeoJSON';
 import convertGeoJSONToSphereCoordinates from 'src/utils/convertGeoJSONToSphereCoordinates';
+import tranformationHackUtility from 'src/utils/transformationHackUtility';
 import { Canvas } from '@react-three/fiber'
 import Error from 'src/components/builders/Error';
 import api_conn from 'src/utils/api';
@@ -44,6 +45,7 @@ function BuildHeatmap({ data, radius }) {
   const [hoverPos, setHoverPos] = useState(null)   // world position for tooltip
   const pointsRef = useRef([])                     // stores [x,y,z] for each point
   const dataRef = useRef([])                       // stores original data aligned to points
+  const allDataRef = useRef([])                    // all articles recieved
   //end
 
   const texture = new TextureLoader().load('/images/ArticlePoint.jpg');       //populate the image for a news Point on the globe
@@ -60,8 +62,11 @@ function BuildHeatmap({ data, radius }) {
 
     console.log("Flattened data:", flatData);
 
-    // Store reference to original data
-    dataRef.current = flatData;
+    //Store all articles separately
+    allDataRef.current = flatData;
+
+    //Reset per-geometry data array so it is ready to collect articles per one geometry
+    dataRef.current = [];
 
     // --- Group points by latitude + longitude ---
     const grouped = new Map();
@@ -93,8 +98,15 @@ function BuildHeatmap({ data, radius }) {
       //default the latitude and longitude objects to the first entry in groups
       const { latitude, longitude } = entries[0];
 
-      //create x,y, and z values from the returned output coordinate array
-      const [x, y, z] = convertGeoJSONToSphereCoordinates(convertObjectsToMultiPointGeoJSON("Congestion", [entries[0]]), radius).output_coordinate_array[0];
+      dataRef.current.push(entries[0]);             //Push one data item per geometry in the exact same order
+
+      //create x,y, and z values from the returned output coordinate array and correct x,y, and z coordinate placement with transformationHackUtility
+      
+      const json = convertObjectsToMultiPointGeoJSON("Congestion", [entries[0]]);
+      const sphereCoords = convertGeoJSONToSphereCoordinates(json, radius);
+      const rawPoint = sphereCoords.output_coordinate_array[0];
+      const [x, y, z] = tranformationHackUtility([rawPoint])[0];
+
       //push new pointrefs to the variable
       pointsRef.current.push([x, y, z]);
 
@@ -146,7 +158,6 @@ function BuildHeatmap({ data, radius }) {
 
   useEffect(() => {
     if (groupRef.current) {
-      groupRef.current.rotation.x = -Math.PI * 0.5; // Quick hack to fix rotation
     }
   }, [])
 
@@ -213,8 +224,8 @@ function BuildHeatmap({ data, radius }) {
     const clicked = dataRef.current[idx];
     if (!clicked) return;
 
-    // Find all articles that share the same lat/lon
-    const group = dataRef.current.filter(
+    // Find all articles that share the same lat/lon, from the full list
+    const group = allDataRef.current.filter(
       item =>
         item.latitude === clicked.latitude &&
         item.longitude === clicked.longitude
