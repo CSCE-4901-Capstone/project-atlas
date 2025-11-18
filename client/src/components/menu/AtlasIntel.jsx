@@ -6,21 +6,38 @@ import { Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css'
 import ReactMarkdown from 'react-markdown'
 
-function AtlasIntel({choiceMade, FilterName}) {
+//This is where Atlas Intelligence will export its summary from the agent.
 
-    const Warning_MSG =
-        "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute";
+function AtlasIntel({choiceMade,FilterName}){                   //FilterName is the name of the filter being currently selected
+    //Dummy AI agent response string set to dummy data for printing the response **REMOVE THIS OR SET IT TO THE RESPONSE WHEN CONTENT IS DELIVERED**
+    const Warning_MSG = "Loading Agent response...\nAs weather, flight, and news data is being considered in the holistic analysis, please be aware that the processing time can take up to approximately 1 minute"
 
-    const [content, setContent] = useState(Warning_MSG);
+    console.log("AtlasIntel rendered, choiceMade =", choiceMade);
+    
+    //set content is the text displayed. Just do setContent = response (No need for UseEffect)
+    const [content,setContent] = useState(Warning_MSG);
+    
+    //variable used to keep track of currently active post requests so they can be cancelled if needed
+    const requestAbortRef = useRef(null);
 
-    // ================================
-    // FETCH AI SUMMARY
-    // ================================
+
+    //Get the analysis data from the backend
     useEffect(() => {
         if (!choiceMade) return;
 
         // always show loading text first
         setContent(Warning_MSG);
+        
+
+        //Cancel the Previous request if one is currently active so we are sure only selected country is queried
+        if(requestAbortRef.current){
+            requestAbortRef.current.abort()
+        }
+
+        //Create a controller for the post request
+        const controller = new AbortController();
+        requestAbortRef.current = controller;
+
 
         // Increment id to only take the last one
         const requestId = ++requestIdRef.current;
