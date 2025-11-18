@@ -556,7 +556,7 @@ class NEWS_API(ExternalAPI):
                         if len(buffer) == 100:
                             out_path = out_dir / f"CountriesGroup{file_idx}.json"
                             
-                            with out_path.open(f"CountriesGroup{file_idx}.json", "w", encoding="utf-8") as f:
+                            with out_path.open("w", encoding="utf-8") as f:
                                 json.dump(buffer, f, indent=2)
                             print(f"Wrote 100 articles in CountriesGroup{file_idx}.json to {out_path}")
                             file_idx += 1
@@ -925,27 +925,33 @@ class DB_Manager_NEWS(ExternalAPI):
         try:
             
             #collect about 500 total articles (5 for each 100 countries) and save the articles to Article_cache subdirectory
-            NEWS_API.Gather_DB_for_Save(first_20_C,second_20_C,third_20_C,fourth_20_C,fifth_20_C)
+            NEWS.Gather_DB_for_Save(first_20_C,second_20_C,third_20_C,fourth_20_C,fifth_20_C)
             
-            if len(out_dir_Article) == 0:               #check to see whether the articles have populated in Article_cache subdirectory
+            
+            #check to see whether the articles have populated in Article_cache subdirectory
+            article_files = list(out_dir_Article.glob("CountriesGroup*.json"))
+            if not article_files:
                 print("Error adding Articles to Article_cache subdirectory")
                 return
-            elif len(out_dir_Article) >= 1:
-                print("Files present in Article_cache subdirectory")            
+            else:
+                print("Files present in Article_cache subdirectory")         
                   
             Geo = Geolocator()          #create instance of Geolocator class to gain access to necessary functions
             
             #geolocate the articles in Article_cache and save the geolocated articles to Geolocated_cache in Geolocated_cache subdirectory
             Geo.process_countries_sequential()
             
-            if len(out_dir_geo) == 0:               #check to see whether the Geolocated Articles have populated
+            
+            #check to see whether the Geolocated Articles have populated
+            geo_files = list(out_dir_geo.glob("CountriesGroup*_geolocated.json"))
+            if not geo_files:
                 print("Error adding Articles to Geolocated_cache subdirectory")
                 return
-            elif len(out_dir_geo) >= 1:
-                print("Files present in Geolocate_cache subdirectory")                           
+            else:
+                print("Files present in Geolocated_cache subdirectory")                          
             
             #at this point no need for articles in Article_cache thus they can be deleted
-            DB_Manager_NEWS.delete_article_cache()
+            self.delete_article_cache()
             
         
         except Exception as e:          #if error encountered print message to the terminal
@@ -989,11 +995,18 @@ class DB_Manager_NEWS(ExternalAPI):
         """
         urls: set[str] = set()
         for col in collection_names:
+            
+            count = 0
+            
             for snap in db.collection(col).stream():
                 d = snap.to_dict() or {}
-                u = DB_Manager_NEWS.norm_url(d.get("url"))
+                u = self.norm_url(d.get("url"))
                 if u:
                     urls.add(u)
+                    count += 1
+            
+            print(f"[fetch_DB_urls] {col}: {count} docs found")
+            
         return urls
     
     def DB_Push(self):              
@@ -1109,7 +1122,7 @@ class DB_Manager_NEWS(ExternalAPI):
         for p in out_dir.glob("CountriesGroup*_geolocated.json"):
             p.unlink(missing_ok=True)
         print("Geolocated_cache cleared.")
-    
+     
 class Geolocator(ExternalAPI):                  #class that will be used for geolocation of articles
     # -----------------------------------------------------------------------------
     # Configuration
@@ -1132,7 +1145,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
 
     def _geocode_with_timeout(self,q):
         # 8–12 seconds is reasonable; 10 is a sweet spot
-        return Geolocator._geolocator.geocode(q, timeout=10)
+        return self._geolocator.geocode(q, timeout=10)
 
     _forward_geocode = RateLimiter(
         _geocode_with_timeout,
@@ -1219,9 +1232,9 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         #if fragment in _cache_wd:
         #    _p(verbose, f"    [wd] cache HIT for '{fragment}'")
         #    return _cache_wd[fragment]
-        hit = Geolocator._wd_cache_get(fragment)
+        hit = self._wd_cache_get(fragment)
         if hit is not None:
-            Geolocator._p(verbose, f"    [wd] cache HIT for '{fragment}'")
+            self._p(verbose, f"    [wd] cache HIT for '{fragment}'")
             return hit
 
         query = f"""
@@ -1237,7 +1250,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         }} LIMIT 1
         """
         try:
-            r = requests.get(Geolocator._WD_SPARQL, params={"query": query, "format":"json"}, timeout=25)
+            r = requests.get(self._WD_SPARQL, params={"query": query, "format":"json"}, timeout=25)
             r.raise_for_status()
             rows = r.json().get("results", {}).get("bindings", [])
             if rows:
@@ -1248,24 +1261,24 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                 lat = lon = None
                 if coord:
                     lon_s, lat_s = coord.replace("Point(", "").replace(")", "").split()
-                    lat, lon = Geolocator._round4(float(lat_s)), Geolocator._round4(float(lon_s))
-                Geolocator._cache_wd[fragment] = (hq_label, hq_country, lat, lon)
-                return Geolocator._cache_wd[fragment]
+                    lat, lon = self._round4(float(lat_s)), self._round4(float(lon_s))
+                self._cache_wd[fragment] = (hq_label, hq_country, lat, lon)
+                return self._cache_wd[fragment]
         except Exception as e:
-            Geolocator._p(verbose, f"    [wd][ERR] {e}")
+            self._p(verbose, f"    [wd][ERR] {e}")
 
-        Geolocator._cache_wd[fragment] = (None, None, None, None)
-        return Geolocator._cache_wd[fragment]
+        self._cache_wd[fragment] = (None, None, None, None)
+        return self._cache_wd[fragment]
 
     def wikidata_hq_lookup(self,url: str, verbose: bool=False) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float]]:
         """
         Try full host first, then registered domain.
         """
-        full_host, registered, _ = Geolocator._domain_parts(url)
-        hq_label, hq_country, lat, lon = Geolocator.wikidata_hq_lookup_by_site_fragment(full_host, verbose=verbose)
+        full_host, registered, _ = self._domain_parts(url)
+        hq_label, hq_country, lat, lon = self.wikidata_hq_lookup_by_site_fragment(full_host, verbose=verbose)
         if any([hq_label, hq_country, lat, lon]):
             return hq_label, hq_country, lat, lon
-        return Geolocator.wikidata_hq_lookup_by_site_fragment(registered, verbose=verbose)
+        return self.wikidata_hq_lookup_by_site_fragment(registered, verbose=verbose)
 
     # -----------------------------------------------------------------------------
     # Function neeeded for Tier 2 search on organization homepage: Parse homepage JSON-LD for address (city/country)
@@ -1276,7 +1289,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         Returns (city, country) if found; else (None, None).
         """
         try:
-            Geolocator._p(verbose, f"    [ldjson] fetching homepage → {url}")
+            self._p(verbose, f"    [ldjson] fetching homepage → {url}")
             r = requests.get(url, timeout=15)
             r.raise_for_status()
             base_url = get_base_url(r.text, url)
@@ -1301,7 +1314,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                                 if city or country:
                                     return city, country if isinstance(country, str) else (country.get("name") if isinstance(country, dict) else country)
         except Exception as e:
-            Geolocator._p(verbose, f"    [ldjson][ERR] {e}")
+            self._p(verbose, f"    [ldjson][ERR] {e}")
         return None, None
     
     # -----------------------------------------------------------------------------
@@ -1315,8 +1328,8 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         """
         try:
             ip = socket.gethostbyname(domain)
-            Geolocator._p(verbose, f"    [ipgeo] {domain} → {ip}")
-            resp = requests.get(Geolocator._IPINFO_URL.format(ip=ip), timeout=10)
+            self._p(verbose, f"    [ipgeo] {domain} → {ip}")
+            resp = requests.get(self._IPINFO_URL.format(ip=ip), timeout=10)
             
             #proceed if we get a valid IP address
             if resp.ok:
@@ -1327,10 +1340,10 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                 lat = lon = None
                 if loc:
                     lat_s, lon_s = loc.split(",")
-                    lat, lon = Geolocator._round4(float(lat_s)), Geolocator._round4(float(lon_s))
+                    lat, lon = self._round4(float(lat_s)), self._round4(float(lon_s))
                 return city, country, lat, lon
         except Exception as e:
-            Geolocator._p(verbose, f"    [ipgeo][ERR] {e}")
+            self._p(verbose, f"    [ipgeo][ERR] {e}")
         return None, None, None, None
     
     # -----------------------------------------------------------------------------
@@ -1346,7 +1359,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
             if wait > 0:
                 time.sleep(wait)
             # call underlying (already rate-limited) geopy
-            loc = Geolocator._forward_geocode(q)
+            loc = self._forward_geocode(q)
             _last_geopy_ts = monotonic()
             return loc
 
@@ -1355,22 +1368,22 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         if not place:
             return None, None
         try:
-            loc = Geolocator._geopy_throttled_geocode(place)
+            loc = self._geopy_throttled_geocode(place)
             if loc:
-                lat, lon = Geolocator._round4(loc.latitude), Geolocator._round4(loc.longitude)
-                Geolocator._p(verbose, f"    [geopy] '{place}' → {lat},{lon}")
+                lat, lon = self._round4(loc.latitude), self._round4(loc.longitude)
+                self._p(verbose, f"    [geopy] '{place}' → {lat},{lon}")
                 return lat, lon
         except Exception as e:
-            Geolocator._p(verbose, f"    [geopy][ERR] {e}")
+            self._p(verbose, f"    [geopy][ERR] {e}")
         return None, None
 
     # Wrap cache reads/writes that multiple threads may touch
     def _wd_cache_get(self,k):
         with _cache_lock:
-            return Geolocator._cache_wd.get(k)
+            return self._cache_wd.get(k)
     def _wd_cache_set(self,k, v):
         with _cache_lock:
-            Geolocator._cache_wd[k] = v
+            self._cache_wd[k] = v
 
     def geocode_place(self,place: str, verbose: bool=False) -> Tuple[Optional[float], Optional[float]]:
         """
@@ -1379,13 +1392,13 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         if not place:
             return None, None
         try:
-            loc = Geolocator._forward_geocode(place)
+            loc = self._forward_geocode(place)
             if loc:
-                lat, lon = Geolocator._round4(loc.latitude), Geolocator._round4(loc.longitude)
-                Geolocator._p(verbose, f"    [geopy] '{place}' → {lat},{lon}")
+                lat, lon = self._round4(loc.latitude), self._round4(loc.longitude)
+                self._p(verbose, f"    [geopy] '{place}' → {lat},{lon}")
                 return lat, lon
         except Exception as e:
-            Geolocator._p(verbose, f"    [geopy][ERR] {e}")
+            self._p(verbose, f"    [geopy][ERR] {e}")
         return None, None
     
     # -----------------------------------------------------------------------------
@@ -1405,68 +1418,68 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         lat = None
         lon = None
 
-        Geolocator._p(verbose, f"\n[Article] {title}")
-        Geolocator._p(verbose, f"  URL: {url}")
-        full_host, registered, suffix = Geolocator._domain_parts(url)
+        self._p(verbose, f"\n[Article] {title}")
+        self._p(verbose, f"  URL: {url}")
+        full_host, registered, suffix = self._domain_parts(url)
         homepage = f"https://{registered}" if registered else url
 
         # Quick publisher map (if you have lots from same sites, this is fastest)
-        if full_host in Geolocator.PUBLISHER_FALLBACK:
-            city, country = Geolocator.PUBLISHER_FALLBACK[full_host]
-            Geolocator._p(verbose, f"  hit PUBLISHER_FALLBACK full_host → {city}, {country}")
-        elif registered in Geolocator.PUBLISHER_FALLBACK:
-            city, country = Geolocator.PUBLISHER_FALLBACK[registered]
-            Geolocator._p(verbose, f"  hit PUBLISHER_FALLBACK registered → {city}, {country}")
+        if full_host in self.PUBLISHER_FALLBACK:
+            city, country = self.PUBLISHER_FALLBACK[full_host]
+            self._p(verbose, f"  hit PUBLISHER_FALLBACK full_host → {city}, {country}")
+        elif registered in self.PUBLISHER_FALLBACK:
+            city, country = self.PUBLISHER_FALLBACK[registered]
+            self._p(verbose, f"  hit PUBLISHER_FALLBACK registered → {city}, {country}")
 
         # Tier 1: Wikidata (if still unknown)
         if not city and not country:
-            Geolocator._p(verbose, "  [Tier1] Wikidata lookup ...")
-            hq_label, hq_country, wd_lat, wd_lon = Geolocator.wikidata_hq_lookup(url, verbose=verbose)
+            self._p(verbose, "  [Tier1] Wikidata lookup ...")
+            hq_label, hq_country, wd_lat, wd_lon = self.wikidata_hq_lookup(url, verbose=verbose)
             if hq_label or hq_country or (wd_lat and wd_lon):
                 city = city or hq_label
                 country = country or hq_country
                 if wd_lat is not None and wd_lon is not None:
                     lat, lon = wd_lat, wd_lon
-                    Geolocator._p(verbose, f"    Wikidata coords → {lat},{lon}")
+                    self._p(verbose, f"    Wikidata coords → {lat},{lon}")
                 else:
-                    Geolocator._p(verbose, f"    Wikidata names → city='{city}', country='{country}'")
+                    self._p(verbose, f"    Wikidata names → city='{city}', country='{country}'")
 
         # Tier 2: JSON-LD on homepage (if still unknown city/country)
         if not city and not country:
-            Geolocator._p(verbose, "  [Tier2] Homepage JSON-LD ...")
-            c_city, c_country = Geolocator.ldjson_address(homepage, verbose=verbose)
+            self._p(verbose, "  [Tier2] Homepage JSON-LD ...")
+            c_city, c_country = self.ldjson_address(homepage, verbose=verbose)
             if c_city or c_country:
                 city = city or c_city
                 country = country or c_country
-                Geolocator._p(verbose, f"    JSON-LD → city='{city}', country='{country}'")
+                self._p(verbose, f"    JSON-LD → city='{city}', country='{country}'")
 
         # Tier 3: IP-based geolocation (last-resort for names)
         if not city and not country:
-            Geolocator._p(verbose, "  [Tier3] IP-based geolocation ...")
-            ip_city, ip_country, ip_lat, ip_lon = Geolocator.ip_geolocate_domain(registered or full_host, verbose=verbose)
+            self._p(verbose, "  [Tier3] IP-based geolocation ...")
+            ip_city, ip_country, ip_lat, ip_lon = self.ip_geolocate_domain(registered or full_host, verbose=verbose)
             if ip_city or ip_country:
                 city = city or ip_city
                 country = country or ip_country
-                Geolocator._p(verbose, f"    IPGeo → city='{city}', country='{country}'")
+                self._p(verbose, f"    IPGeo → city='{city}', country='{country}'")
             # If coords arrived here and nothing else will, we can accept them
             if lat is None and lon is None and ip_lat is not None and ip_lon is not None:
                 lat, lon = ip_lat, ip_lon
-                Geolocator._p(verbose, f"    IPGeo coords → {lat},{lon}")
+                self._p(verbose, f"    IPGeo coords → {lat},{lon}")
 
         # Additional hints: provided article["country"]
         if not country and input_country:
             country = input_country
-            Geolocator._p(verbose, f"  using input country hint → '{country}'")
+            self._p(verbose, f"  using input country hint → '{country}'")
 
         # TLD heuristic (e.g. .in → India) if still nothing
-        if not country and suffix in Geolocator.TLD_COUNTRY:
-            country = Geolocator.TLD_COUNTRY[suffix]
-            Geolocator._p(verbose, f"  TLD heuristic '.{suffix}' → country='{country}'")
+        if not country and suffix in self.TLD_COUNTRY:
+            country = self.TLD_COUNTRY[suffix]
+            self._p(verbose, f"  TLD heuristic '.{suffix}' → country='{country}'")
 
         # Absolute default if still missing
         if not city and not country:
             city, country = "Washington", "United States"
-            Geolocator._p(verbose, "  DEFAULT → Washington, United States")
+            self._p(verbose, "  DEFAULT → Washington, United States")
 
         # Get coordinates (use geopy if we only have names; keep Wikidata/IP coords if already present)
         if lat is None or lon is None:
@@ -1477,13 +1490,13 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                 q = country
             else:
                 q = "United States"
-            lat, lon = Geolocator.geocode_place(q, verbose=verbose)
+            lat, lon = self.geocode_place(q, verbose=verbose)
 
         # Final safety (should be rare)
         if lat is None or lon is None:
             # As a very last attempt, geocode country alone or default to US
             q = country or "United States"
-            lat, lon = Geolocator.geocode_place(q, verbose=verbose)
+            lat, lon = self.geocode_place(q, verbose=verbose)
             if lat is None or lon is None:
                 city, country, lat, lon = "Washington", "United States", 38.9072, -77.0369
 
@@ -1492,8 +1505,8 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
             "url": url,
             "title": title,
             "country": country or "Unknown",
-            "latitude": Geolocator._round4(lat),
-            "longitude": Geolocator._round4(lon),
+            "latitude": self._round4(lat),
+            "longitude": self._round4(lon),
         }
         
     # -----------------------------------------------------------------------------
@@ -1509,12 +1522,12 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
         - Keeps output order identical to input.
         """
         n = len(articles)
-        Geolocator._p(verbose, f"=== Geolocator start (concurrent, n={n}, workers={max_workers}) ===")
+        self._p(verbose, f"=== Geolocator start (concurrent, n={n}, workers={max_workers}) ===")
 
         # submit jobs with their original index so we can restore order
         results: List[Optional[Dict[str, Any]]] = [None] * n
         with ThreadPoolExecutor(max_workers=max_workers) as ex:
-            futures = {ex.submit(Geolocator.resolve_article, art, verbose): i for i, art in enumerate(articles)}
+            futures = {ex.submit(self.resolve_article, art, verbose): i for i, art in enumerate(articles)}
             for fut in as_completed(futures):
                 i = futures[fut]
                 try:
@@ -1522,7 +1535,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                 except Exception as e:
                     # On failure, write a minimal placeholder so array shape is preserved
                     a = articles[i]
-                    Geolocator._p(verbose, f"[ERR] article {i+1}: {e}")
+                    self._p(verbose, f"[ERR] article {i+1}: {e}")
                     results[i] = {
                         "city": "Unknown",
                         "url": a.get("url"),
@@ -1532,26 +1545,26 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                         "longitude": None,
                     }
 
-        Geolocator._p(verbose, "=== Geolocator finish (concurrent) ===")
+        self._p(verbose, "=== Geolocator finish (concurrent) ===")
         # type: ignore (we always fill)
         return results  # type: ignore
         
         
     #function used to start the process of Geolocation after Article_cache subdirectory is populated   
-    def process_countries_sequential():
+    def process_countries_sequential(self):
         print("\n🌍 Starting sequential geolocation run\n")
 
-        for idx in range(Geolocator.START_FILE, Geolocator.END_FILE + 1):
+        for idx in range(self.START_FILE, self.END_FILE + 1):
             filename = f"CountriesGroup{idx}.json"
-            input_path = os.path.join(Geolocator.INPUT_DIR, filename)
-            output_path = os.path.join(Geolocator.OUTPUT_DIR, filename.replace(".json", "_geolocated.json"))
+            input_path = os.path.join(self.INPUT_DIR, filename)
+            output_path = os.path.join(self.OUTPUT_DIR, filename.replace(".json", "_geolocated.json"))
 
             # Skip if missing
             if not os.path.exists(input_path):
                 print(f"⚠️  Skipping {filename} — file not found.")
                 continue
 
-            print(f"\n🟢 [{idx}/{Geolocator.END_FILE}] Processing {filename} ...")
+            print(f"\n🟢 [{idx}/{self.END_FILE}] Processing {filename} ...")
             start_time = time.time()
 
             try:
@@ -1562,7 +1575,7 @@ class Geolocator(ExternalAPI):                  #class that will be used for geo
                     print(f"  ⚠️  {filename} is not a JSON list — skipping.")
                     continue
 
-                enriched = Geolocator.geolocate_articles_json_concurrent(data, max_workers=4, verbose=Geolocator.VERBOSE)
+                enriched = self.geolocate_articles_json_concurrent(data, max_workers=4, verbose=self.VERBOSE)
 
                 with open(output_path, "w", encoding="utf-8") as out:
                     json.dump(enriched, out, ensure_ascii=False, indent=2)

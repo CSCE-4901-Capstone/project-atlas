@@ -1,4 +1,6 @@
 client/node_modules
+server/api/Article_cache
+server/api/Geolocated_cache
 
 .qodo
 .env

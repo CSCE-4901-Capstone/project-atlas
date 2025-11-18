@@ -113,7 +113,7 @@ class Heatmap(APIView):
     NEWS = NEWS_API()               #Initiate the instance of the NEWS_API class for NEWS API article gathering
     DB = DB_Manager_NEWS()          #Initiate the instance o the DB_Manager_NEWS  for Database communication
     
-    def Start_DB_refresh(self):
+    '''def Start_DB_refresh(self):
         #run funciton to push new geolocated articles after an hour of use
         
         if not _stop_event.wait(timeout = 10):     #wait 10 secs before starting first refresh
@@ -152,43 +152,41 @@ class Heatmap(APIView):
                     t = threading.Thread(target=self.Start_DB_refresh, daemon=True)
                     t.start()
                     _refresh_thread_started = True
-                    print("[Heatmap] Background refresh thread started for DB.")
+                    print("[Heatmap] Background refresh thread started for DB.")'''
     
     def get(self,request,format=None):             #GET request for all the articles needed to populate congestion
         
-        self._ensure_refresh_thread()           #start the refresh thread once
+        #self._ensure_refresh_thread()           #start the refresh thread once
         
         Mass_Articles = []
-        
-        '''# --- start background refresh thread  ---
-        if not hasattr(self, "refresh_thread") or not self.refresh_thread.is_alive():
-            self.refresh_thread = threading.Thread(target=self.Start_DB_refresh, daemon=True)
-            self.refresh_thread.start()
-            print("[Heatmap] Background refresh thread started for DB.")'''
 
-        
         #This section of the code gathers all the articles Mass_Articles and returns it to the frontend
-        try:
+        '''try:
             Mass_Articles = self.DB.DB_Pull()               #gather all the articles currently in the collections of DB
         
         except Exception as e:
             print(f"Error encountered during DB_Pull: {e}")
-            Mass_Articles = None        #set to none to execute default code
+            Mass_Articles = None    '''    #set to none to execute default code
         
-        if Mass_Articles is None:       #default to following pre-defined json data if data doesn't load 
+        '''if Mass_Articles is None:       #default to following pre-defined json data if data doesn't load 
             Mass_Articles[data_1, data_2]           #import data from 2 collections in variables.py in event that DB calls are unsuccessful so the application looks funcitonally correct
             
         else:
-            print("\nData from firebase collections retrieved successfully!\n\n")
+            print("\nData from firebase collections retrieved successfully!\n\n")'''
+            
+        Mass_Articles.insert(0, data_1)
+        Mass_Articles.insert(1, data_2)
 
-        #This section of code calls for new articles to be pulled and updated to database (Not Returned to Frontend)
-        
-        
-        #print first retrieved json file from firebae upon successful retrieval of data!!! 
-        #(revert to static JSON array in event that firebase code does not return any values to give illusion of functional filter)
-        #Display error message to terminal in case we don't have a successulf DB call
-        
-        print(f"{Mass_Articles[0]}")
+            #This section of code calls for new articles to be pulled and updated to database (Not Returned to Frontend)
+            
+            
+            #print first retrieved json file from firebae upon successful retrieval of data!!! 
+            #(revert to static JSON array in event that firebase code does not return any values to give illusion of functional filter)
+            #Display error message to terminal in case we don't have a successulf DB call
+        print(f"{Mass_Articles[0][0]}\n\n{Mass_Articles[1][0]}")
+            
+            
+        #print(f"{Mass_Articles[0][0]}\n\n{Mass_Articles[1][0]}\n\n{Mass_Articles[2][0]}\n\n{Mass_Articles[3][0]}\n\n")
         
 
         return Response(Mass_Articles, status=status.HTTP_200_OK)           #return the points after successful data gathering
