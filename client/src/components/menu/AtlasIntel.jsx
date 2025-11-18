@@ -13,9 +13,8 @@ function AtlasIntel({choiceMade, FilterName}) {
 
     const [content, setContent] = useState(Warning_MSG);
 
-
     // ================================
-    // FETCH AI SUMMARY (Only accept latest)
+    // FETCH AI SUMMARY
     // ================================
     useEffect(() => {
         if (!choiceMade) return;
@@ -26,8 +25,7 @@ function AtlasIntel({choiceMade, FilterName}) {
         // Increment id to only take the last one
         const requestId = ++requestIdRef.current;
 
-        api_conn
-            .post(
+        api_conn.post(
                 "/api/Agent/",
                 {
                     country: choiceMade,
