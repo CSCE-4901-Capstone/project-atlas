@@ -35,9 +35,6 @@ function NewsPopulate({ radius, visible }) {       //function used to load in ar
     </>
   );
 }
-function sizeIncrease() {
-
-}
 
 function BuildHeatmap({ data, radius }) {
   const groupRef = useRef();
@@ -49,17 +46,6 @@ function BuildHeatmap({ data, radius }) {
   const dataRef = useRef([])                       // stores original data aligned to points
   //end
 
-  /*//Referecne parameters for the rising box geometry
-  // rising animation state
-    const posAttrRef = useRef(null)       // geometry.attributes.position
-    const basePosRef = useRef(null)       // Float32Array copy of original positions
-    const indexRef = useRef(null)         // geometry.index.array
-    const riseMetaRef = useRef([])        // [{start,count, dx,dy,dz, t, delay}]
-    const allDoneRef = useRef(false)
-    const RISE_HEIGHT = 0.2               // how far to rise outward (tweak)
-    const RISE_SPEED = 1.0                // seconds to reach full height (tweak)
-    //end*/
-
   const texture = new TextureLoader().load('/images/ArticlePoint.jpg');       //populate the image for a news Point on the globe
 
   const mergedGeometry = useMemo(() => {
@@ -67,10 +53,8 @@ function BuildHeatmap({ data, radius }) {
 
   console.log("Incoming data:", data);
 
-  // --- Normalize data to 1D ---
-  const flatData = data.length > 0 && Array.isArray(data[0])
-    ? data.flat()      // handles 2D
-    : data;            // already 1D
+  // Flatten 2D array for data organization
+  const flatData = data.flat();
 
   console.log("Flattened data:", flatData);
 
@@ -80,34 +64,39 @@ function BuildHeatmap({ data, radius }) {
   // --- Group points by latitude + longitude ---
   const grouped = new Map();
   flatData.forEach(item => {
+    //set the key to each item's lat and long
     const key = `${item.latitude},${item.longitude}`;
+    //if the item doesn't have lat and long set the key to a blank array
     if (!grouped.has(key)) grouped.set(key, []);
+    //The item is then pushed to the group map
     grouped.get(key).push(item);
   });
 
+  //Start geometry logic
   const geometries = [];
-pointsRef.current = [];
-
+  pointsRef.current = [];
+//Loop through the grouped map's entries to create each of the geometry objects
 for (const [key, entries] of grouped.entries()) {
+  //Use the callback variable for the length of the map
   const count = entries.length;
 
+  //base stats for each dimension of the geometries
   const baseSize = 0.03;      // width along tangent
   const minHeight = 0.03;     // base radial length
   const heightFactor = 0.015; // extra length per overlapping point
   const maxHeight = 0.3;      // cap height
 
-  // Cap the radial length
+  // Cap the radial length for maximum height value
   const radialLength = Math.min(minHeight + (count - 1) * heightFactor, maxHeight);
-
+  //default the latitude and longitude objects to the first entry in groups
   const { latitude, longitude } = entries[0];
-  const [x, y, z] = convertGeoJSONToSphereCoordinates(
-    convertObjectsToMultiPointGeoJSON("Congestion", [entries[0]]),
-    radius
-  ).output_coordinate_array[0];
 
+  //create x,y, and z values from the returned output coordinate array
+  const [x, y, z] = convertGeoJSONToSphereCoordinates(convertObjectsToMultiPointGeoJSON("Congestion", [entries[0]]),radius).output_coordinate_array[0];
+  //push new pointrefs to the variable
   pointsRef.current.push([x, y, z]);
 
-  // Create box geometry
+  // Create box geometry with radialLength calculated earlier
   const geometry = new BoxGeometry(baseSize, 0.03, radialLength);
 
   // Compute radial vector
@@ -135,9 +124,6 @@ for (const [key, entries] of grouped.entries()) {
   geometries.push(geometry);
 }
 
-
-
-
   console.log("Geometries:", geometries);
 
   // Merge all BoxGeometries into a single mesh
@@ -162,84 +148,6 @@ for (const [key, entries] of grouped.entries()) {
     }
   }, [])
 
-  /*// Use effect prepares rising animation when BoxGeometry becomes available
-  useEffect(() => {
-    const mesh = groupRef.current
-    if (!mesh || !mesh.geometry) return
-    const geom = mesh.geometry
-
-    // cache attributes needed
-    posAttrRef.current = geom.attributes.position
-    indexRef.current   = geom.index?.array || null
-    if (!posAttrRef.current) return
-
-    // store base positions once
-    if (!basePosRef.current || basePosRef.current.length !== posAttrRef.current.array.length) {
-      basePosRef.current = new Float32Array(posAttrRef.current.array) // clone
-    }
-
-    // build one entry per group (each original box)
-    const groups = geom.groups || []
-    const pts = pointsRef.current || []
-    riseMetaRef.current = groups.map((g, i) => {
-      
-      // outward direction = normalized point position
-      const p = pts[i] || [0,0,1]
-      const len = Math.hypot(p[0], p[1], p[2]) || 1
-      const dx = p[0] / len, dy = p[1] / len, dz = p[2] / len
-      return {
-        start: g.start,         // index buffer range (triangles)
-        count: g.count,
-        dx, dy, dz,
-        t: 0,                   // progress 0..1
-        delay: (i % 50) * 0.02, // subtle stagger; tweak or set 0
-      }
-    })
-    allDoneRef.current = false
-  }, [mergedGeometry])*/
-
-  /*//UseFrame used for animating every frame of the BoxGeometry
-  useFrame((_, delta) => {
-  if (allDoneRef.current) return
-  const posAttr = posAttrRef.current
-  const base = basePosRef.current
-  const idxArr = indexRef.current
-  const meta = riseMetaRef.current
-  if (!posAttr || !base || !meta?.length) return
-
-  // ease function (smooth finish)
-  const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3)
-
-  let allDone = true
-  for (let m of meta) {
-    // handle per-item delay
-    if (m.delay > 0) { m.delay -= delta; allDone = false; continue }
-    if (m.t < 1) { m.t = Math.min(1, m.t + delta / RISE_SPEED); allDone = false }
-    const h = RISE_HEIGHT * easeOutCubic(m.t)
-
-    if (idxArr) {
-      // indexed geometry: move only vertices referenced by this group's index range
-      const end = m.start + m.count
-      for (let k = m.start; k < end; k++) {
-        const vi = idxArr[k] * 3
-        posAttr.array[vi    ] = base[vi    ] + m.dx * h
-        posAttr.array[vi + 1] = base[vi + 1] + m.dy * h
-        posAttr.array[vi + 2] = base[vi + 2] + m.dz * h
-      }
-    } else {
-      // non-indexed (unlikely after merge), fallback by vertex range
-      const startV = m.start * 1 // triangle index == vertex index here
-      const endV = startV + m.count
-      for (let vi = startV * 3; vi < endV * 3; vi += 3) {
-        posAttr.array[vi    ] = base[vi    ] + m.dx * h
-        posAttr.array[vi + 1] = base[vi + 1] + m.dy * h
-        posAttr.array[vi + 2] = base[vi + 2] + m.dz * h
-      }
-    }
-  }
-  posAttr.needsUpdate = true
-  allDoneRef.current = allDone
-  })*/
 
 
   const material = new MeshBasicMaterial({ color: 0xff00ff });        //default to box geometry if image fails to load
@@ -306,7 +214,6 @@ for (const [key, entries] of grouped.entries()) {
         onPointerMove={handlePointerMove}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
-      //raycast={(...args) => Mesh.prototype.raycast.apply(args[0].object, args.slice(1))} // keep default
       >
         <primitive object={mergedGeometry} attach="geometry" />
 
@@ -327,7 +234,7 @@ for (const [key, entries] of grouped.entries()) {
             target="_blank"
             rel="noopener noreferrer"
             onPointerDown={(e) => e.stopPropagation()}       // ensure that we can still drag the globe
-            className='news-congestion-link'
+            className='news-congestion-link'    //styling classname added for better readability
           >
             {dataRef.current[hoverIdx]?.title || 'Open article'}
           </a>
@@ -335,7 +242,6 @@ for (const [key, entries] of grouped.entries()) {
       )}
     </>
   ) : null;
-  //end of new code
 }
 
 export default NewsPopulate;
