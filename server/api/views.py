@@ -4,7 +4,6 @@ _refresh_thread_lock = threading.Lock()
 _refresh_is_running = threading.Lock()                  # lock to prevent overlapping the thread upon refreshing the filter
 _stop_event = threading.Event()                         # stops thread gracefully
 
-
 import time
 import os
 from django.shortcuts import render
@@ -20,9 +19,7 @@ from api.models import FlightModel
 from api.serializers import FlightSerializer
 from api.services import FlightAPI,NEWS_API,Agentic_AI, DisasterAPI, DB_Manager_NEWS    #,Gemini_API,
 
-
 from api.variables import data_1, data_2
-
 
 class FlightList(APIView):
     """
@@ -116,7 +113,7 @@ class Heatmap(APIView):
     def Start_DB_refresh(self):
         #run funciton to push new geolocated articles after an hour of use
         
-        if not _stop_event.wait(timeout = 10):     #wait 10 secs before starting first refresh
+        if not _stop_event.wait(timeout = 60):     #wait 1 minute before starting first refresh
             pass
         
         while not _stop_event.is_set():

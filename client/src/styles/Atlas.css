@@ -339,10 +339,10 @@ textarea:focus, input:focus{
     padding: 10px;
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 15rem;
+    height: 26vh;
     width: 47vw;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     border-radius: 0px !important;
     scrollbar-width: thin;
     scrollbar-color: grey transparent;
@@ -356,8 +356,8 @@ textarea:focus, input:focus{
     list-style-type: disc;
     scrollbar-width: thin;
     scrollbar-color: grey rgba(59, 59, 59, 0.255);
-
 }
+
 .atlas-response-container-anim ul li strong,.atlas-response-container-anim ol li strong{
     font-weight: bold;
 }
@@ -365,9 +365,6 @@ textarea:focus, input:focus{
     font-size: medium;
     list-style: circle;
 }
-
-
-
 
 #info-box > div {
     padding: 0.5rem;
