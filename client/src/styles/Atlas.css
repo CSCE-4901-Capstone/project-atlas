@@ -497,8 +497,8 @@ svg{
     text-decoration: none;
     text-align: center;
     position: absolute;
-    right: 25rem;
-    top: 2rem;
+    right: 15vw;
+    top: 2vh;
 }
 
 .welcome-container{
