@@ -7,6 +7,7 @@ Group Members: Amaan Jamil Siddiqui,
                Juan Correa,
                Ivan Rivas,
                Jacob Gewin
+               
 Dev Log:
     Starting a new IDE:
         Create Python environment for efficient package testing and management
